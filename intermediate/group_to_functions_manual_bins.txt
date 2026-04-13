@@ -1,0 +1,6 @@
+Group 0 (eps_bin_0__r2_bin_0): [7, 16, 19, 21, 22, 23, 24]
+Group 1 (eps_bin_0__r2_bin_1): [3, 4, 13, 14, 15, 17, 18]
+Group 2 (eps_bin_0__r2_bin_2): [1, 5]
+Group 3 (eps_bin_1__r2_bin_0): [2, 9, 12]
+Group 4 (eps_bin_1__r2_bin_1): [8, 11, 20]
+Group 5 (eps_bin_1__r2_bin_2): [6, 10]
