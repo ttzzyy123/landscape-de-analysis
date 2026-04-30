@@ -5,10 +5,14 @@ import pandas as pd
 def main():
     project_root = Path("/data/s3795888/ioh_project/my_landscape_experiments")
 
-    group_file = project_root / "output" / "manual_binning" / "function_group_mapping_for_step3.csv"
+    group_file = project_root / "output" / "manual_binning_experiments" / "eps2bins_3_r025065" / "function_group_mapping_for_step3.csv"
+
     pkl_file = project_root / "data" / "de_final_5_processed.pkl"
-    output_dir = project_root / "intermediate" / "group_data_manual_bins"
+    
+    output_dir = project_root / "intermediate" / "group_data_eps2bins_3_r025065"
+    
     output_dir.mkdir(parents=True, exist_ok=True)
+    
 
     print(f"Loading group mapping: {group_file}")
     df_group = pd.read_csv(group_file)

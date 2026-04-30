@@ -32,7 +32,7 @@ MANUAL_CONFIGS = {
 
     # 更保守一点的 r2 分法
     "manual_2x3_alt1": {
-        "eps_ratio": [-np.inf, 3.0, np.inf],
+        "eps_ratio": [-np.inf, 3.0, np.inf], 
         "adj_r2": [-np.inf, 0.2, 0.6, np.inf],
     },
 

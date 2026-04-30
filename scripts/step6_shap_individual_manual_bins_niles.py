@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import shap
-from sklearn.ensemble import RandomForestRegressor
+import catboost as cb
 
 
 # =========================
@@ -14,7 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_FILE = PROJECT_ROOT / "data" / "de_final_5_processed.pkl"
 GROUP_MAP_FILE = PROJECT_ROOT / "output" / "manual_binning" / "function_group_mapping_for_step3.csv"
 
-OUTPUT_DIR = PROJECT_ROOT / "output" / "shap_individual_manual_bins_encoding"
+OUTPUT_DIR = PROJECT_ROOT / "output" / "shap_individual_manual_bins_niles"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 SAMPLE_SIZE = 10000
@@ -23,25 +23,38 @@ SAMPLE_SIZE = 10000
 # =========================
 # Feature settings
 # =========================
-NUMERIC_FEATURES = [
+FEATURE_ORDER = [
     "CR",
     "F",
+    "crossover",
     "lambda_",
     "lpsr",
+    "mutation_base",
     "mutation_n_comps",
+    "mutation_reference",
     "use_archive",
+    "Instance variance",
+    "Stochastic variance",
+]
+
+RAW_FEATURES = [
+    "CR",
+    "F",
+    "crossover",
+    "lambda_",
+    "lpsr",
+    "mutation_base",
+    "mutation_n_comps",
+    "mutation_reference",
+    "use_archive",
+    "iid",
+    "seed",
 ]
 
 CATEGORICAL_FEATURES = [
+    "crossover",
     "mutation_base",
     "mutation_reference",
-    "crossover",
-    "adaptation_method",
-]
-
-VARIANCE_FEATURES = [
-    "iid",
-    "seed",
 ]
 
 TARGET_COL = "auc"
@@ -51,23 +64,11 @@ RENAME_MAP = {
     "seed": "Stochastic variance",
 }
 
-FINAL_FEATURE_ORDER = [
-    "CR",
-    "F",
-    "lambda_",
-    "lpsr",
-    "mutation_n_comps",
-    "use_archive",
-    "mutation_base",
-    "mutation_reference",
-    "crossover",
-    "Instance variance",
-    "Stochastic variance",
-]
-
-
-# 固定 encoding，避免每个 function 内部类别编码不一致
 CATEGORY_MAPS = {
+    "crossover": {
+        "bin": 0,
+        "exp": 1,
+    },
     "mutation_base": {
         "best": 0,
         "rand": 1,
@@ -79,60 +80,41 @@ CATEGORY_MAPS = {
         "pbest": 2,
         "rand": 3,
     },
-    "crossover": {
-        "bin": 0,
-        "exp": 1,
-    },
-    "adaptation_method": {
-        "nan": 0,
-    },
 }
 
 
 def prepare_features(sub: pd.DataFrame):
     """
-    Individual SHAP feature preparation.
-
-    - 数值列直接保留
-    - 类别列使用固定 categorical encoding
-    - 加入 iid 和 seed
-    - 删除常量列，例如 adaptation_method
-    - 保持 feature 顺序与 group-level Step4 一致
+    Niels-style individual SHAP feature preparation:
+    - CatBoostRegressor
+    - categorical encoding, no one-hot
+    - include iid/seed as variance features
+    - fixed feature order
     """
     sub = sub.copy()
 
-    required_cols = (
-        NUMERIC_FEATURES
-        + CATEGORICAL_FEATURES
-        + VARIANCE_FEATURES
-        + [TARGET_COL]
-    )
-
+    required_cols = RAW_FEATURES + [TARGET_COL]
     missing = [c for c in required_cols if c not in sub.columns]
     if missing:
         raise ValueError(f"Missing required columns: {missing}")
 
-    X = sub[
-        NUMERIC_FEATURES
-        + CATEGORICAL_FEATURES
-        + VARIANCE_FEATURES
-    ].copy()
-
+    X = sub[RAW_FEATURES].copy()
     X = X.rename(columns=RENAME_MAP)
 
     for col in CATEGORICAL_FEATURES:
-        if col in X.columns:
-            X[col] = X[col].astype(str)
-            X[col] = X[col].map(CATEGORY_MAPS[col])
+        X[col] = X[col].astype(str)
+        X[col] = X[col].map(CATEGORY_MAPS[col])
 
-            if X[col].isna().any():
-                unknown_values = sorted(sub[col].astype(str)[X[col].isna()].unique().tolist())
-                raise ValueError(
-                    f"Unknown category in {col}: {unknown_values}. "
-                    f"Please update CATEGORY_MAPS."
-                )
+        if X[col].isna().any():
+            unknown_values = sorted(
+                sub[col].astype(str)[X[col].isna()].unique().tolist()
+            )
+            raise ValueError(
+                f"Unknown category in {col}: {unknown_values}. "
+                f"Please update CATEGORY_MAPS."
+            )
 
-            X[col] = X[col].astype(int)
+        X[col] = X[col].astype(int)
 
     constant_cols = [
         col for col in X.columns
@@ -143,8 +125,8 @@ def prepare_features(sub: pd.DataFrame):
         print(f"Dropping constant columns: {constant_cols}")
         X = X.drop(columns=constant_cols)
 
-    existing_order = [c for c in FINAL_FEATURE_ORDER if c in X.columns]
-    X = X[existing_order]
+    ordered_cols = [c for c in FEATURE_ORDER if c in X.columns]
+    X = X[ordered_cols]
 
     y = sub[TARGET_COL].copy()
 
@@ -173,14 +155,15 @@ def run_function_shap(sub: pd.DataFrame, fid: int):
     print("X shape:", X.shape)
     print("Features:", list(X.columns))
 
-    model = RandomForestRegressor(
-        n_estimators=100,
-        max_depth=10,
-        random_state=42,
-        n_jobs=-1,
+    model = cb.CatBoostRegressor(
+        iterations=100,
+        depth=14,
+        random_seed=42,
+        verbose=False,
     )
 
     model.fit(X, y)
+
     train_r2 = model.score(X, y)
     print(f"Train R2: {train_r2:.4f}")
 
