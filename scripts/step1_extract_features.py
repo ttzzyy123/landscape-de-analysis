@@ -53,6 +53,10 @@ def main():
         "ic.eps.ratio": "eps_ratio",
         "ela_meta.lin_simple.adj_r2": "adj_r2"
     })
+    
+    df_wide["function_instance"] = (
+        "f" + df_wide["Function"].astype(str) + "_i" + df_wide["Instance"].astype(str)
+    )
 
     print("\n=== Final dataset shape ===")
     print(df_wide.shape)
@@ -60,7 +64,7 @@ def main():
     print("\n=== Preview ===")
     print(df_wide.head())
 
-    output_file = output_dir / "dim5_selected_features.csv"
+    output_file = output_dir / "dim5_selected_features_by_instance.csv"
     df_wide.to_csv(output_file, index=False)
 
     print(f"\nSaved to: {output_file}")

@@ -11,8 +11,11 @@ import catboost as cb
 # =========================
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-GROUP_DATA_DIR = PROJECT_ROOT / "intermediate" / "group_data_eps2bins_3_r025065"
-OUTPUT_DIR = PROJECT_ROOT / "output" / "shap_eps2bins_3_r025065_niles"
+# New selected grouping:
+# eps2bins_3_r0307_main + majority vote with mean-based tie-break
+GROUP_DATA_DIR = PROJECT_ROOT / "intermediate" / "group_data_eps2bins_3_r0307_main_tiebreak"
+
+OUTPUT_DIR = PROJECT_ROOT / "output" / "shap_eps2bins_3_r0307_main_tiebreak_niles"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 SAMPLE_SIZE = 20000
@@ -176,6 +179,15 @@ def run_shap(df: pd.DataFrame, group_id: int):
     importance["train_r2"] = train_r2
     importance["n_samples"] = len(X)
 
+    if "group_label" in df.columns:
+        labels = df["group_label"].dropna().unique().tolist()
+        importance["group_label"] = labels[0] if len(labels) == 1 else "|".join(map(str, labels))
+
+    if "fid" in df.columns:
+        fids = sorted(df["fid"].dropna().unique().tolist())
+        importance["functions"] = ",".join([f"f{int(fid)}" for fid in fids])
+        importance["n_functions"] = len(fids)
+
     importance = importance.sort_values(
         by="importance",
         ascending=False,
@@ -207,7 +219,10 @@ def main():
     if not group_files:
         raise FileNotFoundError(f"No group pkl files found in: {GROUP_DATA_DIR}")
 
-    print(f"Found {len(group_files)} group files.")
+    print(f"Using group data directory: {GROUP_DATA_DIR}")
+    print(f"Saving SHAP outputs to: {OUTPUT_DIR}")
+
+    print(f"\nFound {len(group_files)} group files.")
     print(group_files)
 
     all_results = []
@@ -222,6 +237,10 @@ def main():
         if "group_label" in df.columns:
             labels = df["group_label"].dropna().unique().tolist()
             print(f"Group label(s): {labels}")
+
+        if "fid" in df.columns:
+            fids = sorted(df["fid"].dropna().unique().tolist())
+            print("Functions:", [f"f{int(fid)}" for fid in fids])
 
         importance = run_shap(df, group_id)
 

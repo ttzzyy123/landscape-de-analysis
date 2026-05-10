@@ -10,21 +10,11 @@ import matplotlib.pyplot as plt
 FEATURE_1 = "eps_ratio"
 FEATURE_2 = "adj_r2"
 
-DEFAULT_SMALL_BIN_WIDTHS = {
-    FEATURE_1: 0.05,
-    FEATURE_2: 0.05,
-}
-
 BIN_CONFIGS = {
-    # =====================================================
-    # Current main candidate: 2 x 3
-    # =====================================================
     "eps2bins_3_r0307_main": {
         "eps_ratio": [-np.inf, 3.0, np.inf],
         "adj_r2": [-np.inf, 0.3, 0.7, np.inf],
     },
-
-    # nearby alternatives around main
     "eps2bins_3_r025065": {
         "eps_ratio": [-np.inf, 3.0, np.inf],
         "adj_r2": [-np.inf, 0.25, 0.65, np.inf],
@@ -37,8 +27,6 @@ BIN_CONFIGS = {
         "eps_ratio": [-np.inf, 3.0, np.inf],
         "adj_r2": [-np.inf, 0.4, 0.75, np.inf],
     },
-
-    # eps boundary sensitivity
     "eps2bins_35_r0307": {
         "eps_ratio": [-np.inf, 3.5, np.inf],
         "adj_r2": [-np.inf, 0.3, 0.7, np.inf],
@@ -47,10 +35,6 @@ BIN_CONFIGS = {
         "eps_ratio": [-np.inf, 2.5, np.inf],
         "adj_r2": [-np.inf, 0.3, 0.7, np.inf],
     },
-
-    # =====================================================
-    # Coarser 2 x 2 baselines
-    # =====================================================
     "eps2bins_3_r05": {
         "eps_ratio": [-np.inf, 3.0, np.inf],
         "adj_r2": [-np.inf, 0.5, np.inf],
@@ -63,10 +47,6 @@ BIN_CONFIGS = {
         "eps_ratio": [-np.inf, 3.0, np.inf],
         "adj_r2": [-np.inf, 0.6, np.inf],
     },
-
-    # =====================================================
-    # eps_ratio as 3 bins, motivated by visual distribution
-    # =====================================================
     "eps3bins_3_55_r0307": {
         "eps_ratio": [-np.inf, 3.0, 5.5, np.inf],
         "adj_r2": [-np.inf, 0.3, 0.7, np.inf],
@@ -79,8 +59,6 @@ BIN_CONFIGS = {
         "eps_ratio": [-np.inf, 3.0, 6.0, np.inf],
         "adj_r2": [-np.inf, 0.3, 0.7, np.inf],
     },
-
-    # eps 3 bins, adj 2 bins
     "eps3bins_3_55_r05": {
         "eps_ratio": [-np.inf, 3.0, 5.5, np.inf],
         "adj_r2": [-np.inf, 0.5, np.inf],
@@ -89,8 +67,6 @@ BIN_CONFIGS = {
         "eps_ratio": [-np.inf, 2.5, 5.5, np.inf],
         "adj_r2": [-np.inf, 0.5, np.inf],
     },
-
-    # eps 3 bins, adj 3 bins
     "eps3bins_3_55_r025065": {
         "eps_ratio": [-np.inf, 3.0, 5.5, np.inf],
         "adj_r2": [-np.inf, 0.25, 0.65, np.inf],
@@ -99,10 +75,6 @@ BIN_CONFIGS = {
         "eps_ratio": [-np.inf, 2.5, 5.5, np.inf],
         "adj_r2": [-np.inf, 0.2, 0.6, np.inf],
     },
-
-    # =====================================================
-    # adj_r2 as 4 bins, to test finer adj partition
-    # =====================================================
     "eps2bins_3_r4bins_0205075": {
         "eps_ratio": [-np.inf, 3.0, np.inf],
         "adj_r2": [-np.inf, 0.2, 0.5, 0.75, np.inf],
@@ -111,10 +83,6 @@ BIN_CONFIGS = {
         "eps_ratio": [-np.inf, 3.0, np.inf],
         "adj_r2": [-np.inf, 0.3, 0.6, 0.75, np.inf],
     },
-
-    # =====================================================
-    # Very fine control: likely over-partitioning
-    # =====================================================
     "eps3bins_3_55_r4bins_0205075": {
         "eps_ratio": [-np.inf, 3.0, 5.5, np.inf],
         "adj_r2": [-np.inf, 0.2, 0.5, 0.75, np.inf],
@@ -180,40 +148,96 @@ def assign_bin_label(values, edges, prefix):
     return pd.cut(values, bins=edges, labels=labels, include_lowest=True, right=False)
 
 
-def majority_vote(series):
+def assign_single_value_to_bin(value, edges, prefix):
+    labels = [f"{prefix}_bin_{i}" for i in range(len(edges) - 1)]
+
+    for i in range(len(edges) - 1):
+        if edges[i] <= value < edges[i + 1]:
+            return labels[i]
+
+    return np.nan
+
+
+def majority_vote_with_status(series):
     cnt = Counter(series.dropna().astype(str))
+
     if not cnt:
-        return np.nan
+        return np.nan, "empty", {}
+
     max_count = max(cnt.values())
     winners = sorted([k for k, v in cnt.items() if v == max_count])
-    return winners[0]
+
+    if len(winners) > 1:
+        return winners, "tie", dict(cnt)
+
+    return winners[0], "clear", dict(cnt)
 
 
 def compute_majority_assignments(df, manual_bins):
+    """
+    Final strategy:
+    1. Assign each instance to bins for eps_ratio and adj_r2.
+    2. For each function, use majority vote over instance-level bins.
+    3. If there is a tie, use the function-level mean bin as tie-breaker.
+    """
     out = df.copy()
 
     out["bin_feat1"] = assign_bin_label(out[FEATURE_1], manual_bins[FEATURE_1], "eps")
     out["bin_feat2"] = assign_bin_label(out[FEATURE_2], manual_bins[FEATURE_2], "r2")
 
     rows = []
+
     for fid, sub in out.groupby("Function"):
-        maj_bin_1 = majority_vote(sub["bin_feat1"])
-        maj_bin_2 = majority_vote(sub["bin_feat2"])
-        group_label = f"{maj_bin_1}__{maj_bin_2}"
+        mean_feat1 = sub[FEATURE_1].mean()
+        mean_feat2 = sub[FEATURE_2].mean()
+
+        mean_bin_1 = assign_single_value_to_bin(
+            mean_feat1,
+            manual_bins[FEATURE_1],
+            "eps"
+        )
+        mean_bin_2 = assign_single_value_to_bin(
+            mean_feat2,
+            manual_bins[FEATURE_2],
+            "r2"
+        )
+
+        maj_1, status_1, _ = majority_vote_with_status(sub["bin_feat1"])
+        maj_2, status_2, _ = majority_vote_with_status(sub["bin_feat2"])
+
+        final_bin_1 = mean_bin_1 if status_1 == "tie" else maj_1
+        final_bin_2 = mean_bin_2 if status_2 == "tie" else maj_2
+
+        group_label = f"{final_bin_1}__{final_bin_2}"
 
         row = {
             "Function": fid,
-            "majority_bin_feat1": maj_bin_1,
-            "majority_bin_feat2": maj_bin_2,
+            "mean_eps_ratio": mean_feat1,
+            "mean_adj_r2": mean_feat2,
+            "mean_bin_feat1": mean_bin_1,
+            "mean_bin_feat2": mean_bin_2,
+            "majority_bin_feat1": maj_1 if not isinstance(maj_1, list) else "|".join(maj_1),
+            "majority_bin_feat2": maj_2 if not isinstance(maj_2, list) else "|".join(maj_2),
+            "majority_status_feat1": status_1,
+            "majority_status_feat2": status_2,
+            "final_bin_feat1": final_bin_1,
+            "final_bin_feat2": final_bin_2,
             "group_label": group_label,
             "n_instances": len(sub),
         }
 
-        feat1_dist = sub["bin_feat1"].astype(str).value_counts(normalize=True, dropna=False).to_dict()
-        feat2_dist = sub["bin_feat2"].astype(str).value_counts(normalize=True, dropna=False).to_dict()
+        feat1_dist = sub["bin_feat1"].astype(str).value_counts(
+            normalize=True,
+            dropna=False
+        ).to_dict()
+        feat2_dist = sub["bin_feat2"].astype(str).value_counts(
+            normalize=True,
+            dropna=False
+        ).to_dict()
 
         for k, v in feat1_dist.items():
             row[f"feat1_prop__{k}"] = v
+
         for k, v in feat2_dist.items():
             row[f"feat2_prop__{k}"] = v
 
@@ -246,6 +270,14 @@ def summarize_grouping(function_assignments, config_name, manual_bins):
         "singleton_groups": int((counts == 1).sum()),
         "small_groups_le_2": int((counts <= 2).sum()),
         "small_groups_le_3": int((counts <= 3).sum()),
+        "tie_feat1_functions": int((function_assignments["majority_status_feat1"] == "tie").sum()),
+        "tie_feat2_functions": int((function_assignments["majority_status_feat2"] == "tie").sum()),
+        "total_tie_functions": int(
+            (
+                (function_assignments["majority_status_feat1"] == "tie")
+                | (function_assignments["majority_status_feat2"] == "tie")
+            ).sum()
+        ),
     }
 
     if summary["singleton_groups"] > 0:
@@ -265,7 +297,11 @@ def plot_2d_scatter_with_groups(df, function_assignments, output_dir, config_nam
         df.groupby("Function")[[FEATURE_1, FEATURE_2]]
         .mean()
         .reset_index()
-        .merge(function_assignments[["Function", "group_id", "group_label"]], on="Function", how="left")
+        .merge(
+            function_assignments[["Function", "group_id", "group_label"]],
+            on="Function",
+            how="left"
+        )
     )
 
     plt.figure(figsize=(8, 6))
@@ -291,7 +327,7 @@ def plot_2d_scatter_with_groups(df, function_assignments, output_dir, config_nam
 
     plt.xlabel(FEATURE_1)
     plt.ylabel(FEATURE_2)
-    plt.title(f"Manual bin grouping: {config_name}")
+    plt.title(f"Manual bin grouping with mean tie-break: {config_name}")
     plt.legend(title="Group", bbox_to_anchor=(1.02, 1), loc="upper left")
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, f"scatter_{config_name}.png"), dpi=300)
@@ -310,7 +346,7 @@ def plot_group_sizes(function_assignments, output_dir, config_name):
     plt.bar(range(len(counts)), counts["n_functions"])
     plt.xticks(range(len(counts)), counts["group_label"], rotation=45, ha="right")
     plt.ylabel("Number of functions")
-    plt.title(f"Group sizes: {config_name}")
+    plt.title(f"Group sizes with mean tie-break: {config_name}")
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, f"group_sizes_{config_name}.png"), dpi=300)
     plt.close()
@@ -342,7 +378,14 @@ def run_one_config(df_used, config_name, manual_bins, base_output_dir):
         index=False
     )
 
-    plot_2d_scatter_with_groups(df_used, function_assignments, config_dir, config_name, manual_bins)
+    plot_2d_scatter_with_groups(
+        df_used,
+        function_assignments,
+        config_dir,
+        config_name,
+        manual_bins
+    )
+
     plot_group_sizes(function_assignments, config_dir, config_name)
 
     summary = summarize_grouping(function_assignments, config_name, manual_bins)
@@ -371,12 +414,14 @@ def main():
         default="intermediate/dim5_selected_features.csv",
         help="Step1 输出的 feature CSV"
     )
+
     parser.add_argument(
         "--output_dir",
         type=str,
-        default="output/manual_binning_experiments",
-        help="多方案 Step2 输出目录"
+        default="output/manual_binning_experiments_tiebreak",
+        help="多方案 Step2 输出目录，使用 majority vote + mean-based tie-break"
     )
+
     parser.add_argument(
         "--drop_tails",
         type=float,
