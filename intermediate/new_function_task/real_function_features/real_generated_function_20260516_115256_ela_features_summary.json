@@ -1,0 +1,29 @@
+{
+  "task": "new_function_task_F_compute_real_generated_function_ela_features",
+  "run_id": "20260516_115256",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260516_115256.py",
+  "class_name": "landscape",
+  "dim": 5,
+  "n_repeats": 5,
+  "sample_size": 1250,
+  "sample_type": "lhs",
+  "domain": [
+    -5.0,
+    5.0
+  ],
+  "target_features": [
+    "ic.eps.ratio",
+    "ela_meta.lin_simple.adj_r2"
+  ],
+  "feature_means": {
+    "ic.eps.ratio": 0.6296296296296293,
+    "ela_meta.lin_simple.adj_r2": -0.001434364109831443
+  },
+  "feature_stds": {
+    "ic.eps.ratio": 0.01674995048116267,
+    "ela_meta.lin_simple.adj_r2": 0.001324095555947407
+  },
+  "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260516_115256_ela_features_repeats.csv",
+  "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260516_115256_ela_features_summary.json",
+  "next_step": "Use these mean feature values to assign the real generated function to the existing BBOB landscape group."
+}

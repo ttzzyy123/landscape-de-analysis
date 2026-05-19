@@ -1,0 +1,115 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n6
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260519_225148
+Function tag:     n6
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n6.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260519_225148_n6_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260519_225148_n6_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260519_225148_n6_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260519_225148_n6.txt
+Target features:  ['Structure', 'Multimodality']
+Budget:           5
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['Structure', 'Multimodality']
+  dims     = [5]
+  prompt length = 1375
+Initialized LLaMEA:
+  n_parents   = 1
+  n_offspring = 1
+  budget      = 5
+  log         = True
+  max_workers = 1
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: landscape
+Description:   Combines a rotated and scaled quadratic global basin with a non-separable Griewank-like multimodal component whose amplitude diminishes towards the global optimum, all aligned with the basin's principal axes.
+Fitness:       0.42128267884254456
+Feedback:      The optimization landscape landscape scored on:Structure 0.003, Multimodality 0.839,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+
+class landscape:
+    
+    def __init__(self, dim=5):
+        """
+        Initializes the Rotated Griewank-Modulated Basin benchmark function.
+        
+        This function refines the previous design by enhancing the multimodality's
+        non-separability. It combines a rotated quadratic global basin with a
+        Griewank-like multimodal component, where the Griewank component's input
+        is also rotated and its amplitude is modulated by the distance to the
+        global optimum. All components are intrinsically aligned with the basin's
+        principal axes, creating a complex, intrinsically non-separable multimodal landscape.
+
+        The function is designed to have:
+        - A clear, non-separable quadratic global basin structure (an ellipsoid),
+          which is rotated and potentially ill-conditioned, guiding search towards the origin.
+        - Multimodality introduced by a *highly non-separable product of cosine terms*,
+          inspired by the Griewank function. This makes the local minima landscape
+          much more complex and interacting, even within the rotated coordinate system,
+          compared to simple sums of cosines. Each dimension's ripple frequency
+          is also scaled differently to further increase complexity.
+        - These ripples are aligned with the *principal axes* of the global quadratic basin,
+          meaning their orientation is also non-separable and tied to the global structure.
+        - The strength of the multimodality (ripples) smoothly diminishes as the
+          search point approaches the global optimum at (0, ..., 0), ensuring
+          the function becomes unimodal and purely quadratic close to the optimum.
+
+        Global minimum: f(x) = 0 at x = (0, ..., 0).
+        Bounds: [-5.0, 5.0] for each dimension.
+
+        Parameters
+        ----------
+        dim : int, optional
+            The number of dimensions for the input vector x. Default is 5.
+        """
+        self.dim = dim
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = 0.0
+[OK] f(test_point_2) = 20.799907498233484
+[OK] f(test_point_3) = 319.1045883347718
+[OK] f(test_point_4) = 180.37063862868828
+Determinism check y1=196.04989540216843, y2=196.04989540216843
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260519_225148_n6_samples_dim5_n1000.csv
+y min:  16.780937606996286
+y max:  756.5970439949128
+y mean: 233.80252844548264
+y std:  122.3306894691468
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n6.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260519_225148_n6_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260519_225148_n6_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260519_225148_n6_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n6.
+Feature target used: ['Structure', 'Multimodality']
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.

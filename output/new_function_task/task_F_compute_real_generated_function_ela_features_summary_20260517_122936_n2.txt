@@ -1,0 +1,76 @@
+================================================================================
+NEW FUNCTION TASK F: COMPUTE REAL GENERATED FUNCTION ELA FEATURES
+================================================================================
+Project root:        /data/s3795888/ioh_project/my_landscape_experiments
+Function file:       /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_122936_n2.py
+Run ID:              20260517_122936
+Function tag:        n2
+Full ID:             20260517_122936_n2
+Feature output dir:  /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features
+Target features:     ['ic.eps.ratio', 'ela_meta.lin_simple.adj_r2']
+DIM:                 5
+N_REPEATS:           5
+SAMPLE_SIZE:         1250
+
+================================================================================
+2. LOAD GENERATED FUNCTION MODULE
+================================================================================
+Function file: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_122936_n2.py
+[OK] Module loaded successfully.
+
+================================================================================
+3. FIND GENERATED CLASS
+================================================================================
+Detected classes:
+ - landscape
+Selected class: landscape
+
+================================================================================
+4. INSTANTIATE GENERATED FUNCTION
+================================================================================
+[OK] Instantiated with dim=5
+[OK] Method .f exists
+
+================================================================================
+5. COMPUTE ELA FEATURES
+================================================================================
+
+Repeat 1: seed=20261586
+  ic.eps.ratio = 0.9459459459459456
+  ela_meta.lin_simple.adj_r2 = -0.0031431399209762567
+
+Repeat 2: seed=20261587
+  ic.eps.ratio = 0.9859859859859856
+  ela_meta.lin_simple.adj_r2 = -0.0022837910790698412
+
+Repeat 3: seed=20261588
+  ic.eps.ratio = 0.9659659659659654
+  ela_meta.lin_simple.adj_r2 = -0.0026582029258328532
+
+Repeat 4: seed=20261589
+  ic.eps.ratio = 0.9659659659659654
+  ela_meta.lin_simple.adj_r2 = 0.000499959019611862
+
+Repeat 5: seed=20261590
+  ic.eps.ratio = 0.9859859859859856
+  ela_meta.lin_simple.adj_r2 = -0.0009536243585883675
+
+================================================================================
+6. SAVE FEATURE OUTPUTS
+================================================================================
+[OK] Repeats CSV saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260517_122936_n2_ela_features_repeats.csv
+[OK] Summary JSON saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260517_122936_n2_ela_features_summary.json
+
+Feature means:
+  ic.eps.ratio: 0.9699699699699696
+  ela_meta.lin_simple.adj_r2: -0.0017077598529710914
+
+Feature stds:
+  ic.eps.ratio: 0.016749950481162696
+  ela_meta.lin_simple.adj_r2: 0.0014780234193057524
+
+================================================================================
+TASK F CONCLUSION
+================================================================================
+[SUCCESS] ELA features computed for this real generated function.
+Next step: assign this function to the existing BBOB landscape group.

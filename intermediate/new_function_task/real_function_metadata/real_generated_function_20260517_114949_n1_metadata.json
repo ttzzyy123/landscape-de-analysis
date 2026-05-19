@@ -1,0 +1,54 @@
+{
+  "task": "new_function_task_E_real_automatic_landscape_generation",
+  "run_id": "20260517_114949",
+  "function_tag": "n1",
+  "source": "real_llm_generation",
+  "package_dir": "/data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_114949_n1.py",
+  "metadata_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_114949_n1_metadata.json",
+  "solution_jsonl_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_114949_n1_solution.jsonl",
+  "samples_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_114949_n1_samples_dim5_n1000.csv",
+  "llm_info": {
+    "backend": "gemini",
+    "model": "gemini-2.5-flash"
+  },
+  "class_name": "landscape",
+  "description": "A separable function combining a quadratic component with a discontinuous penalty term based on the parity of the floor of the absolute value of each dimension, creating a landscape with varying local optima structures and sharp jumps.",
+  "fitness": 1.0,
+  "feedback": "The optimization landscape landscape scored on:Separable 1.000,  (higher is better, 1.0 is the best).",
+  "error": "",
+  "features_targeted_by_ELAproblem": [
+    "Separable"
+  ],
+  "dims": [
+    5
+  ],
+  "llamea_budget": 3,
+  "n_parents": 1,
+  "n_offspring": 1,
+  "max_workers": 1,
+  "eval_timeout": 60,
+  "validation_result": {
+    "test_values": [
+      0.0,
+      15.0,
+      66.5,
+      45.102639369459084
+    ],
+    "determinism_y1": 57.51846248816488,
+    "determinism_y2": 57.51846248816488
+  },
+  "sampling_summary": {
+    "samples_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_114949_n1_samples_dim5_n1000.csv",
+    "n_samples": 1000,
+    "dim": 5,
+    "lower_bound": -5.0,
+    "upper_bound": 5.0,
+    "random_seed": 42,
+    "y_min": 2.019370408837306,
+    "y_max": 89.7358296255507,
+    "y_mean": 45.59523202981235,
+    "y_std": 16.57987012041521
+  },
+  "next_step": "Compute ELA features ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this real generated function, then assign it to an existing BBOB group."
+}

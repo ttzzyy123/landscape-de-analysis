@@ -1,0 +1,54 @@
+================================================================================
+NEW FUNCTION TASK E: MULTI REAL AUTOMATIC LANDSCAPE GENERATION
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Local env file:   /data/s3795888/ioh_project/my_landscape_experiments/secrets/local_api_keys.env
+Run ID:           20260517_114158
+N_FUNCTIONS:      3
+Target features:  ['Separable']
+Budget:           3
+Master summary:   /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_master_summary_20260517_114158.txt
+
+================================================================================
+0. LOAD LOCAL ENV FILE
+================================================================================
+[OK] Loaded local env file: /data/s3795888/ioh_project/my_landscape_experiments/secrets/local_api_keys.env
+Loaded non-secret keys: ['REAL_LLM_BACKEND', 'GEMINI_MODEL']
+Loaded secret keys: ['GOOGLE_API_KEY=***', 'GEMINI_API_KEY=***']
+
+================================================================================
+1. PYTHON PATH SETUP
+================================================================================
+Added to sys.path: /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Changed working directory to: /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+
+================================================================================
+2. IMPORT LLAMEA COMPONENTS
+================================================================================
+[ERROR] Failed to import LLaMEA components
+No module named 'google'
+Traceback (most recent call last):
+  File "/data/s3795888/ioh_project/my_landscape_experiments/scripts/new_function_task_E_real_automatic_landscape_generation.py", line 200, in import_llamea_components
+    import llamea
+  File "/data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1/llamea/__init__.py", line 2, in <module>
+    from .llm import LLM, Dummy_LLM, Gemini_LLM, Multi_LLM, Ollama_LLM, OpenAI_LLM
+  File "/data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1/llamea/llm.py", line 13, in <module>
+    import google.generativeai as genai
+ModuleNotFoundError: No module named 'google'
+
+
+================================================================================
+TASK E MULTI GENERATION FAILED
+================================================================================
+No module named 'google'
+Traceback (most recent call last):
+  File "/data/s3795888/ioh_project/my_landscape_experiments/scripts/new_function_task_E_real_automatic_landscape_generation.py", line 696, in main
+    llamea_module, LLaMEA, ELAproblem = import_llamea_components(master_lines)
+  File "/data/s3795888/ioh_project/my_landscape_experiments/scripts/new_function_task_E_real_automatic_landscape_generation.py", line 200, in import_llamea_components
+    import llamea
+  File "/data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1/llamea/__init__.py", line 2, in <module>
+    from .llm import LLM, Dummy_LLM, Gemini_LLM, Multi_LLM, Ollama_LLM, OpenAI_LLM
+  File "/data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1/llamea/llm.py", line 13, in <module>
+    import google.generativeai as genai
+ModuleNotFoundError: No module named 'google'

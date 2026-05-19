@@ -1,0 +1,124 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n3
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260517_114949
+Function tag:     n3
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_114949_n3.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_114949_n3_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_114949_n3_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_114949_n3_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260517_114949_n3.txt
+Target features:  ['Separable']
+Budget:           3
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['Separable']
+  dims     = [5]
+  prompt length = 1348
+Initialized LLaMEA:
+  n_parents   = 1
+  n_offspring = 1
+  budget      = 3
+  log         = True
+  max_workers = 1
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: landscape
+Description:   A separable function combining a quadratic bowl with high-frequency, non-uniformly scaled ripples whose amplitude increases as distance from the origin grows.
+Fitness:       1.0
+Feedback:      The optimization landscape landscape scored on:Separable 1.000,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+
+class landscape:
+    
+    def __init__(self, dim=5):
+        self.dim = dim
+        # Parameters for the 'Increasing Ripple Parabola' function
+        self.A = 0.1   # Scales the maximum amplitude of the ripples
+        self.B = 0.5   # Controls how fast the ripple amplitude factor approaches its maximum (1)
+        self.C = 4.0 * np.pi # Frequency of the sinusoidal ripples
+
+    def f(self, x):
+        """
+        Evaluates the Increasing Ripple Parabola function.
+        The function is defined as f(x) = sum_{i=1}^{dim} g(x_i), where
+        g(x_i) = x_i^2 + A * (1 - exp(-B * x_i^2)) * sin(C * x_i)^2.
+        
+        The global minimum is at x = (0, ..., 0) with a value of 0.
+        The term (1 - exp(-B * x_i^2)) acts as a scaling factor for the ripples,
+        starting at 0 for x_i=0 and increasing towards 1 as |x_i| increases.
+        This creates a landscape where the ripples become more pronounced and
+        potentially introduce more challenging local minima further from the origin.
+
+        Args:
+            x (np.ndarray): A real-valued sample vector.
+
+        Returns:
+            float: The function value.
+        """
+        if not isinstance(x, np.ndarray):
+            x = np.array(x)
+
+        if x.shape[0] != self.dim:
+            raise ValueError(f"Input vector dimension {x.shape[0]} does not match initialized dimension {self.dim}")
+
+        # Base quadratic term for each dimension
+        base_quadratic = x**2
+
+        # Ripple amplitude scaling term: (1 - exp(-B * x_i^2))
+        # This factor starts at 0 at x_i=0 and approaches 1 as |x_i| increases,
+        # making the ripples grow in amplitude away from the origin.
+        ripple_amplitude_factor = (1.0 - np.exp(-self.B * x**2))
+
+        # High-frequency sinusoidal ripple term, squared to ensure non-negativity
+        sin_squared_term = np.sin(self.C * x)**2
+
+        # Full ripple component for each dimension
+        ripple_component = self.A * ripple_amplitude_factor * sin_
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = 0.0
+[OK] f(test_point_2) = 5.0
+[OK] f(test_point_3) = 62.5
+[OK] f(test_point_4) = 41.25220955759332
+Determinism check y1=51.707128607451764, y2=51.707128607451764
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_114949_n3_samples_dim5_n1000.csv
+y min:  2.068629098475796
+y max:  90.015498017435
+y mean: 41.80887096655465
+y std:  16.708058223169143
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_114949_n3.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_114949_n3_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_114949_n3_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_114949_n3_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n3.
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.

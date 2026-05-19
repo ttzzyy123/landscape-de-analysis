@@ -1,0 +1,113 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n7
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260517_125137
+Function tag:     n7
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n7.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n7_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n7_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n7_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260517_125137_n7.txt
+Target features:  ['NOT Homogeneous']
+Budget:           5
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['NOT Homogeneous']
+  dims     = [5]
+  prompt length = 1328
+Initialized LLaMEA:
+  n_parents   = 1
+  n_offspring = 1
+  budget      = 5
+  log         = True
+  max_workers = 1
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: landscape
+Description:   A multi-phase landscape with radial transitions: a central smooth quadratic basin, transitioning to non-separable, rotated oscillating ridges with amplitude increasing radially, and finally to extremely steep, radially increasing cliffs, creating distinct non-homogeneous and challenging search phases.
+Fitness:       0.8534976989030838
+Feedback:      The optimization landscape landscape scored on:NOT Homogeneous 0.853,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+from scipy.linalg import qr
+
+class landscape:
+    
+    def __init__(self, dim=5):
+        self.dim = dim
+        
+        # Define radial thresholds for phase transitions based on Euclidean distance from the origin.
+        # These define the boundaries where the function's behavior radically changes.
+        self.r_threshold1 = 1.8 # Radius where the pure quadratic basin transitions to oscillatory ridges
+        self.r_threshold2 = 3.5 # Radius where the oscillatory ridges transition to extremely steep cliffs
+        
+        # Coefficients for modulating the different regions.
+        # `osc_strength` controls the magnitude of the oscillations.
+        self.osc_strength = 0.8 
+        # `osc_frequency` determines how tightly packed the oscillations are.
+        self.osc_frequency = 2.0 * np.pi 
+        
+        # `cliff_steepness` and `cliff_power` define the severity of the outermost penalty.
+        # A higher power (e.g., 3.0) ensures a very rapid increase, making escape difficult.
+        self.cliff_steepness = 15.0 
+        self.cliff_power = 3.0 
+        
+        # Generate a random orthonormal (rotation) matrix for the oscillatory phase.
+        # This rotation introduces non-separability, meaning the principal directions of the ridges
+        # are not aligned with the coordinate axes, making it harder for separable optimization algorithms.
+        random_matrix = np.random.rand(self.dim, self.dim)
+        Q, R = qr(random_matrix) # QR decomposition yields an orthogonal matrix Q
+        self.rotation_matrix = Q
+        
+        # Validate thresholds to ensure they are logically ordered and within the search space's bounds.
+        # The maximum possible Euclidean distance in a [-5, 5] search space is sqrt(dim * 5^2).
+        max_r_possible = np.sqrt(self.dim * (5.0**2)) 
+        if not (0 < self.r_threshold1 < self.r_threshold2 < max_r_possible):
+            raise ValueError(f"Radial thresholds must be strictly ordered and within (0, {ma
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = 0.0
+[OK] f(test_point_2) = 5.358530189146626
+[OK] f(test_point_3) = 1367.7625199364231
+[OK] f(test_point_4) = 427.88784794519256
+Determinism check y1=816.5930973896061, y2=816.5930973896061
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n7_samples_dim5_n1000.csv
+y min:  2.019370408837306
+y max:  3316.7354312459292
+y mean: 611.6706210843997
+y std:  599.476301116204
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n7.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n7_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n7_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n7_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n7.
+Feature target used: ['NOT Homogeneous']
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.

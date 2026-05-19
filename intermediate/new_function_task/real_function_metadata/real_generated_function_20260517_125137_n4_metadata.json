@@ -1,0 +1,54 @@
+{
+  "task": "new_function_task_E_real_automatic_landscape_generation",
+  "run_id": "20260517_125137",
+  "function_tag": "n4",
+  "source": "real_llm_generation",
+  "package_dir": "/data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n4.py",
+  "metadata_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n4_metadata.json",
+  "solution_jsonl_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n4_solution.jsonl",
+  "samples_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n4_samples_dim5_n1000.csv",
+  "llm_info": {
+    "backend": "gemini",
+    "model": "gemini-2.5-flash"
+  },
+  "class_name": "landscape",
+  "description": "The Interwoven Ripple Basin combines a quadratic base with multi-modal ripples that are interwoven between dimensions, while their amplitude is dynamically modulated both globally by the sum of dimensions and locally per dimension, yielding a complex and heterogeneous landscape with a global minimum at `x=0`.",
+  "fitness": 0.9432380199432373,
+  "feedback": "The optimization landscape landscape scored on:Multimodality 0.943,  (higher is better, 1.0 is the best).",
+  "error": "",
+  "features_targeted_by_ELAproblem": [
+    "Multimodality"
+  ],
+  "dims": [
+    5
+  ],
+  "llamea_budget": 5,
+  "n_parents": 1,
+  "n_offspring": 1,
+  "max_workers": 1,
+  "eval_timeout": 60,
+  "validation_result": {
+    "test_values": [
+      0.0,
+      23.33646489104133,
+      67.9,
+      48.37881841212227
+    ],
+    "determinism_y1": 56.965461999967985,
+    "determinism_y2": 56.965461999967985
+  },
+  "sampling_summary": {
+    "samples_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n4_samples_dim5_n1000.csv",
+    "n_samples": 1000,
+    "dim": 5,
+    "lower_bound": -5.0,
+    "upper_bound": 5.0,
+    "random_seed": 42,
+    "y_min": 6.440543917291254,
+    "y_max": 93.6207413467802,
+    "y_mean": 46.515633327584744,
+    "y_std": 16.378158463962123
+  },
+  "next_step": "Compute ELA features ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this real generated function, then assign it to an existing BBOB group."
+}

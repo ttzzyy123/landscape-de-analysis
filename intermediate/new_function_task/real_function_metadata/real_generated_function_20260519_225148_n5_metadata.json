@@ -1,0 +1,55 @@
+{
+  "task": "new_function_task_E_real_automatic_landscape_generation",
+  "run_id": "20260519_225148",
+  "function_tag": "n5",
+  "source": "real_llm_generation",
+  "package_dir": "/data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n5.py",
+  "metadata_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260519_225148_n5_metadata.json",
+  "solution_jsonl_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260519_225148_n5_solution.jsonl",
+  "samples_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260519_225148_n5_samples_dim5_n1000.csv",
+  "llm_info": {
+    "backend": "gemini",
+    "model": "gemini-2.5-flash"
+  },
+  "class_name": "landscape",
+  "description": "A multimodal function with multiscale, dimension-dependent oscillations, asymmetric non-separable interactions, and a deep global funnel within a turbulent outer landscape, yielding strong global-local contrast and non-homogeneous basin sizes.",
+  "fitness": 0.0758378654718399,
+  "feedback": "The optimization landscape landscape scored on:GlobalLocal 0.107, NOT Basins 0.045,  (higher is better, 1.0 is the best).",
+  "error": "",
+  "features_targeted_by_ELAproblem": [
+    "GlobalLocal",
+    "NOT Basins"
+  ],
+  "dims": [
+    5
+  ],
+  "llamea_budget": 5,
+  "n_parents": 1,
+  "n_offspring": 1,
+  "max_workers": 1,
+  "eval_timeout": 60,
+  "validation_result": {
+    "test_values": [
+      -1000.0,
+      32.73715408341317,
+      143.71999175474136,
+      211.26146395295373
+    ],
+    "determinism_y1": 143.69460956369699,
+    "determinism_y2": 143.69460956369699
+  },
+  "sampling_summary": {
+    "samples_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260519_225148_n5_samples_dim5_n1000.csv",
+    "n_samples": 1000,
+    "dim": 5,
+    "lower_bound": -5.0,
+    "upper_bound": 5.0,
+    "random_seed": 42,
+    "y_min": 13.52751999696273,
+    "y_max": 409.9415862077939,
+    "y_mean": 152.17961996959656,
+    "y_std": 62.55903011262895
+  },
+  "next_step": "Compute ELA features ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this real generated function, then assign it to an existing BBOB group."
+}

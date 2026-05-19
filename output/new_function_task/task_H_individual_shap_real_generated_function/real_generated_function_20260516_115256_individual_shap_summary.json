@@ -1,0 +1,14 @@
+{
+  "task": "new_function_task_H_individual_shap_for_real_generated_function",
+  "run_id": "20260516_115256",
+  "function_label": "new_f",
+  "assigned_group": "G1",
+  "input_data": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/modde_real_function_results/real_generated_function_20260516_115256_modde_results_processed.pkl",
+  "n_total_rows": 3005,
+  "n_samples_used_for_shap": 3005,
+  "train_r2": 0.9998164975899181,
+  "importance_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_H_individual_shap_real_generated_function/real_generated_function_20260516_115256_individual_shap_importance.csv",
+  "plot_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_H_individual_shap_real_generated_function/real_generated_function_20260516_115256_individual_shap_beeswarm_d5.png",
+  "pdf_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_H_individual_shap_real_generated_function/real_generated_function_20260516_115256_individual_shap_beeswarm_d5.pdf",
+  "next_step": "Compare this individual SHAP importance with the assigned group-level SHAP importance."
+}

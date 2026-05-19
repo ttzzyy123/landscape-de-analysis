@@ -1,0 +1,17 @@
+{
+  "scheme": "eps2bins_3_r025065",
+  "assignment_strategy": "ambiguous_on_tie",
+  "new_function_label": "new_n5",
+  "function_tag": "n5",
+  "run_id": "20260517_125137",
+  "full_id": "20260517_125137_n5",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n5.py",
+  "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260517_125137_n5_ela_features_summary.json",
+  "eps_ratio": 1.0060060060060056,
+  "adj_r2": 0.155637020793761,
+  "eps_ratio_std": 0.0141562919156465,
+  "adj_r2_std": 0.0089458076755,
+  "assigned_group": "G1",
+  "bin_description": "eps_ratio < 3.0 and adj_r2 < 0.25",
+  "note": "The generated function is assigned according to the same visible eps2bins_3_r025065 boundaries used for the BBOB landscape grouping."
+}

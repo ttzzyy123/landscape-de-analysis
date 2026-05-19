@@ -1,0 +1,64 @@
+================================================================================
+NEW FUNCTION TASK D: LOAD AND VALIDATE GENERATED FUNCTION
+================================================================================
+Project root:   /data/s3795888/ioh_project/my_landscape_experiments
+Function file:  /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/extracted_functions/generated_function_001.py
+Samples file:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/function_samples/generated_function_001_samples_dim5_n1000.csv
+Metadata file:  /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/function_metadata/generated_function_001_task_D_validation.json
+Summary file:   /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_D_load_and_validate_generated_function_summary.txt
+
+================================================================================
+1. LOAD GENERATED FUNCTION MODULE
+================================================================================
+Function file found: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/extracted_functions/generated_function_001.py
+[OK] Module loaded successfully.
+
+================================================================================
+2. FIND GENERATED LANDSCAPE CLASS
+================================================================================
+Detected classes:
+ - GeneratedDryRunLandscape
+Selected class: GeneratedDryRunLandscape
+
+================================================================================
+3. INSTANTIATE GENERATED FUNCTION
+================================================================================
+[OK] Instantiated with dim=5
+[OK] Method .f exists
+Detected lower bound: -5.0
+Detected upper bound: 5.0
+
+================================================================================
+4. VALIDATE FUNCTION VALUES
+================================================================================
+[OK] f(zero) = 7.8125
+[OK] f(one) = 0.42841266068306033
+[OK] f(lower_bound) = 195.61377349628043
+[OK] f(upper_bound) = 70.61377349628042
+[OK] f(mixed) = 70.69933615560461
+[OK] f(random_seed_42) = 40.23138886415536
+Determinism check: y1=89.15782106038921, y2=89.15782106038921
+[OK] Determinism check passed.
+
+================================================================================
+5. SAMPLE GENERATED FUNCTION
+================================================================================
+[OK] Sampled 1000 points in dimension 5.
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/function_samples/generated_function_001_samples_dim5_n1000.csv
+y min:  3.279890086392558
+y max:  132.13613921471094
+y mean: 50.37375105665839
+y std:  23.898184829385244
+
+================================================================================
+6. SAVE TASK D METADATA
+================================================================================
+[OK] Task D metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/function_metadata/generated_function_001_task_D_validation.json
+
+================================================================================
+TASK D CONCLUSION
+================================================================================
+[SUCCESS] Generated function can be loaded independently.
+[SUCCESS] Function values are finite and deterministic.
+[SUCCESS] Sample dataset for later ELA computation has been saved.
+Next step: Task E should compute ic.eps.ratio and ela_meta.lin_simple.adj_r2.

@@ -1,0 +1,27 @@
+{
+  "task": "new_function_task_C_dryrun_generate_one_function",
+  "source": "mock_llm_dryrun",
+  "package_dir": "/data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/extracted_functions/generated_function_001.py",
+  "class_name": "GeneratedDryRunLandscape",
+  "description": "Dry-run generated continuous optimization landscape with a smooth quadratic basin and mild multimodal sinusoidal ripples.",
+  "fitness": 0.6013671875,
+  "feedback": "The optimization landscape GeneratedDryRunLandscape scored on:Separable 0.601,  (higher is better, 1.0 is the best).",
+  "error": "",
+  "dimension_tested": 5,
+  "bounds_assumed": [
+    -5.0,
+    5.0
+  ],
+  "validation_result": {
+    "test_values": [
+      7.8125,
+      0.42841266068306033,
+      70.69933615560461,
+      40.23138886415536
+    ],
+    "determinism_y1": 89.15782106038921,
+    "determinism_y2": 89.15782106038921
+  },
+  "note": "This function was generated using a mocked LLM response to validate the LLaMEA/ELAproblem generation pipeline."
+}

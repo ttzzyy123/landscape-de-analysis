@@ -1,0 +1,113 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n5
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260517_125137
+Function tag:     n5
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n5.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n5_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n5_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n5_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260517_125137_n5.txt
+Target features:  ['Structure']
+Budget:           5
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['Structure']
+  dims     = [5]
+  prompt length = 1267
+Initialized LLaMEA:
+  n_parents   = 1
+  n_offspring = 1
+  budget      = 5
+  log         = True
+  max_workers = 1
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: AsymmetricChainedCanyonWithDirectionalRoughness
+Description:   A chained canyon with an asymmetric valley floor and adaptively modulated directional roughness, featuring both high-frequency ripples and localized cliff-like penalties along its winding global optimum path.
+Fitness:       0.8683273792266846
+Feedback:      The optimization landscape AsymmetricChainedCanyonWithDirectionalRoughness scored on:Structure 0.868,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+
+class AsymmetricChainedCanyonWithDirectionalRoughness:
+    
+    def __init__(self, dim=5):
+        """
+        Initializes the Asymmetric Chained Canyon with Directional Roughness benchmark function.
+        The global optimum follows a specific non-zero chained sine path, with f(x) = 0.0 at the optimum.
+        The valley structure is asymmetric, and local ruggedness features (oscillations and cliffs)
+        vary in intensity, frequency, and position depending on the location along the global path.
+        
+        Args:
+            dim (int): The dimensionality of the input vector. Must be at least 1.
+        """
+        if dim < 1:
+            raise ValueError("Dimension must be at least 1.")
+        self.dim = dim
+        
+        # Parameters for the main chained sine wave global path structure
+        self.x0_anchor = 0.5              # Anchor point for the first dimension of the global optimum path.
+        self.global_path_amplitude = 2.0  # Amplitude of the target sine wave for chaining.
+        self.global_path_frequency = np.pi # Frequency factor for the sine wave.
+        
+        # Parameters for the asymmetric valley shape
+        self.valley_asymmetry_factor = 0.4  # Controls how much more penalizing one side is (e.g., 0.4 -> 1.4x vs 0.6x).
+        self.valley_asymmetry_scale = 0.5   # Controls the "smoothness" of the tanh transition for asymmetry.
+        
+        # Base parameters for the superimposed high-frequency oscillations (symmetric ruggedness)
+        self.base_ruggedness_strength = 0.15  # Base amplitude/depth of the local oscillations.
+        self.base_ruggedness_frequency = 5.0 * np.pi # Base density/frequency of local oscillations.
+        
+        # Base parameters for the directional spike/cliff feature
+        self.base_spike_strength = 0.5     # Base strength of the directional "cliff" penalty.
+        self.base_spike_threshold = 0.05   # How far deviation needs to be before the spike starts.
+        
+        # 
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = 0.25
+[OK] f(test_point_2) = 10.645342204622679
+[OK] f(test_point_3) = 65.03873675457515
+[OK] f(test_point_4) = 84.0746133276537
+Determinism check y1=22.741097046533135, y2=22.741097046533135
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n5_samples_dim5_n1000.csv
+y min:  3.872683225790727
+y max:  177.05463067169924
+y mean: 52.572389451430936
+y std:  28.136378532394637
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n5.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n5_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n5_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n5_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n5.
+Feature target used: ['Structure']
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.

@@ -1,0 +1,19 @@
+{
+  "task": "new_function_task_H0_run_modde_on_real_generated_function",
+  "run_id": "20260516_115256",
+  "real_function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260516_115256.py",
+  "raw_pkl_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/modde_real_function_results/real_generated_function_20260516_115256_modde_results_raw.pkl",
+  "processed_pkl_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/modde_real_function_results/real_generated_function_20260516_115256_modde_results_processed.pkl",
+  "checkpoint_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/modde_real_function_results/real_generated_function_20260516_115256_modde_intermediate.csv",
+  "configs_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/modde_real_function_results/real_generated_function_20260516_115256_modde_sampled_configs.csv",
+  "dim": 5,
+  "fid_new": 25,
+  "iid_new": 1,
+  "sample_size": 1000,
+  "reps": 3,
+  "budget": 10000,
+  "n_rows_raw": 3005,
+  "n_rows_processed": 3005,
+  "n_auc_nan": 0,
+  "next_step": "Run Task H individual SHAP plotting script on the processed pkl."
+}

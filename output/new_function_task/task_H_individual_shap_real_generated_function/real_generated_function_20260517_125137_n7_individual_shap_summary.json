@@ -1,0 +1,18 @@
+{
+  "task": "new_function_task_H_individual_shap_for_real_generated_function_batch",
+  "base_run_id": "20260517_125137",
+  "full_id": "20260517_125137_n7",
+  "function_tag": "n7",
+  "function_label": "new_n7",
+  "assigned_group": "G1",
+  "eps_ratio": 2.091091091091092,
+  "adj_r2": -0.0003463945599114,
+  "input_data": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/modde_real_function_results/real_generated_function_20260517_125137_n7_modde_results_processed.pkl",
+  "n_total_rows": 3000,
+  "n_samples_used_for_shap": 3000,
+  "train_r2": 0.9999543357968484,
+  "importance_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_H_individual_shap_real_generated_function/real_generated_function_20260517_125137_n7_individual_shap_importance.csv",
+  "plot_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_H_individual_shap_real_generated_function/real_generated_function_20260517_125137_n7_individual_shap_beeswarm_d5.png",
+  "pdf_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_H_individual_shap_real_generated_function/real_generated_function_20260517_125137_n7_individual_shap_beeswarm_d5.pdf",
+  "next_step": "Compare this individual SHAP importance with the assigned group-level SHAP importance."
+}

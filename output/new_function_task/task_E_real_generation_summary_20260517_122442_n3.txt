@@ -1,0 +1,32 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n3
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260517_122442
+Function tag:     n3
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_122442_n3.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_122442_n3_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_122442_n3_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_122442_n3_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260517_122442_n3.txt
+Target features:  ['Non-separable']
+Budget:           3
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+
+================================================================================
+TASK E FAILED FOR n3
+================================================================================
+Feature target used: ['Non-separable']
+'Non-separable'
+Traceback (most recent call last):
+  File "/data/s3795888/ioh_project/my_landscape_experiments/scripts/new_function_task_E_real_automatic_landscape_generation.py", line 623, in run_single_generation
+    problem = ELAproblem(
+              ^^^^^^^^^^^
+  File "/data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1/ELA.py", line 284, in __init__
+    self.task_prompt += f"\n- {self.feature_descriptions[feature]} ({feature})"
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+KeyError: 'Non-separable'

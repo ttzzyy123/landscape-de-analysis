@@ -1,0 +1,54 @@
+{
+  "task": "new_function_task_E_real_automatic_landscape_generation",
+  "run_id": "20260517_122936",
+  "function_tag": "n2",
+  "source": "real_llm_generation",
+  "package_dir": "/data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_122936_n2.py",
+  "metadata_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_122936_n2_metadata.json",
+  "solution_jsonl_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_122936_n2_solution.jsonl",
+  "samples_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_122936_n2_samples_dim5_n1000.csv",
+  "llm_info": {
+    "backend": "gemini",
+    "model": "gemini-2.5-flash"
+  },
+  "class_name": "landscape",
+  "description": "A function featuring a deep, negative Gaussian basin at its global optimum, overlaid with cosine ripples that create numerous higher-valued local minima, ensuring strong global-local contrast.",
+  "fitness": 0.9807446599006653,
+  "feedback": "The optimization landscape landscape scored on:GlobalLocal 0.981,  (higher is better, 1.0 is the best).",
+  "error": "",
+  "features_targeted_by_ELAproblem": [
+    "GlobalLocal"
+  ],
+  "dims": [
+    5
+  ],
+  "llamea_budget": 3,
+  "n_parents": 1,
+  "n_offspring": 1,
+  "max_workers": 1,
+  "eval_timeout": 60,
+  "validation_result": {
+    "test_values": [
+      -1000.0,
+      -77.0849986238988,
+      102.4999999999732,
+      88.78848369637996
+    ],
+    "determinism_y1": 97.77759712145918,
+    "determinism_y2": 97.77759712145918
+  },
+  "sampling_summary": {
+    "samples_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_122936_n2_samples_dim5_n1000.csv",
+    "n_samples": 1000,
+    "dim": 5,
+    "lower_bound": -5.0,
+    "upper_bound": 5.0,
+    "random_seed": 42,
+    "y_min": -283.2052660600795,
+    "y_max": 158.9682579888697,
+    "y_mean": 90.6703036607031,
+    "y_std": 27.592875487792668
+  },
+  "next_step": "Compute ELA features ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this real generated function, then assign it to an existing BBOB group."
+}

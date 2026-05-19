@@ -1,0 +1,117 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n3
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260517_125137
+Function tag:     n3
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n3.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n3_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n3_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n3_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260517_125137_n3.txt
+Target features:  ['GlobalLocal']
+Budget:           5
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['GlobalLocal']
+  dims     = [5]
+  prompt length = 1397
+Initialized LLaMEA:
+  n_parents   = 1
+  n_offspring = 1
+  budget      = 5
+  log         = True
+  max_workers = 1
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: RotatedAnisotropicValleyRastrigin
+Description:   A Rastrigin-like landscape with a globally shifted, *rotated*, and anisotropically-shaped deep exponential well, enhancing global-local contrast and introducing complex, non-axis-aligned search challenges.
+Fitness:       0.036589279770851135
+Feedback:      The optimization landscape RotatedAnisotropicValleyRastrigin scored on:GlobalLocal 0.037,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+
+class RotatedAnisotropicValleyRastrigin:
+    
+    def __init__(self, dim=5):
+        self.dim = dim
+        
+        # Parameters for the Rastrigin-like component
+        self.A = 10.0
+        self.B = 2 * np.pi
+        
+        # Parameters for the deep global minimum enhancement
+        # C controls the depth of the global minimum, ensuring strong global-local contrast.
+        self.C = 100.0 
+        # D controls the sharpness/width of the global minimum well.
+        self.D = 10.0  
+        
+        # Global minimum shift: Offset from the origin.
+        # This shifts the global optimum away from (0,0,...,0) to challenge origin-centric search.
+        # The chosen shift (2.0 in all dimensions) is well within [-5, 5] bounds.
+        self.global_minimum_shift = np.full(dim, 2.0)
+        
+        # Anisotropy factors for the deep well component.
+        # These weights distort the shape of the exponential well, making it elliptical/stretched.
+        # This introduces non-uniform gradients and directional challenges when approaching
+        # the global minimum, as the basin's steepness varies per dimension.
+        # Values range from 0.5 (wider dimension) to 2.0 (narrower dimension).
+        self.anisotropy_factors = np.linspace(0.5, 2.0, dim)
+        
+        # Generate a random orthogonal rotation matrix.
+        # This is the key refinement: it ensures the principal axes of the deep well
+        # are not aligned with the coordinate axes, making the search space more complex
+        # and challenging for many optimizers that rely on axis-aligned search.
+        # Using a fixed seed for reproducibility of the benchmark instance across runs.
+        rng = np.random.default_rng(seed=42 + dim) # Vary seed based on dim for different matrices
+        random_matrix = rng.standard_normal(size=(dim, dim))
+        Q, R = np.linalg.qr(random_matrix)
+        self.rotation_matrix = Q
+        
+        # Bounds are implicitly handled by the calling framew
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = 20.0
+[OK] f(test_point_2) = 5.0
+[OK] f(test_point_3) = 122.5
+[OK] f(test_point_4) = 94.26937347733738
+Determinism check y1=165.10517846369194, y2=165.10517846369194
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n3_samples_dim5_n1000.csv
+y min:  26.71682372866437
+y max:  233.1769684727594
+y mean: 112.68069866758904
+y std:  35.92390351244391
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n3.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n3_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n3_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n3_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n3.
+Feature target used: ['GlobalLocal']
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.

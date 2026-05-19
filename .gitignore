@@ -10,3 +10,8 @@ __pycache__/
 # Ignore large data formats
 *.pkl
 *.csv
+# local API keys
+secrets/
+*.env
+external/LLaMEA-paper-ela/*.zip
+external/LLaMEA-paper-ela/LLaMEA-paper-ela.zip

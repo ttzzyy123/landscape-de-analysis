@@ -1,0 +1,54 @@
+{
+  "task": "new_function_task_E_real_automatic_landscape_generation",
+  "run_id": "20260517_125137",
+  "function_tag": "n5",
+  "source": "real_llm_generation",
+  "package_dir": "/data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n5.py",
+  "metadata_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n5_metadata.json",
+  "solution_jsonl_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n5_solution.jsonl",
+  "samples_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n5_samples_dim5_n1000.csv",
+  "llm_info": {
+    "backend": "gemini",
+    "model": "gemini-2.5-flash"
+  },
+  "class_name": "AsymmetricChainedCanyonWithDirectionalRoughness",
+  "description": "A chained canyon with an asymmetric valley floor and adaptively modulated directional roughness, featuring both high-frequency ripples and localized cliff-like penalties along its winding global optimum path.",
+  "fitness": 0.8683273792266846,
+  "feedback": "The optimization landscape AsymmetricChainedCanyonWithDirectionalRoughness scored on:Structure 0.868,  (higher is better, 1.0 is the best).",
+  "error": "",
+  "features_targeted_by_ELAproblem": [
+    "Structure"
+  ],
+  "dims": [
+    5
+  ],
+  "llamea_budget": 5,
+  "n_parents": 1,
+  "n_offspring": 1,
+  "max_workers": 1,
+  "eval_timeout": 60,
+  "validation_result": {
+    "test_values": [
+      0.25,
+      10.645342204622679,
+      65.03873675457515,
+      84.0746133276537
+    ],
+    "determinism_y1": 22.741097046533135,
+    "determinism_y2": 22.741097046533135
+  },
+  "sampling_summary": {
+    "samples_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n5_samples_dim5_n1000.csv",
+    "n_samples": 1000,
+    "dim": 5,
+    "lower_bound": -5.0,
+    "upper_bound": 5.0,
+    "random_seed": 42,
+    "y_min": 3.872683225790727,
+    "y_max": 177.05463067169924,
+    "y_mean": 52.572389451430936,
+    "y_std": 28.136378532394637
+  },
+  "next_step": "Compute ELA features ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this real generated function, then assign it to an existing BBOB group."
+}

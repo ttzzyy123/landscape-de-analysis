@@ -1,0 +1,11 @@
+{
+  "scheme": "eps2bins_3_r025065",
+  "assignment_strategy": "ambiguous_on_tie",
+  "new_function_label": "new_f",
+  "run_id": "20260516_115256",
+  "eps_ratio": 0.6296296296296293,
+  "adj_r2": -0.001434364109831443,
+  "assigned_group": "G1",
+  "bin_description": "eps_ratio < 3.0 and adj_r2 < 0.25",
+  "note": "The new function falls in the same visible bin as BBOB functions f16, f19, f21, f22, f23, and f24 in the provided plot."
+}

@@ -1,0 +1,78 @@
+[project]
+name = "llamea"
+version = "1.1.0"
+description = "LLaMEA is a Python framework for automatically generating and refining metaheuristic optimization algorithms using large language models, featuring optional in-the-loop hyper-parameter optimization."
+authors = [{ name = "Anonynous", email = "anonynous@anonynous.com" }]
+requires-python = ">=3.11, <4"
+readme = "README.md"
+license = "MIT"
+dependencies = [
+    "numpy>=1.24.3,<2",
+    "pandas==2.0.3",
+    "openai>=1.25.2,<2",
+    "tqdm>=4.66.4,<5",
+    "ollama>=0.2.1,<0.3",
+    "jsonlines>=4.0.0,<5",
+    "configspace>=1.2.0,<2",
+    "google-generativeai>=0.8.1,<0.9",
+    "joblib>=1.4.2,<2",
+    "xgboost>=3.0.3",
+    "pflacco>=1.2.2",
+    "seaborn>=0.13.2",
+]
+
+[project.urls]
+Homepage = ""
+Repository = ""
+
+[dependency-groups]
+dev = [
+    "black>=23.11.0,<24",
+    "isort>=5.12.0,<6",
+    "pytest>=7.4.3,<8",
+    "jupyter>=1.0.0,<2",
+    "pytest-cov>=4.1.0,<5",
+    "codecov>=2.1.13,<3",
+    "pytest-mock>=3.14.0,<4",
+    "ipykernel>=6.29.5,<7",
+]
+docs = [
+    "sphinx==7.4.7",
+    "sphinx-rtd-theme>=3.0.2,<4",
+    "myst-parser>=4.0.1,<5",
+    "nbsphinx>=0.9.6,<0.10",
+    "pandoc~=2.4",
+    "furo>=2024.8.6,<2025",
+    "sphinxext-opengraph>=0.9.1,<0.10",
+    "sphinx-copybutton>=0.5.2,<0.6",
+    "sphinx-autobuild>=2024.10.3,<2025",
+]
+examples = [
+    "ioh>=0.3.18,<0.4",
+    "scikit-learn==1.2.2",
+    "seaborn>=0.13.2,<0.14",
+    "levenshtein>=0.25.1,<0.26",
+    "zss>=1.2.0,<2",
+    "jellyfish>=1.0.3,<2",
+    "flask>=3.0.3,<4",
+    "flask-socketio>=5.3.6,<6",
+    "smac>=2.2.0,<3",
+    "google-generativeai>=0.8.1,<0.9",
+    "modcma>=1.0.8,<2",
+    "lizard>=1.17.13,<2",
+    "networkx>=3.4.2,<4",
+    "iohinspector>=0.0.3,<0.0.4",
+    "pymoosh==3.2",
+]
+llm-extras = [
+    "torch>=2.6.0,<3",
+    "transformers>=4.49.0,<5",
+]
+
+[tool.uv]
+default-groups = [
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

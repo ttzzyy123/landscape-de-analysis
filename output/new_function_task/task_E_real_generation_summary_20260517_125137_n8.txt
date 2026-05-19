@@ -1,0 +1,118 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n8
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260517_125137
+Function tag:     n8
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n8.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n8_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n8_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n8_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260517_125137_n8.txt
+Target features:  ['NOT Basins']
+Budget:           5
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['NOT Basins']
+  dims     = [5]
+  prompt length = 1340
+Initialized LLaMEA:
+  n_parents   = 1
+  n_offspring = 1
+  budget      = 5
+  log         = True
+  max_workers = 1
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: FracturedAnisotropicLandscape
+Description:   A Fractured Anisotropic Landscape combines a corrugated quadratic base with diverse anisotropic Gaussian pits (minima) and strategically placed anisotropic Gaussian hills (barriers), generating a complex and highly non-homogeneous distribution of basin sizes and shapes.
+Fitness:       0.04943132400512695
+Feedback:      The optimization landscape FracturedAnisotropicLandscape scored on:NOT Basins 0.049,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+
+class FracturedAnisotropicLandscape:
+    
+    def __init__(self, dim=5):
+        self.dim = dim
+
+        # Base landscape properties
+        # The base is a quadratic bowl (x^2) combined with a sum of cosine functions.
+        # This corrugated base introduces numerous small-scale local minima and maxima,
+        # creating a textured, uneven "floor" that complicates basin boundaries.
+        self.quadratic_weight = 1.0
+        self.corrugation_amplitude = 20.0 # Amplitude of the cosine waves, creating ripples.
+        self.corrugation_frequency = 2.0 * np.pi # Frequency for the cosine waves.
+
+        # Feature definition: a list of dictionaries.
+        # Each dictionary defines a Gaussian component (either a pit or a hill).
+        # 'center': np.array(dim), the location of the feature.
+        # 'strength': Magnitude of the Gaussian. Negative for pits (minima), positive for hills (barriers).
+        # 'sigma_factors': np.array(dim), controls the anisotropy (shape) and width/steepness of the Gaussian.
+        #                  A larger sigma_factor along a dimension makes the feature narrower/steeper in that direction.
+
+        self.features = []
+
+        # 1. Global Minimum Pit: Very deep, highly anisotropic, and potentially guarded.
+        # Designed to be challenging due to extreme differences in steepness across dimensions.
+        global_min_sigma = np.linspace(0.1, 3.0, dim)
+        if dim > 0:
+             global_min_sigma[0] *= 0.1 # Very wide along the first dimension
+        if dim > 1:
+             global_min_sigma[1] *= 5.0 # Extremely narrow along the second dimension
+        global_min_center = np.zeros(dim)
+        if dim > 0: global_min_center[0] = 0.5
+        if dim > 1: global_min_center[1] = -0.5
+        self.features.append({
+            'center': global_min_center,
+            'strength': -200.0 - self.dim * 8, # Deepest pit
+            'sigma_factors': global_min_sigma
+        })
+
+        # 2. Deceptive Wide Pit (Local M
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = -203.57316453770153
+[OK] f(test_point_2) = -104.44967021898644
+[OK] f(test_point_3) = 118.17677287340857
+[OK] f(test_point_4) = 100.1877024922608
+Determinism check y1=110.18157801027714, y2=110.18157801027714
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n8_samples_dim5_n1000.csv
+y min:  -76.23660226549677
+y max:  214.941070976798
+y mean: 98.95922687644104
+y std:  47.1883848512726
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n8.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n8_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_125137_n8_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_125137_n8_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n8.
+Feature target used: ['NOT Basins']
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.

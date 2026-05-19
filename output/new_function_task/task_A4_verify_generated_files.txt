@@ -1,0 +1,146 @@
+================================================================================
+NEW FUNCTION TASK A4: VERIFY GENERATED OUTPUT FILES
+================================================================================
+Project root:  /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir: /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Notebook:      /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1/function-definitions.ipynb
+Summary file:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_A4_verify_generated_files.txt
+
+================================================================================
+1. FILE EXTENSION SUMMARY
+================================================================================
+Total files: 96
+.py          31
+.png         27
+.json        17
+<no_ext>     8
+.ipynb       3
+.yml         3
+.jsonl       2
+.toml        1
+.md          1
+.lock        1
+.joblib      1
+.txt         1
+
+================================================================================
+2. ALL JSONL FILES
+================================================================================
+Found 2 jsonl files
+- landscapes/bbob.jsonl (311.1 KB)
+- outputs/bbob.jsonl (311.1 KB)
+
+================================================================================
+3. EXPECTED EXP-*.JSONL FILES REFERENCED BY NOTEBOOK
+================================================================================
+Expected files found in notebook: 23
+[MISSING] outputs/exp-11-07_095145-LLaMEA-gpt-5-nano-ELA-Separable_GlobalLocal-sharing.jsonl
+[MISSING] outputs/exp-11-07_100349-LLaMEA-gpt-5-nano-ELA-Separable_Multimodality-sharing.jsonl
+[MISSING] outputs/exp-11-07_101329-LLaMEA-gpt-5-nano-ELA-Separable_Basins-sharing.jsonl
+[MISSING] outputs/exp-11-07_102426-LLaMEA-gpt-5-nano-ELA-Separable_Homogeneous-sharing.jsonl
+[MISSING] outputs/exp-11-07_103559-LLaMEA-gpt-5-nano-ELA-Separable-sharing.jsonl
+[MISSING] outputs/exp-11-07_104417-LLaMEA-gpt-5-nano-ELA-GlobalLocal_Multimodality-sharing.jsonl
+[MISSING] outputs/exp-11-07_105439-LLaMEA-gpt-5-nano-ELA-GlobalLocal_Basins-sharing.jsonl
+[MISSING] outputs/exp-11-07_131500-LLaMEA-gpt-5-nano-ELA-GlobalLocal_Homogeneous-sharing.jsonl
+[MISSING] outputs/exp-11-07_151340-LLaMEA-gpt-5-nano-ELA-GlobalLocal-sharing.jsonl
+[MISSING] outputs/exp-11-07_153338-LLaMEA-gpt-5-nano-ELA-Multimodality_Basins-sharing.jsonl
+[MISSING] outputs/exp-11-07_191623-LLaMEA-gpt-5-nano-ELA-Multimodality_Homogeneous-sharing.jsonl
+[MISSING] outputs/exp-11-07_192657-LLaMEA-gpt-5-nano-ELA-Multimodality-sharing.jsonl
+[MISSING] outputs/exp-11-08_121302-LLaMEA-gpt-5-nano-ELA-Basins_Homogeneous-sharing.jsonl
+[MISSING] outputs/exp-11-08_135452-LLaMEA-gpt-5-nano-ELA-Basins-sharing.jsonl
+[MISSING] outputs/exp-11-08_175315-LLaMEA-gpt-5-nano-ELA-Homogeneous-sharing.jsonl
+[MISSING] outputs/exp-11-08_182445-LLaMEA-gpt-5-nano-ELA-NOT Basins_Separable-sharing.jsonl
+[MISSING] outputs/exp-11-08_191508-LLaMEA-gpt-5-nano-ELA-NOT Basins_GlobalLocal-sharing.jsonl
+[MISSING] outputs/exp-11-08_195321-LLaMEA-gpt-5-nano-ELA-NOT Basins_Multimodality-sharing.jsonl
+[MISSING] outputs/exp-11-08_222921-LLaMEA-gpt-5-nano-ELA-NOT Basins-sharing.jsonl
+[MISSING] outputs/exp-11-08_230434-LLaMEA-gpt-5-nano-ELA-NOT Homogeneous_Separable-sharing.jsonl
+[MISSING] outputs/exp-11-08_234910-LLaMEA-gpt-5-nano-ELA-NOT Homogeneous_GlobalLocal-sharing.jsonl
+[MISSING] outputs/exp-11-09_003403-LLaMEA-gpt-5-nano-ELA-NOT Homogeneous_Multimodality-sharing.jsonl
+[MISSING] outputs/exp-11-09_010643-LLaMEA-gpt-5-nano-ELA-NOT Homogeneous-sharing.jsonl
+
+================================================================================
+4. ACTUAL FILES CONTAINING exp-11
+================================================================================
+Found 0 files
+
+================================================================================
+5. TEXT SEARCH FOR CODE INDICATORS
+================================================================================
+
+--------------------------------------------------------------------------------
+Indicator: "code"
+--------------------------------------------------------------------------------
+Hits: 10
+- plot.py
+- ela.ipynb
+- function-definitions.ipynb
+- tests/test_individual.py
+- llamea/solution.py
+- llamea/utils.py
+- basinsattribution-main/basins.ipynb
+- basinsattribution-main/process_basins.py
+- misc/python_ast_analysis.py
+- misc/ast.py
+
+--------------------------------------------------------------------------------
+Indicator: entry["code"]
+--------------------------------------------------------------------------------
+Hits: 1
+- plot.py
+
+--------------------------------------------------------------------------------
+Indicator: cls = globals()
+--------------------------------------------------------------------------------
+Hits: 2
+- plot.py
+- function-definitions.ipynb
+
+--------------------------------------------------------------------------------
+Indicator: func = cls(dim=dim).f
+--------------------------------------------------------------------------------
+Hits: 2
+- plot.py
+- function-definitions.ipynb
+
+--------------------------------------------------------------------------------
+Indicator: def f(
+--------------------------------------------------------------------------------
+Hits: 5
+- ELA.py
+- tests/test_initialization.py
+- tests/test_algorithm_generation.py
+- tests/test_adaptive_prompt.py
+- tests/test_evolution.py
+
+--------------------------------------------------------------------------------
+Indicator: class 
+--------------------------------------------------------------------------------
+Hits: 21
+- plot.py
+- ela.ipynb
+- test_functions.py
+- ELA.py
+- function-definitions.ipynb
+- tests/test_algorithm_generation.py
+- tests/test_adaptive_prompt.py
+- tests/test_evolution.py
+- tests/test_niching.py
+- tests/test_llm.py
+- llamea/llamea.py
+- llamea/llm.py
+- llamea/solution.py
+- llamea/utils.py
+- llamea/loggers.py
+- llamea/bbobalgs/ERADS_QuantumFluxUltraRefined.py
+- basinsattribution-main/analyze_basins.py
+- basinsattribution-main/utils.py
+- misc/python_ast_analysis.py
+- misc/ast.py
+- misc/utils.py
+
+================================================================================
+TASK A4 CONCLUSION
+================================================================================
+All exp-*.jsonl files referenced by function-definitions.ipynb are missing.
+The current package contains the visualization notebook but not the generated function output jsonl files.
+Next step: obtain the missing exp-*.jsonl files or use another package/repository version that includes them.

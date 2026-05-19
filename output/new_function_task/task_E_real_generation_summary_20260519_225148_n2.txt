@@ -1,0 +1,119 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n2
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260519_225148
+Function tag:     n2
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n2.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260519_225148_n2_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260519_225148_n2_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260519_225148_n2_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260519_225148_n2.txt
+Target features:  ['NOT Homogeneous', 'Multimodality']
+Budget:           5
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['NOT Homogeneous', 'Multimodality']
+  dims     = [5]
+  prompt length = 1436
+Initialized LLaMEA:
+  n_parents   = 1
+  n_offspring = 1
+  budget      = 5
+  log         = True
+  max_workers = 1
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: SpatiallyModulatedRuggedness
+Description:   A multimodal landscape featuring a global parabolic basin where the density and amplitude of local minima are continuously modulated across the search space by a complex, spatially varying pattern, leading to non-homogeneous ruggedness.
+Fitness:       0.8856582194566727
+Feedback:      The optimization landscape SpatiallyModulatedRuggedness scored on:NOT Homogeneous 0.771, Multimodality 1.000,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+
+class SpatiallyModulatedRuggedness:
+    
+    def __init__(self, dim=5):
+        self.dim = dim
+        
+        # Parameters for base quadratic attraction
+        # (Implicit, as x^2 is directly used, contributing to the global minimum at origin)
+
+        # Parameters for base multimodality (Rastrigin-like)
+        self.A_base_multimodal = 1.0       # Amplitude of the initial, sparser multimodality
+        self.freq_base_multimodal = 2 * np.pi # Frequency for the base multimodality
+
+        # Parameters for modulated ruggedness component
+        # This controls the non-linear growth of ruggedness based on distance from the origin.
+        self.ruggedness_onset_scale = 0.7  
+        
+        # Base frequency for the higher-frequency oscillations in rugged regions.
+        self.ruggedness_base_freq = 5.0 * np.pi 
+        
+        # Factor for how much the frequency of ruggedness also changes with modulation,
+        # making local minima denser in highly modulated areas.
+        self.ruggedness_freq_mod_factor = 0.6 
+        
+        # Overall amplitude scaling for the modulated ruggedness component.
+        self.ruggedness_amplitude_scale = 25.0 
+        
+        # Parameters for generating the spatially non-uniform modulation pattern itself.
+        # These constants create a "noisy" but coherent pattern for the modulation.
+        self.spatial_mod_freq1 = 0.8 * np.pi  # Lower frequency for broader patterns
+        self.spatial_mod_freq2 = 1.7 * np.pi  # Higher frequency for finer details in the modulation
+        self.spatial_mod_amplitude = 0.6      # How strongly the spatial pattern influences the modulation
+
+    def f(self, x):
+        if len(x) != self.dim:
+            raise ValueError(f"Input vector x must have dimension {self.dim} but got {len(x)}")
+        
+        x_np = np.asarray(x, dtype=float)
+        
+        # 1. Global Parabolic Basin: Ensures a global minimum at the origin (0,0,...,0)
+        # This term provides a strong gravita
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = 0.0
+[OK] f(test_point_2) = 25.741647443230708
+[OK] f(test_point_3) = 68.77684107383067
+[OK] f(test_point_4) = 95.63233003947836
+Determinism check y1=127.20169641995236, y2=127.20169641995236
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260519_225148_n2_samples_dim5_n1000.csv
+y min:  20.963128371495557
+y max:  220.27666517514967
+y mean: 92.72904562450009
+y std:  30.444752502190173
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n2.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260519_225148_n2_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260519_225148_n2_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260519_225148_n2_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n2.
+Feature target used: ['NOT Homogeneous', 'Multimodality']
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.

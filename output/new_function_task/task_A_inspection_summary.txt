@@ -1,0 +1,205 @@
+================================================================================
+NEW FUNCTION TASK A: INSPECT LLAMEA PACKAGE
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Package dir:      /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela
+Zip file:         /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/LLaMEA-paper-ela.zip
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Summary output:   /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_A_inspection_summary.txt
+
+================================================================================
+1. ZIP FILE CHECK
+================================================================================
+[OK] Zip file found: /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/LLaMEA-paper-ela.zip
+     Size: 145.07 MB
+     Number of files inside zip: 109
+     First 10 entries:
+       - XAI-liacs-LLaMEA-6d8b3c1/
+       - XAI-liacs-LLaMEA-6d8b3c1/.github/
+       - XAI-liacs-LLaMEA-6d8b3c1/.github/workflows/
+       - XAI-liacs-LLaMEA-6d8b3c1/.github/workflows/docs2pages.yml
+       - XAI-liacs-LLaMEA-6d8b3c1/.github/workflows/publish.yml
+       - XAI-liacs-LLaMEA-6d8b3c1/.github/workflows/test.yml
+       - XAI-liacs-LLaMEA-6d8b3c1/.gitignore
+       - XAI-liacs-LLaMEA-6d8b3c1/.vscode/
+       - XAI-liacs-LLaMEA-6d8b3c1/.vscode/settings.json
+       - XAI-liacs-LLaMEA-6d8b3c1/ELA.py
+
+================================================================================
+2. EXTRACTED DIRECTORY CHECK
+================================================================================
+[OK] Extracted directory found: /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+     Number of top-level items: 21
+     Top-level items:
+       [DIR ] .github
+       [FILE] .gitignore
+       [DIR ] .vscode
+       [DIR ] basinsattribution-main
+       [DIR ] dimensions
+       [FILE] ela.ipynb
+       [FILE] ELA.py
+       [FILE] ela_scaler.joblib
+       [FILE] framework.png
+       [FILE] function-definitions.ipynb
+       [DIR ] landscapes
+       [DIR ] llamea
+       [DIR ] misc
+       [DIR ] outputs
+       [FILE] plot.py
+       [FILE] pyproject.toml
+       [FILE] README.md
+       [FILE] test_functions.py
+       [DIR ] tests
+       [FILE] transform_exp.py
+       [FILE] uv.lock
+
+================================================================================
+3. IMPORTANT FILES CHECK
+================================================================================
+[OK]      README.md                                  2.3 KB
+[OK]      ELA.py                                    19.4 KB
+[OK]      function-definitions.ipynb             33183.3 KB
+[OK]      ela.ipynb                                786.4 KB
+[OK]      test_functions.py                          6.6 KB
+[OK]      pyproject.toml                             1.9 KB
+[OK]      outputs/bbob.jsonl                       311.1 KB
+[OK]      landscapes/bbob.jsonl                    311.1 KB
+[OK]      llamea/llamea.py                          24.9 KB
+[OK]      llamea/solution.py                         5.3 KB
+[OK]      llamea/llm.py                             17.5 KB
+[OK]      llamea/utils.py                            5.0 KB
+
+================================================================================
+4. README PREVIEW
+================================================================================
+[OK] README found: /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1/README.md
+First 40 lines:
+  
+  <h1 align="center">LLM Driven Design of Diverse Optimization Problems with High-level Characteristics</h1>
+  
+  This is the repository for the paper "LLM Driven Design of Diverse Optimization Problems with High-level Characteristics" based on the open-source LLaMEA framework.
+  
+  LLaMEA couples large-language-model reasoning with an evolutionary loop to **invent, mutate and benchmark algorithms fully autonomously**.  
+  
+  In this work we extended LLaMEA with a niching approach for the automatic evolution of diverse black-box continuous problem landscapes.
+  
+  All generated problems and their 2d visualisations can be found in the `landscapes` folder.
+  
+  
+  ## 🎁 Installation
+  
+  Install the package from source using <a href="https://docs.astral.sh/uv/" target="_blank">uv</a> (0.7.19).
+  make sure you have `uv` installed.
+  
+  1. Clone or download the repository:
+     ```bash
+     cd LLaMEA
+     ```
+  2. Install the required dependencies via uv:
+     ```bash
+     uv sync
+     ```
+  3. Optional install dev or/and example dependencies:
+     ```bash
+     uv sync --dev --group examples
+     ```
+  
+  ## 💻 Quick Start
+  
+  
+  1. Set up an OpenAI API key:
+     - Obtain an API key from [OpenAI](https://openai.com/).
+     - Set the API key in your environment variables:
+       ```bash
+       export OPENAI_API_KEY='your_api_key_here'
+       ```
+  
+
+================================================================================
+5. JSONL FILE CHECK
+================================================================================
+
+--------------------------------------------------------------------------------
+JSONL INSPECTION: outputs/bbob.jsonl
+--------------------------------------------------------------------------------
+[OK] Found: /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1/outputs/bbob.jsonl
+     Size: 311.1 KB
+     Parsed preview rows: 3
+
+     Row 1:
+       Type: <class 'dict'>
+       Keys (4): ['function_id', 'instance_id', 'basin_info', 'nr_of_basins']
+       - function_id: int, value=5
+       - instance_id: int, value=0
+       - basin_info: list, len=1
+       - nr_of_basins: int, value=1
+
+     Row 2:
+       Type: <class 'dict'>
+       Keys (4): ['function_id', 'instance_id', 'basin_info', 'nr_of_basins']
+       - function_id: int, value=5
+       - instance_id: int, value=1
+       - basin_info: list, len=1
+       - nr_of_basins: int, value=1
+
+     Row 3:
+       Type: <class 'dict'>
+       Keys (4): ['function_id', 'instance_id', 'basin_info', 'nr_of_basins']
+       - function_id: int, value=11
+       - instance_id: int, value=0
+       - basin_info: list, len=1
+       - nr_of_basins: int, value=1
+
+--------------------------------------------------------------------------------
+JSONL INSPECTION: landscapes/bbob.jsonl
+--------------------------------------------------------------------------------
+[OK] Found: /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1/landscapes/bbob.jsonl
+     Size: 311.1 KB
+     Parsed preview rows: 3
+
+     Row 1:
+       Type: <class 'dict'>
+       Keys (4): ['function_id', 'instance_id', 'basin_info', 'nr_of_basins']
+       - function_id: int, value=5
+       - instance_id: int, value=0
+       - basin_info: list, len=1
+       - nr_of_basins: int, value=1
+
+     Row 2:
+       Type: <class 'dict'>
+       Keys (4): ['function_id', 'instance_id', 'basin_info', 'nr_of_basins']
+       - function_id: int, value=5
+       - instance_id: int, value=1
+       - basin_info: list, len=1
+       - nr_of_basins: int, value=1
+
+     Row 3:
+       Type: <class 'dict'>
+       Keys (4): ['function_id', 'instance_id', 'basin_info', 'nr_of_basins']
+       - function_id: int, value=11
+       - instance_id: int, value=0
+       - basin_info: list, len=1
+       - nr_of_basins: int, value=1
+
+================================================================================
+6. NOTEBOOK METADATA CHECK
+================================================================================
+[OK] Notebook found: /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1/function-definitions.ipynb
+     Size: 32.41 MB
+     Number of notebook cells: 2
+     Code cells: 2
+     Markdown cells: 0
+
+     First 10 code cell previews:
+       Cell 0: 
+       Cell 1: import json\nimport pandas as pd\nimport seaborn as sns\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport math\nimport textwrap\nimport re\nimport os\nfrom IPython.display import display, Markdown\nfrom itertools import product\nimport itertools\n\noutput_files = [\n	"exp-11-07_095145-LLaMEA-gpt-5-nano-ELA-Separable_GlobalLocal-sharing.jsonl",\n	"exp-11-07_100349-LLaMEA-gpt-5-nano-ELA-Separable_Multimodality-sharing.jsonl",\n	"exp-11-07_101329-LLaMEA-gpt-5-nano-ELA-Separable_Basins-sh
+
+================================================================================
+TASK A CONCLUSION
+================================================================================
+Use this summary to decide where generated function definitions are stored.
+Likely candidates:
+  1. function-definitions.ipynb
+  2. outputs/bbob.jsonl
+  3. landscapes/bbob.jsonl
+  4. test_functions.py

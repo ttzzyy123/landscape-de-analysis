@@ -1,0 +1,55 @@
+{
+  "task": "new_function_task_E_real_automatic_landscape_generation",
+  "run_id": "20260519_225148",
+  "function_tag": "n8",
+  "source": "real_llm_generation",
+  "package_dir": "/data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n8.py",
+  "metadata_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260519_225148_n8_metadata.json",
+  "solution_jsonl_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260519_225148_n8_solution.jsonl",
+  "samples_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260519_225148_n8_samples_dim5_n1000.csv",
+  "llm_info": {
+    "backend": "gemini",
+    "model": "gemini-2.5-flash"
+  },
+  "class_name": "landscape",
+  "description": "A 'Homogeneous Corrugated Bowl' function that combines a very flat quadratic term with a high-frequency cosine term to create a landscape with many regularly spaced local minima of similar depth, promoting homogeneous basin sizes across the search space.",
+  "fitness": 0.9993214011192322,
+  "feedback": "The optimization landscape landscape scored on:Homogeneous 1.000, Basins 0.999,  (higher is better, 1.0 is the best).",
+  "error": "",
+  "features_targeted_by_ELAproblem": [
+    "Homogeneous",
+    "Basins"
+  ],
+  "dims": [
+    5
+  ],
+  "llamea_budget": 5,
+  "n_parents": 1,
+  "n_offspring": 1,
+  "max_workers": 1,
+  "eval_timeout": 60,
+  "validation_result": {
+    "test_values": [
+      0.0,
+      0.025,
+      4.3125,
+      4.97409774830077
+    ],
+    "determinism_y1": 4.883505776420245,
+    "determinism_y2": 4.883505776420245
+  },
+  "sampling_summary": {
+    "samples_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260519_225148_n8_samples_dim5_n1000.csv",
+    "n_samples": 1000,
+    "dim": 5,
+    "lower_bound": -5.0,
+    "upper_bound": 5.0,
+    "random_seed": 42,
+    "y_min": 0.7661146165277131,
+    "y_max": 9.670794132362971,
+    "y_mean": 5.225920087424124,
+    "y_std": 1.5940941943565463
+  },
+  "next_step": "Compute ELA features ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this real generated function, then assign it to an existing BBOB group."
+}

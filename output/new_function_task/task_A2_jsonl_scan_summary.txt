@@ -1,0 +1,80 @@
+================================================================================
+NEW FUNCTION TASK A2: SCAN JSONL FILES
+================================================================================
+Project root:  /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir: /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Summary file:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_A2_jsonl_scan_summary.txt
+
+================================================================================
+Searching directory: /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1/outputs
+================================================================================
+Found 1 .jsonl files
+  - bbob.jsonl (311.1 KB)
+
+================================================================================
+Searching directory: /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1/landscapes
+================================================================================
+Found 1 .jsonl files
+  - bbob.jsonl (311.1 KB)
+
+================================================================================
+JSONL FIELD INSPECTION
+================================================================================
+
+--------------------------------------------------------------------------------
+File: outputs/bbob.jsonl
+Size: 311.1 KB
+Preview rows parsed: 3
+Keys: ['function_id', 'instance_id', 'basin_info', 'nr_of_basins']
+Code-like keys: ['function_id']
+
+  Row 1 preview:
+    - function_id: int | 5
+    - instance_id: int | 0
+    - basin_info: list | list(len=1)
+    - nr_of_basins: int | 1
+
+  Row 2 preview:
+    - function_id: int | 5
+    - instance_id: int | 1
+    - basin_info: list | list(len=1)
+    - nr_of_basins: int | 1
+
+  Row 3 preview:
+    - function_id: int | 11
+    - instance_id: int | 0
+    - basin_info: list | list(len=1)
+    - nr_of_basins: int | 1
+
+--------------------------------------------------------------------------------
+File: landscapes/bbob.jsonl
+Size: 311.1 KB
+Preview rows parsed: 3
+Keys: ['function_id', 'instance_id', 'basin_info', 'nr_of_basins']
+Code-like keys: ['function_id']
+
+  Row 1 preview:
+    - function_id: int | 5
+    - instance_id: int | 0
+    - basin_info: list | list(len=1)
+    - nr_of_basins: int | 1
+
+  Row 2 preview:
+    - function_id: int | 5
+    - instance_id: int | 1
+    - basin_info: list | list(len=1)
+    - nr_of_basins: int | 1
+
+  Row 3 preview:
+    - function_id: int | 11
+    - instance_id: int | 0
+    - basin_info: list | list(len=1)
+    - nr_of_basins: int | 1
+
+================================================================================
+LIKELY CANDIDATE FILES FOR GENERATED FUNCTION DEFINITIONS
+================================================================================
+- outputs/bbob.jsonl
+  code-like keys: ['function_id']
+- landscapes/bbob.jsonl
+  code-like keys: ['function_id']

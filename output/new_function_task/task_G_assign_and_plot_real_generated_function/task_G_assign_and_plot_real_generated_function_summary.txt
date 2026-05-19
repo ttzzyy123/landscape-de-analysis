@@ -1,0 +1,302 @@
+================================================================================
+NEW FUNCTION TASK G: BATCH ASSIGN AND PLOT REAL GENERATED FUNCTIONS
+================================================================================
+Project root: /data/s3795888/ioh_project/my_landscape_experiments
+BBOB feature file: /data/s3795888/ioh_project/my_landscape_experiments/data/features_summary_dim_5_sobol.csv
+Real feature dir: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features
+Batch feature CSV: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_functions_batch_ela_features_summary.csv
+Output dir: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function
+Scheme: eps2bins_3_r025065
+Assignment strategy: ambiguous_on_tie
+
+================================================================================
+1. LOAD BBOB FEATURE DATA
+================================================================================
+Loading: /data/s3795888/ioh_project/my_landscape_experiments/data/features_summary_dim_5_sobol.csv
+Original shape: (5542080, 8)
+After filtering # samples == 5000: (782400, 8)
+After filtering target features: (24000, 8)
+Instance-level wide shape: (120, 4)
+BBOB function-level points:
+ Function  eps_ratio    adj_r2 group
+        1   0.731532  0.711958    G3
+        2   6.236156  0.477192    G7
+        3   1.795075  0.674264    G2
+        4   1.977017  0.366322    G2
+        5   0.590831  1.000000    G3
+        6   4.451852  0.774617    G7
+        7   1.896817  0.445537    G0
+        8   4.265666  0.561612    G6
+        9   4.045205  0.088537    G5
+       10   6.173333  0.584166    G7
+       11   6.094935  0.358656    G4
+       12   7.389469  0.282784    G6
+       13   1.926647  0.652881    G3
+       14   0.877758  0.449330    G2
+       15   1.665425  0.539144    G2
+       16   1.615095  0.002762    G1
+       17   0.905345  0.384855    G2
+       18   1.622663  0.363278    G2
+       19   1.084965  0.058695    G1
+       20   3.822462  0.662775    G7
+       21   0.696897  0.037329    G1
+       22   0.355115  0.071883    G1
+       23   1.056136 -0.000025    G1
+       24   1.370611  0.225066    G1
+
+================================================================================
+2. LOAD GENERATED FUNCTION FEATURE SUMMARY
+================================================================================
+Loading: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_functions_batch_ela_features_summary.csv
+Loaded 8 successful generated function(s):
+           full_id function_tag  eps_ratio    adj_r2                                                                                                                                             function_file
+20260517_125137_n1           n1  -0.027027  0.001050 /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n1.py
+20260517_125137_n2           n2   0.597598  0.001509 /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n2.py
+20260517_125137_n3           n3   0.981982  0.566107 /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n3.py
+20260517_125137_n4           n4   0.601602  0.002558 /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n4.py
+20260517_125137_n5           n5   1.006006  0.155637 /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n5.py
+20260517_125137_n6           n6   0.301301 -0.002964 /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n6.py
+20260517_125137_n7           n7   2.091091 -0.000346 /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n7.py
+20260517_125137_n8           n8   1.270270  0.087969 /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n8.py
+
+================================================================================
+3. ASSIGN GENERATED FUNCTIONS TO EXISTING BIN/GROUP
+================================================================================
+
+Assignment for 20260517_125137_n1:
+{
+  "scheme": "eps2bins_3_r025065",
+  "assignment_strategy": "ambiguous_on_tie",
+  "new_function_label": "new_n1",
+  "function_tag": "n1",
+  "run_id": "20260517_125137",
+  "full_id": "20260517_125137_n1",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n1.py",
+  "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260517_125137_n1_ela_features_summary.json",
+  "eps_ratio": -0.027027027027027,
+  "adj_r2": 0.0010503916434179,
+  "eps_ratio_std": 0.0268596754054028,
+  "adj_r2_std": 0.0029454207875407,
+  "assigned_group": "G1",
+  "bin_description": "eps_ratio < 3.0 and adj_r2 < 0.25",
+  "note": "The generated function is assigned according to the same visible eps2bins_3_r025065 boundaries used for the BBOB landscape grouping."
+}
+
+Assignment for 20260517_125137_n2:
+{
+  "scheme": "eps2bins_3_r025065",
+  "assignment_strategy": "ambiguous_on_tie",
+  "new_function_label": "new_n2",
+  "function_tag": "n2",
+  "run_id": "20260517_125137",
+  "full_id": "20260517_125137_n2",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n2.py",
+  "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260517_125137_n2_ela_features_summary.json",
+  "eps_ratio": 0.5975975975975973,
+  "adj_r2": 0.0015091593114303,
+  "eps_ratio_std": 0.0179064502702685,
+  "adj_r2_std": 0.0043949443022883,
+  "assigned_group": "G1",
+  "bin_description": "eps_ratio < 3.0 and adj_r2 < 0.25",
+  "note": "The generated function is assigned according to the same visible eps2bins_3_r025065 boundaries used for the BBOB landscape grouping."
+}
+
+Assignment for 20260517_125137_n3:
+{
+  "scheme": "eps2bins_3_r025065",
+  "assignment_strategy": "ambiguous_on_tie",
+  "new_function_label": "new_n3",
+  "function_tag": "n3",
+  "run_id": "20260517_125137",
+  "full_id": "20260517_125137_n3",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n3.py",
+  "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260517_125137_n3_ela_features_summary.json",
+  "eps_ratio": 0.9819819819819816,
+  "adj_r2": 0.5661074420404038,
+  "eps_ratio_std": 0.0219308331333399,
+  "adj_r2_std": 0.0187189408265203,
+  "assigned_group": "G2",
+  "bin_description": "eps_ratio < 3.0 and 0.25 <= adj_r2 < 0.65",
+  "note": "The generated function is assigned according to the same visible eps2bins_3_r025065 boundaries used for the BBOB landscape grouping."
+}
+
+Assignment for 20260517_125137_n4:
+{
+  "scheme": "eps2bins_3_r025065",
+  "assignment_strategy": "ambiguous_on_tie",
+  "new_function_label": "new_n4",
+  "function_tag": "n4",
+  "run_id": "20260517_125137",
+  "full_id": "20260517_125137_n4",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n4.py",
+  "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260517_125137_n4_ela_features_summary.json",
+  "eps_ratio": 0.6016016016016013,
+  "adj_r2": 0.0025583464056899,
+  "eps_ratio_std": 0.0167499504811626,
+  "adj_r2_std": 0.0059630136133532,
+  "assigned_group": "G1",
+  "bin_description": "eps_ratio < 3.0 and adj_r2 < 0.25",
+  "note": "The generated function is assigned according to the same visible eps2bins_3_r025065 boundaries used for the BBOB landscape grouping."
+}
+
+Assignment for 20260517_125137_n5:
+{
+  "scheme": "eps2bins_3_r025065",
+  "assignment_strategy": "ambiguous_on_tie",
+  "new_function_label": "new_n5",
+  "function_tag": "n5",
+  "run_id": "20260517_125137",
+  "full_id": "20260517_125137_n5",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n5.py",
+  "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260517_125137_n5_ela_features_summary.json",
+  "eps_ratio": 1.0060060060060056,
+  "adj_r2": 0.155637020793761,
+  "eps_ratio_std": 0.0141562919156465,
+  "adj_r2_std": 0.0089458076755,
+  "assigned_group": "G1",
+  "bin_description": "eps_ratio < 3.0 and adj_r2 < 0.25",
+  "note": "The generated function is assigned according to the same visible eps2bins_3_r025065 boundaries used for the BBOB landscape grouping."
+}
+
+Assignment for 20260517_125137_n6:
+{
+  "scheme": "eps2bins_3_r025065",
+  "assignment_strategy": "ambiguous_on_tie",
+  "new_function_label": "new_n6",
+  "function_tag": "n6",
+  "run_id": "20260517_125137",
+  "full_id": "20260517_125137_n6",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n6.py",
+  "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260517_125137_n6_ela_features_summary.json",
+  "eps_ratio": 0.3013013013013011,
+  "adj_r2": -0.0029644838691373,
+  "eps_ratio_std": 0.0219308331333399,
+  "adj_r2_std": 0.0004207160319254,
+  "assigned_group": "G1",
+  "bin_description": "eps_ratio < 3.0 and adj_r2 < 0.25",
+  "note": "The generated function is assigned according to the same visible eps2bins_3_r025065 boundaries used for the BBOB landscape grouping."
+}
+
+Assignment for 20260517_125137_n7:
+{
+  "scheme": "eps2bins_3_r025065",
+  "assignment_strategy": "ambiguous_on_tie",
+  "new_function_label": "new_n7",
+  "function_tag": "n7",
+  "run_id": "20260517_125137",
+  "full_id": "20260517_125137_n7",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n7.py",
+  "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260517_125137_n7_ela_features_summary.json",
+  "eps_ratio": 2.091091091091092,
+  "adj_r2": -0.0003463945599114,
+  "eps_ratio_std": 0.0219308331333399,
+  "adj_r2_std": 0.0011248327735287,
+  "assigned_group": "G1",
+  "bin_description": "eps_ratio < 3.0 and adj_r2 < 0.25",
+  "note": "The generated function is assigned according to the same visible eps2bins_3_r025065 boundaries used for the BBOB landscape grouping."
+}
+
+Assignment for 20260517_125137_n8:
+{
+  "scheme": "eps2bins_3_r025065",
+  "assignment_strategy": "ambiguous_on_tie",
+  "new_function_label": "new_n8",
+  "function_tag": "n8",
+  "run_id": "20260517_125137",
+  "full_id": "20260517_125137_n8",
+  "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_125137_n8.py",
+  "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260517_125137_n8_ela_features_summary.json",
+  "eps_ratio": 1.2702702702702695,
+  "adj_r2": 0.0879686443587025,
+  "eps_ratio_std": 0.0261029125333439,
+  "adj_r2_std": 0.0166908544693692,
+  "assigned_group": "G1",
+  "bin_description": "eps_ratio < 3.0 and adj_r2 < 0.25",
+  "note": "The generated function is assigned according to the same visible eps2bins_3_r025065 boundaries used for the BBOB landscape grouping."
+}
+
+================================================================================
+4. SAVE ASSIGNMENT TABLES
+================================================================================
+[OK] BBOB instance table saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/bbob_dim5_selected_features_by_instance.csv
+[OK] BBOB function table saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/bbob_dim5_selected_features_by_function_mean.csv
+[OK] Batch generated points saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_functions_feature_points_batch.csv
+[OK] Batch assignment CSV saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_functions_group_assignment_batch.csv
+[OK] Batch assignment JSON saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_functions_group_assignment_batch.json
+[OK] Single assignment saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n1_group_assignment.json
+[OK] Single point saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n1_feature_point.csv
+[OK] Single assignment saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n2_group_assignment.json
+[OK] Single point saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n2_feature_point.csv
+[OK] Single assignment saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n3_group_assignment.json
+[OK] Single point saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n3_feature_point.csv
+[OK] Single assignment saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n4_group_assignment.json
+[OK] Single point saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n4_feature_point.csv
+[OK] Single assignment saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n5_group_assignment.json
+[OK] Single point saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n5_feature_point.csv
+[OK] Single assignment saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n6_group_assignment.json
+[OK] Single point saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n6_feature_point.csv
+[OK] Single assignment saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n7_group_assignment.json
+[OK] Single point saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n7_feature_point.csv
+[OK] Single assignment saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n8_group_assignment.json
+[OK] Single point saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_function_20260517_125137_n8_feature_point.csv
+
+================================================================================
+5. PLOT COMBINED GENERATED FUNCTIONS
+================================================================================
+[OK] Combined plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_functions_batch_with_bbob_groups_plot.png
+[OK] Combined PDF saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_functions_batch_with_bbob_groups_plot.pdf
+
+================================================================================
+6. PLOT INDIVIDUAL GENERATED FUNCTIONS
+================================================================================
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n1_with_bbob_groups_plot.png
+[OK] Individual PDF saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n1_with_bbob_groups_plot.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n2_with_bbob_groups_plot.png
+[OK] Individual PDF saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n2_with_bbob_groups_plot.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n3_with_bbob_groups_plot.png
+[OK] Individual PDF saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n3_with_bbob_groups_plot.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n4_with_bbob_groups_plot.png
+[OK] Individual PDF saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n4_with_bbob_groups_plot.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n5_with_bbob_groups_plot.png
+[OK] Individual PDF saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n5_with_bbob_groups_plot.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n6_with_bbob_groups_plot.png
+[OK] Individual PDF saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n6_with_bbob_groups_plot.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n7_with_bbob_groups_plot.png
+[OK] Individual PDF saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n7_with_bbob_groups_plot.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n8_with_bbob_groups_plot.png
+[OK] Individual PDF saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n8_with_bbob_groups_plot.pdf
+
+================================================================================
+TASK G CONCLUSION
+================================================================================
+[SUCCESS] Generated functions assigned and plotted.
+new_n1 (20260517_125137_n1) -> G1 | eps_ratio=-0.027027027027027 | adj_r2=0.0010503916434179
+new_n2 (20260517_125137_n2) -> G1 | eps_ratio=0.5975975975975973 | adj_r2=0.0015091593114303
+new_n3 (20260517_125137_n3) -> G2 | eps_ratio=0.9819819819819816 | adj_r2=0.5661074420404038
+new_n4 (20260517_125137_n4) -> G1 | eps_ratio=0.6016016016016013 | adj_r2=0.0025583464056899
+new_n5 (20260517_125137_n5) -> G1 | eps_ratio=1.0060060060060056 | adj_r2=0.155637020793761
+new_n6 (20260517_125137_n6) -> G1 | eps_ratio=0.3013013013013011 | adj_r2=-0.0029644838691373
+new_n7 (20260517_125137_n7) -> G1 | eps_ratio=2.091091091091092 | adj_r2=-0.0003463945599114
+new_n8 (20260517_125137_n8) -> G1 | eps_ratio=1.2702702702702695 | adj_r2=0.0879686443587025
+
+Combined plot: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_functions_batch_with_bbob_groups_plot.png
+Combined PDF:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_functions_batch_with_bbob_groups_plot.pdf
+
+Saved assignment files:
+  bbob_instance_file: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/bbob_dim5_selected_features_by_instance.csv
+  bbob_function_file: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/bbob_dim5_selected_features_by_function_mean.csv
+  batch_points_csv: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_functions_feature_points_batch.csv
+  batch_assignment_csv: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_functions_group_assignment_batch.csv
+  batch_assignment_json: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_group_assignment/real_generated_functions_group_assignment_batch.json
+
+Individual plots:
+  20260517_125137_n1: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n1_with_bbob_groups_plot.png
+  20260517_125137_n2: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n2_with_bbob_groups_plot.png
+  20260517_125137_n3: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n3_with_bbob_groups_plot.png
+  20260517_125137_n4: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n4_with_bbob_groups_plot.png
+  20260517_125137_n5: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n5_with_bbob_groups_plot.png
+  20260517_125137_n6: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n6_with_bbob_groups_plot.png
+  20260517_125137_n7: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n7_with_bbob_groups_plot.png
+  20260517_125137_n8: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_real_generated_function/real_generated_function_20260517_125137_n8_with_bbob_groups_plot.png
+
+Next step: select representative generated function(s) for modDE/H SHAP analysis.

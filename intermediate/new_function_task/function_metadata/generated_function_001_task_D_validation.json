@@ -1,0 +1,128 @@
+{
+  "task": "new_function_task_D_load_and_validate_generated_function",
+  "source_function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/extracted_functions/generated_function_001.py",
+  "task_c_metadata_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/function_metadata/generated_function_001_metadata.json",
+  "class_name": "GeneratedDryRunLandscape",
+  "dimension": 5,
+  "validation": {
+    "module_loaded": true,
+    "class_found": true,
+    "instantiated": true,
+    "has_f_method": true,
+    "test_values": {
+      "zero": {
+        "x": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "y": 7.8125
+      },
+      "one": {
+        "x": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "y": 0.42841266068306033
+      },
+      "lower_bound": {
+        "x": [
+          -5.0,
+          -5.0,
+          -5.0,
+          -5.0,
+          -5.0
+        ],
+        "y": 195.61377349628043
+      },
+      "upper_bound": {
+        "x": [
+          5.0,
+          5.0,
+          5.0,
+          5.0,
+          5.0
+        ],
+        "y": 70.61377349628042
+      },
+      "mixed": {
+        "x": [
+          -5.0,
+          -2.5,
+          0.0,
+          2.5,
+          5.0
+        ],
+        "y": 70.69933615560461
+      },
+      "random_seed_42": {
+        "x": [
+          2.7395604855596334,
+          -0.6112156024794766,
+          3.585979199113824,
+          1.9736802905936388,
+          -4.058226521123505
+        ],
+        "y": 40.23138886415536
+      }
+    },
+    "determinism": {
+      "x": [
+        1.8235186324814343,
+        -4.4617898119777735,
+        -2.7964012722738865,
+        -3.156281893013303,
+        -3.2409409891496965
+      ],
+      "y1": 89.15782106038921,
+      "y2": 89.15782106038921,
+      "passed": true
+    }
+  },
+  "sampling_summary": {
+    "n_samples": 1000,
+    "dim": 5,
+    "lower_bound": -5.0,
+    "upper_bound": 5.0,
+    "random_seed": 42,
+    "samples_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/function_samples/generated_function_001_samples_dim5_n1000.csv",
+    "y_min": 3.279890086392558,
+    "y_max": 132.13613921471094,
+    "y_mean": 50.37375105665839,
+    "y_std": 23.898184829385244
+  },
+  "task_c_metadata_available": true,
+  "task_c_metadata": {
+    "task": "new_function_task_C_dryrun_generate_one_function",
+    "source": "mock_llm_dryrun",
+    "package_dir": "/data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1",
+    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/extracted_functions/generated_function_001.py",
+    "class_name": "GeneratedDryRunLandscape",
+    "description": "Dry-run generated continuous optimization landscape with a smooth quadratic basin and mild multimodal sinusoidal ripples.",
+    "fitness": 0.6013671875,
+    "feedback": "The optimization landscape GeneratedDryRunLandscape scored on:Separable 0.601,  (higher is better, 1.0 is the best).",
+    "error": "",
+    "dimension_tested": 5,
+    "bounds_assumed": [
+      -5.0,
+      5.0
+    ],
+    "validation_result": {
+      "test_values": [
+        7.8125,
+        0.42841266068306033,
+        70.69933615560461,
+        40.23138886415536
+      ],
+      "determinism_y1": 89.15782106038921,
+      "determinism_y2": 89.15782106038921
+    },
+    "note": "This function was generated using a mocked LLM response to validate the LLaMEA/ELAproblem generation pipeline."
+  },
+  "next_step": "Use the saved sample file to compute ELA features: ic.eps.ratio and ela_meta.lin_simple.adj_r2."
+}

@@ -1,0 +1,125 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n1
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260517_114949
+Function tag:     n1
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_114949_n1.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_114949_n1_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_114949_n1_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_114949_n1_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260517_114949_n1.txt
+Target features:  ['Separable']
+Budget:           3
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['Separable']
+  dims     = [5]
+  prompt length = 1348
+Initialized LLaMEA:
+  n_parents   = 1
+  n_offspring = 1
+  budget      = 3
+  log         = True
+  max_workers = 1
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: landscape
+Description:   A separable function combining a quadratic component with a discontinuous penalty term based on the parity of the floor of the absolute value of each dimension, creating a landscape with varying local optima structures and sharp jumps.
+Fitness:       1.0
+Feedback:      The optimization landscape landscape scored on:Separable 1.000,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+
+class landscape:
+    
+    def __init__(self, dim=5):
+        """
+        Initializes the landscape function with a given number of dimensions.
+        The function is designed for optimization in the range [-5.0, 5.0] per dimension.
+        """
+        self.dim = dim
+
+    def f(self, x):
+        """
+        Evaluates the Parity-Floor Quadratic function for a given input vector x.
+        
+        The function is defined as: f(x) = sum_{i=1 to dim} (x_i^2 + (1 - cos(pi * floor(|x_i|))))
+        
+        The global minimum is at x_i = 0 for all i, with f(0) = 0.
+        
+        The term `(1 - cos(pi * floor(|x_i|)))` acts as a discontinuous penalty:
+        - It's 0 when floor(|x_i|) is an even integer (e.g., for x_i in (-1, 1), (-3, -2], [2, 3), etc.)
+        - It's 2 when floor(|x_i|) is an odd integer (e.g., for x_i in (-2, -1], [1, 2), etc.)
+        
+        This introduces step-like discontinuities and modulates the base quadratic landscape
+        to create regions with different local minimum characteristics.
+        
+        Args:
+            x (numpy.ndarray): A real-valued sample vector.
+        
+        Returns:
+            float: The objective function value for the given input x.
+        """
+        # Ensure x is a numpy array for element-wise operations
+        x = np.asarray(x)
+        
+        # Raise an error if the input dimension does not match
+        if x.shape[0] != self.dim:
+            raise ValueError(f"Input vector x must have dimension {self.dim}, but got {x.shape[0]}")
+        
+        # Calculate the floor of the absolute value for each dimension
+        floor_abs_x = np.floor(np.abs(x))
+        
+        # Calculate the oscillating penalty term
+        # This term is 0 for even floor_abs_x (cos(even*pi) = 1)
+        # and 2 for odd floor_abs_x (cos(odd*pi) = -1)
+        penalty_term = (1.0 - np.cos(np.pi * floor_abs_x))
+        
+        # Combine the quadratic base term with the penalty term for each dimension
+        
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = 0.0
+[OK] f(test_point_2) = 15.0
+[OK] f(test_point_3) = 66.5
+[OK] f(test_point_4) = 45.102639369459084
+Determinism check y1=57.51846248816488, y2=57.51846248816488
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_114949_n1_samples_dim5_n1000.csv
+y min:  2.019370408837306
+y max:  89.7358296255507
+y mean: 45.59523202981235
+y std:  16.57987012041521
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260517_114949_n1.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_114949_n1_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260517_114949_n1_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260517_114949_n1_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n1.
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.
