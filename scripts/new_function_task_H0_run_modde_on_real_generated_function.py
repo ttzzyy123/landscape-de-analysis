@@ -17,37 +17,71 @@ from tqdm import tqdm
 
 # ============================================================
 # New Function Task H0
-# Batch run Niels-style modDE experiments on selected real generated functions
+# Run Niels-style modDE experiments on Quentin affine BBOB functions
 #
-# Selected functions:
-#   n3, n7, n5 from run 20260517_125137
+# Affine functions:
+#   f3  + f6   alpha=0.9
+#   f1  + f23  alpha=0.9
+#   f9  + f12  alpha=0.9
+#   f10 + f6   alpha=0.9
+#   f15 + f8   alpha=0.9
 #
-# Default full setting:
+# Default setting:
 #   1000 configs
 #   3 repeats
 #   10000 evaluations
 #
 # Output:
-# intermediate/new_function_task/modde_real_function_results/
-#   real_generated_function_20260517_125137_n3_modde_results_processed.pkl
-#   real_generated_function_20260517_125137_n7_modde_results_processed.pkl
-#   real_generated_function_20260517_125137_n5_modde_results_processed.pkl
+# intermediate/new_function_task/modde_affine_function_results/
 # ============================================================
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-BASE_RUN_ID = os.environ.get("REAL_FUNCTION_BASE_RUN_ID", "20260517_125137")
+AFFINE_FUNCTION_FILE = PROJECT_ROOT / "data" / "affine_functions_tony.py"
 
-# Run these generated functions by default.
-TARGET_FUNCTION_TAGS = os.environ.get("REAL_FUNCTION_TAGS", "n3,n7,n5").split(",")
-TARGET_FUNCTION_TAGS = [x.strip() for x in TARGET_FUNCTION_TAGS if x.strip()]
+OUT_DIR = (
+    PROJECT_ROOT
+    / "intermediate"
+    / "new_function_task"
+    / "modde_affine_function_results"
+)
+OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-DIM = int(os.environ.get("REAL_FUNCTION_DIM", "5"))
 
-# Use separate fid values so later files can be distinguished safely.
-FID_BASE = int(os.environ.get("REAL_FUNCTION_FID_BASE", "25"))
-IID_NEW = int(os.environ.get("REAL_FUNCTION_IID", "1"))
+# ============================================================
+# Affine function settings
+# ============================================================
+
+DIM = int(os.environ.get("AFFINE_FUNCTION_DIM", "5"))
+ALPHA = float(os.environ.get("AFFINE_ALPHA", "0.9"))
+
+# Format can be overridden, e.g.
+# AFFINE_TARGET_PAIRS="3_6,1_23,9_12,10_6,15_8"
+TARGET_PAIR_STR = os.environ.get(
+    "AFFINE_TARGET_PAIRS",
+    "3_6,1_23,9_12,10_6,15_8",
+)
+
+TARGET_PAIRS = []
+for item in TARGET_PAIR_STR.split(","):
+    item = item.strip()
+    if not item:
+        continue
+    a, b = item.split("_")
+    TARGET_PAIRS.append((int(a), int(b)))
+
+# For the affine functions, use the same iid for both component BBOB functions.
+IID1 = int(os.environ.get("AFFINE_IID1", "1"))
+IID2 = int(os.environ.get("AFFINE_IID2", "1"))
+
+# Use separate artificial fid values for logging/result distinction.
+FID_BASE = int(os.environ.get("AFFINE_FID_BASE", "101"))
+
+
+# ============================================================
+# modDE experiment settings
+# ============================================================
 
 SAMPLE_SIZE = int(os.environ.get("MODDE_SAMPLE_SIZE", "1000"))
 REPS = int(os.environ.get("MODDE_REPS", "3"))
@@ -61,26 +95,10 @@ START_INDEX = int(os.environ.get("MODDE_START_INDEX", "0"))
 STOP_AFTER = os.environ.get("MODDE_STOP_AFTER", "")
 STOP_AFTER = int(STOP_AFTER) if STOP_AFTER.strip() else None
 
-REAL_FUNCTION_DIR = (
-    PROJECT_ROOT
-    / "intermediate"
-    / "new_function_task"
-    / "real_generated_functions"
-)
-
-OUT_DIR = (
-    PROJECT_ROOT
-    / "intermediate"
-    / "new_function_task"
-    / "modde_real_function_results"
-)
-OUT_DIR.mkdir(parents=True, exist_ok=True)
-
 
 # ============================================================
-# Same modDE configuration space as Niels' config.py
+# Same modDE configuration space as previous experiments
 # ============================================================
-
 
 de_cs = ConfigurationSpace(
     {
@@ -112,9 +130,8 @@ DE_COLUMNS = [
 
 
 # ============================================================
-# AOC logger copied/adapted from IOHxplainer utils.py
+# AOC logger
 # ============================================================
-
 
 class aoc_logger(ioh.logger.AbstractLogger):
     def __init__(
@@ -200,9 +217,8 @@ def correct_aoc(ioh_function, logger, budget):
 
 
 # ============================================================
-# Per-function context
+# Context
 # ============================================================
-
 
 CURRENT_CONTEXT = {}
 
@@ -212,72 +228,73 @@ def set_context(context):
     CURRENT_CONTEXT = context
 
 
-def get_function_file(full_id):
-    return REAL_FUNCTION_DIR / f"real_generated_function_{full_id}.py"
+def make_affine_tag(fid1, fid2):
+    return f"f{fid1}_f{fid2}"
 
 
-def get_output_paths(full_id):
+def get_output_paths(function_tag):
+    prefix = f"affine_function_{function_tag}_alpha_{str(ALPHA).replace('.', 'p')}"
     return {
-        "raw_pkl": OUT_DIR / f"real_generated_function_{full_id}_modde_results_raw.pkl",
-        "processed_pkl": OUT_DIR / f"real_generated_function_{full_id}_modde_results_processed.pkl",
-        "checkpoint": OUT_DIR / f"real_generated_function_{full_id}_modde_intermediate.csv",
-        "configs": OUT_DIR / f"real_generated_function_{full_id}_modde_sampled_configs.csv",
-        "summary": OUT_DIR / f"real_generated_function_{full_id}_modde_run_summary.json",
+        "raw_pkl": OUT_DIR / f"{prefix}_modde_results_raw.pkl",
+        "processed_pkl": OUT_DIR / f"{prefix}_modde_results_processed.pkl",
+        "checkpoint": OUT_DIR / f"{prefix}_modde_intermediate.csv",
+        "configs": OUT_DIR / f"{prefix}_modde_sampled_configs.csv",
+        "summary": OUT_DIR / f"{prefix}_modde_run_summary.json",
     }
 
 
 # ============================================================
-# Generated function loading and IOH wrapping
+# Load affine function generator
 # ============================================================
 
+def load_affine_generator():
+    if not AFFINE_FUNCTION_FILE.exists():
+        raise FileNotFoundError(f"Affine function file not found: {AFFINE_FUNCTION_FILE}")
 
-def load_generated_class(function_file):
-    if not function_file.exists():
-        raise FileNotFoundError(f"Real generated function file not found: {function_file}")
-
-    spec = importlib.util.spec_from_file_location(function_file.stem, function_file)
+    spec = importlib.util.spec_from_file_location(
+        AFFINE_FUNCTION_FILE.stem,
+        AFFINE_FUNCTION_FILE,
+    )
 
     if spec is None or spec.loader is None:
-        raise RuntimeError(f"Could not load module spec from {function_file}")
+        raise RuntimeError(f"Could not load module spec from {AFFINE_FUNCTION_FILE}")
 
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    candidates = []
-    for name in dir(module):
-        obj = getattr(module, name)
-        if isinstance(obj, type) and not name.startswith("_"):
-            candidates.append((name, obj))
+    if not hasattr(module, "get_bbob_function"):
+        raise RuntimeError("affine_functions_tony.py does not contain get_bbob_function().")
 
-    if not candidates:
-        raise RuntimeError("No generated class found in real generated function file.")
-
-    # Prefer class named landscape if present.
-    for name, cls in candidates:
-        if name == "landscape":
-            return name, cls
-
-    return candidates[0]
+    return module.get_bbob_function
 
 
 def make_ioh_problem(dim, problem_name):
-    function_file = CURRENT_CONTEXT["function_file"]
+    fid1 = CURRENT_CONTEXT["fid1"]
+    fid2 = CURRENT_CONTEXT["fid2"]
+    iid1 = CURRENT_CONTEXT["iid1"]
+    iid2 = CURRENT_CONTEXT["iid2"]
+    alpha = CURRENT_CONTEXT["alpha"]
 
-    class_name, cls = load_generated_class(function_file)
-    landscape = cls(dim=dim)
+    get_bbob_function = load_affine_generator()
 
-    lower = float(getattr(landscape, "lower_bound", getattr(landscape, "bounds_lb", -5.0)))
-    upper = float(getattr(landscape, "upper_bound", getattr(landscape, "bounds_ub", 5.0)))
+    affine_func = get_bbob_function(
+        fid1=fid1,
+        iid1=iid1,
+        fid2=fid2,
+        iid2=iid2,
+        dim=dim,
+        alpha=alpha,
+    )
 
     def objective(x):
-        return float(landscape.f(np.asarray(x, dtype=float)))
+        return float(affine_func(np.asarray(x, dtype=float)))
 
     try:
         problem = ioh.wrap_problem(
             objective,
             name=problem_name,
-            lb=lower,
-            ub=upper,
+            lb=-5.0,
+            ub=5.0,
         )
     except TypeError:
         problem = ioh.wrap_problem(
@@ -285,17 +302,16 @@ def make_ioh_problem(dim, problem_name):
             name=problem_name,
             optimization_type=ioh.OptimizationType.MIN,
             problem_type=ioh.ProblemType.REAL,
-            lb=lower,
-            ub=upper,
+            lb=-5.0,
+            ub=5.0,
         )
 
     return problem
 
 
 # ============================================================
-# modDE runner copied/adapted from config.py
+# modDE runner
 # ============================================================
-
 
 def run_de(func, config, budget, dim, *args, **kwargs):
     lam = config.get("lambda_")
@@ -359,7 +375,6 @@ def run_de(func, config, budget, dim, *args, **kwargs):
 # Experiment execution
 # ============================================================
 
-
 def config_to_dict(config):
     if hasattr(config, "get_dictionary"):
         d = config.get_dictionary()
@@ -399,13 +414,18 @@ def run_one_config(task):
 
     rows = []
 
-    full_id = CURRENT_CONTEXT["full_id"]
+    function_tag = CURRENT_CONTEXT["function_tag"]
     fid_new = CURRENT_CONTEXT["fid_new"]
+    fid1 = CURRENT_CONTEXT["fid1"]
+    fid2 = CURRENT_CONTEXT["fid2"]
+    iid1 = CURRENT_CONTEXT["iid1"]
+    iid2 = CURRENT_CONTEXT["iid2"]
+    alpha = CURRENT_CONTEXT["alpha"]
 
     for seed in range(REPS):
         np.random.seed(seed)
 
-        problem_name = f"real_generated_{full_id}_cfg{config_index}_seed{seed}"
+        problem_name = f"affine_{function_tag}_cfg{config_index}_seed{seed}"
         func = make_ioh_problem(DIM, problem_name)
 
         logger = aoc_logger(
@@ -421,12 +441,17 @@ def run_one_config(task):
             auc1, auc2 = correct_aoc(func, logger, BUDGET)
 
             row = {
-                "function_tag": CURRENT_CONTEXT["function_tag"],
-                "full_id": full_id,
+                "function_source": "quentin_affine_bbob",
+                "function_tag": function_tag,
                 "fid": fid_new,
-                "iid": IID_NEW,
+                "iid": 1,
                 "dim": DIM,
                 "seed": seed,
+                "fid1": fid1,
+                "iid1": iid1,
+                "fid2": fid2,
+                "iid2": iid2,
+                "alpha": alpha,
                 **config,
                 "auc": auc1,
                 "aucLarge": auc2,
@@ -437,12 +462,17 @@ def run_one_config(task):
 
         except Exception as e:
             row = {
-                "function_tag": CURRENT_CONTEXT["function_tag"],
-                "full_id": full_id,
+                "function_source": "quentin_affine_bbob",
+                "function_tag": function_tag,
                 "fid": fid_new,
-                "iid": IID_NEW,
+                "iid": 1,
                 "dim": DIM,
                 "seed": seed,
+                "fid1": fid1,
+                "iid1": iid1,
+                "fid2": fid2,
+                "iid2": iid2,
+                "alpha": alpha,
                 **config,
                 "auc": np.nan,
                 "aucLarge": np.nan,
@@ -483,29 +513,31 @@ def process_results(df_raw):
     return df
 
 
-def run_for_one_function(function_tag, fid_new):
-    full_id = f"{BASE_RUN_ID}_{function_tag}"
-    function_file = get_function_file(full_id)
-    paths = get_output_paths(full_id)
+def run_for_one_affine_function(fid1, fid2, fid_new):
+    function_tag = make_affine_tag(fid1, fid2)
+    paths = get_output_paths(function_tag)
 
-    set_context(
-        {
-            "function_tag": function_tag,
-            "full_id": full_id,
-            "function_file": function_file,
-            "fid_new": fid_new,
-        }
-    )
+    context = {
+        "function_source": "quentin_affine_bbob",
+        "function_tag": function_tag,
+        "fid1": fid1,
+        "fid2": fid2,
+        "iid1": IID1,
+        "iid2": IID2,
+        "alpha": ALPHA,
+        "fid_new": fid_new,
+    }
+
+    set_context(context)
 
     print("\n" + "=" * 80)
-    print(f"RUNNING H0 FOR {function_tag} ({full_id})")
+    print(f"RUNNING H0 FOR AFFINE FUNCTION {function_tag}")
     print("=" * 80)
     print(f"Project root: {PROJECT_ROOT}")
-    print(f"Real function file: {function_file}")
-    print(f"Full ID: {full_id}")
+    print(f"Affine function file: {AFFINE_FUNCTION_FILE}")
+    print(f"Function: fid1={fid1}, iid1={IID1}, fid2={fid2}, iid2={IID2}, alpha={ALPHA}")
     print(f"DIM: {DIM}")
     print(f"FID_NEW: {fid_new}")
-    print(f"IID_NEW: {IID_NEW}")
     print(f"Sample size: {SAMPLE_SIZE}")
     print(f"Repeats: {REPS}")
     print(f"Budget: {BUDGET}")
@@ -513,16 +545,15 @@ def run_for_one_function(function_tag, fid_new):
     print(f"Workers: {N_WORKERS}")
     print(f"Checkpoint: {paths['checkpoint']}")
 
-    if not function_file.exists():
-        raise FileNotFoundError(f"Function file not found: {function_file}")
+    if not AFFINE_FUNCTION_FILE.exists():
+        raise FileNotFoundError(f"Affine function file not found: {AFFINE_FUNCTION_FILE}")
 
-    # Remove previous checkpoint for this exact function to avoid accidental append.
     if paths["checkpoint"].exists():
         print(f"[WARN] Removing existing checkpoint: {paths['checkpoint']}")
         paths["checkpoint"].unlink()
 
     print("\nSmoke test IOH wrapping...")
-    test_func = make_ioh_problem(DIM, f"real_generated_{full_id}_smoke_test")
+    test_func = make_ioh_problem(DIM, f"affine_{function_tag}_smoke_test")
     y0 = test_func(np.zeros(DIM))
     print(f"f(0) via IOH wrapper = {y0}")
     test_func.reset()
@@ -539,7 +570,11 @@ def run_for_one_function(function_tag, fid_new):
     all_rows = []
 
     if PARALLEL:
-        with Pool(processes=min(N_WORKERS, len(tasks)), initializer=set_context, initargs=(CURRENT_CONTEXT,)) as pool:
+        with Pool(
+            processes=min(N_WORKERS, len(tasks)),
+            initializer=set_context,
+            initargs=(CURRENT_CONTEXT,),
+        ) as pool:
             for rows in tqdm(pool.imap_unordered(run_one_config, tasks), total=len(tasks)):
                 flat_rows = list(rows)
                 append_checkpoint(flat_rows, paths["checkpoint"])
@@ -565,18 +600,22 @@ def run_for_one_function(function_tag, fid_new):
     df_processed.to_pickle(paths["processed_pkl"])
 
     summary = {
-        "task": "new_function_task_H0_run_modde_on_real_generated_function_batch",
-        "base_run_id": BASE_RUN_ID,
+        "task": "new_function_task_H0_run_modde_on_quentin_affine_functions",
+        "function_source": "quentin_affine_bbob",
         "function_tag": function_tag,
-        "full_id": full_id,
-        "real_function_file": str(function_file),
+        "fid1": fid1,
+        "iid1": IID1,
+        "fid2": fid2,
+        "iid2": IID2,
+        "alpha": ALPHA,
+        "affine_function_file": str(AFFINE_FUNCTION_FILE),
         "raw_pkl_file": str(paths["raw_pkl"]),
         "processed_pkl_file": str(paths["processed_pkl"]),
         "checkpoint_file": str(paths["checkpoint"]),
         "configs_file": str(paths["configs"]),
         "dim": DIM,
         "fid_new": fid_new,
-        "iid_new": IID_NEW,
+        "iid_new": 1,
         "sample_size": SAMPLE_SIZE,
         "reps": REPS,
         "budget": BUDGET,
@@ -599,21 +638,28 @@ def run_for_one_function(function_tag, fid_new):
 
 def main():
     print("=" * 80)
-    print("NEW FUNCTION TASK H0: BATCH RUN modDE ON SELECTED REAL GENERATED FUNCTIONS")
+    print("NEW FUNCTION TASK H0: BATCH RUN modDE ON QUENTIN AFFINE FUNCTIONS")
     print("=" * 80)
-    print(f"BASE_RUN_ID: {BASE_RUN_ID}")
-    print(f"TARGET_FUNCTION_TAGS: {TARGET_FUNCTION_TAGS}")
+    print(f"TARGET_PAIRS: {TARGET_PAIRS}")
+    print(f"ALPHA: {ALPHA}")
+    print(f"IID1: {IID1}")
+    print(f"IID2: {IID2}")
     print(f"Full setting: sample_size={SAMPLE_SIZE}, reps={REPS}, budget={BUDGET}")
     print(f"Parallel: {PARALLEL}, workers={N_WORKERS}")
 
     summaries = []
 
-    for idx, function_tag in enumerate(TARGET_FUNCTION_TAGS):
+    for idx, (fid1, fid2) in enumerate(TARGET_PAIRS):
         fid_new = FID_BASE + idx
-        summary = run_for_one_function(function_tag=function_tag, fid_new=fid_new)
+        summary = run_for_one_affine_function(
+            fid1=fid1,
+            fid2=fid2,
+            fid_new=fid_new,
+        )
         summaries.append(summary)
 
-    batch_summary_file = OUT_DIR / f"real_generated_function_{BASE_RUN_ID}_{'_'.join(TARGET_FUNCTION_TAGS)}_modde_batch_summary.json"
+    batch_name = "_".join([make_affine_tag(a, b) for a, b in TARGET_PAIRS])
+    batch_summary_file = OUT_DIR / f"affine_functions_{batch_name}_modde_batch_summary.json"
     batch_summary_file.write_text(json.dumps(summaries, indent=2), encoding="utf-8")
 
     print("\n" + "=" * 80)

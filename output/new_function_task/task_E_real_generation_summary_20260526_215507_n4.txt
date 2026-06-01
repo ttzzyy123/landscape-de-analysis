@@ -1,0 +1,127 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n4
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260526_215507
+Function tag:     n4
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n4.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n4_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n4_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n4_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260526_215507_n4.txt
+Target features:  ['Basins', 'Separable']
+Budget:           55
+Fitness sharing:  True
+Niche radius:     0.5
+Adaptive radius:  True
+Elitism:          False
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['Basins', 'Separable']
+  dims     = [5]
+  prompt length = 1482
+Initialized LLaMEA:
+  n_parents   = 8
+  n_offspring = 16
+  budget      = 55
+  log         = True
+  max_workers = 4
+  elitism     = False
+  niching     = sharing
+  distance    = ela_distance
+  radius      = 0.5
+  adaptive    = True
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: landscape
+Description:   A separable multi-modal benchmark where each dimension combines a periodic cosine wave for homogeneous local basins with a gentle quadratic term to define a unique global optimum at the origin.
+Fitness:       0.9900655448436737
+Feedback:      The optimization landscape landscape scored on:Basins 0.980, Separable 1.000,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+
+class landscape:
+    
+    def __init__(self, dim=5):
+        self.dim = dim
+        # Parameter for the periodic component, controls frequency of local minima
+        self.alpha = 2 * np.pi 
+        # Parameter for the gentle quadratic component, controls bias towards global optimum
+        # A small beta ensures basin size homogeneity by not significantly distorting local curvature.
+        self.beta = 0.05 
+
+    def f(self, x):
+        """
+        Evaluates the Homogeneous Basin Cosine Quadratic function.
+        
+        The function is defined as f(x) = sum_{i=1 to dim} g(x_i), where
+        g(x_i) = (1 - cos(alpha * x_i)) + beta * x_i^2.
+        
+        - The (1 - cos(alpha * x_i)) term creates multiple local minima 
+          with homogeneous local curvature, ensuring similar basin "shapes".
+        - The beta * x_i^2 term introduces a gentle quadratic bowl, making 
+          the global minimum uniquely at x=(0, ..., 0) and slightly elevating 
+          other local minima without dramatically altering their local attraction properties.
+        
+        Args:
+            x (np.ndarray): A real-valued sample of shape (dim,).
+                            Expected to be within [-5.0, 5.0] per dimension.
+
+        Returns:
+            float: The function value.
+        """
+        if len(x) != self.dim:
+            raise ValueError(f"Input vector x must have dimension {self.dim}, but got {len(x)}")
+
+        # Calculate the 1D component for each dimension
+        g_x = (1 - np.cos(self.alpha * x)) + self.beta * (x**2)
+        
+        # Sum the components for separability
+        return np.sum(g_x)
+
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = 0.0
+[OK] f(test_point_2) = 0.25
+[OK] f(test_point_3) = 7.125
+[OK] f(test_point_4) = 6.823716519926429
+Determinism check y1=7.201836588387665, y2=7.201836588387665
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n4_samples_dim5_n1000.csv
+y min:  1.5871625605180582
+y max:  12.619967027032512
+y mean: 7.099055528765681
+y std:  1.7663799940330904
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n4.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n4_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n4_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n4_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n4.
+Feature target used: ['Basins', 'Separable']
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.

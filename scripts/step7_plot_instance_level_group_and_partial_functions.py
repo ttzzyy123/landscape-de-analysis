@@ -8,6 +8,24 @@ import matplotlib as mpl
 import catboost as cb
 
 
+# ============================================================
+# Step7: Instance-level SHAP plots
+#
+# Config:
+#   eps2bins_4_r025050075_instance
+#
+# Outputs:
+#   00_group_single/
+#       group_0_beeswarm_instance_level_d5.png
+#       ...
+#   01_all_groups_combined/
+#       all_groups_beeswarm_one_row_instance_level_d5.png
+#   02_group_with_partial_functions/
+#       group_0_with_partial_function_instances_d5.png
+#       ...
+# ============================================================
+
+
 # =========================
 # Paths
 # =========================
@@ -31,9 +49,11 @@ OUTPUT_DIR = (
     / CONFIG_NAME
 )
 
+GROUP_SINGLE_OUT_DIR = OUTPUT_DIR / "00_group_single"
 GROUP_COMBINED_OUT_DIR = OUTPUT_DIR / "01_all_groups_combined"
 GROUP_WITH_PARTIAL_FUNCTIONS_OUT_DIR = OUTPUT_DIR / "02_group_with_partial_functions"
 
+GROUP_SINGLE_OUT_DIR.mkdir(parents=True, exist_ok=True)
 GROUP_COMBINED_OUT_DIR.mkdir(parents=True, exist_ok=True)
 GROUP_WITH_PARTIAL_FUNCTIONS_OUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -251,14 +271,6 @@ def get_function_instance_text(df: pd.DataFrame):
 
 
 def get_group_function_instance_map(df_group: pd.DataFrame):
-    """
-    返回每个 function 在当前 group 中实际出现的 instances。
-    例如:
-    {
-        14: [4],
-        22: [1,2,3,4,5]
-    }
-    """
     mapping = {}
 
     pairs = (
@@ -285,12 +297,85 @@ def load_full_data():
     return df
 
 
+# ============================================================
+# Part 1: Single group beeswarm plots
+# ============================================================
+
+def plot_single_group(group_id: int, df_group: pd.DataFrame):
+    group_label = get_group_label(df_group, group_id)
+    function_text = get_functions_text(df_group)
+    instance_text = get_function_instance_text(df_group)
+
+    print(f"\nSingle group plot: G{group_id}")
+    print(f"Group label: {group_label}")
+    print(f"Functions: {function_text}")
+    print(f"Function-instances: {instance_text}")
+
+    X, shap_values, train_r2 = compute_shap(
+        df_group,
+        sample_size=GROUP_SAMPLE_SIZE,
+        random_state=42,
+    )
+
+    fig = plt.figure(figsize=(7.2, 6.8))
+    gs = fig.add_gridspec(
+        nrows=1,
+        ncols=2,
+        width_ratios=[1, 0.05],
+        wspace=0.15,
+    )
+
+    ax = fig.add_subplot(gs[0, 0])
+    cax = fig.add_subplot(gs[0, 1])
+
+    shap_dot_on_axis(
+        ax=ax,
+        shap_values=shap_values,
+        X=X,
+        show_ylabels=True,
+        title=f"Group {group_id}: {group_label}",
+        xlabel=f"SHAP on Group {group_id}",
+    )
+
+    ax.text(
+        0.0,
+        -0.24,
+        f"Functions: {function_text}\n"
+        f"Function-instances: {instance_text}\n"
+        f"Train $R^2$ = {train_r2:.4f}\n"
+        f"n function-instances = {len(df_group[['fid', 'iid']].drop_duplicates())}",
+        transform=ax.transAxes,
+        fontsize=8.0,
+        ha="left",
+        va="top",
+        wrap=True,
+    )
+
+    add_shared_colorbar(fig, cax)
+
+    fig.suptitle(
+        f"Instance-level SHAP beeswarm for Group {group_id} in $d=5$\n{CONFIG_NAME}",
+        fontsize=13,
+        y=1.02,
+    )
+
+    out_file = GROUP_SINGLE_OUT_DIR / f"group_{group_id}_beeswarm_instance_level_d5.png"
+    fig.savefig(out_file, dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
+    print(f"Saved: {out_file}")
+
+
+# ============================================================
+# Part 2: All groups combined
+# ============================================================
+
 def plot_all_groups_combined(group_records):
     print("\nCombined all-group plot")
 
     n_groups = len(group_records)
 
-    fig = plt.figure(figsize=(4.1 * n_groups + 1.0, 5.6))
+    fig = plt.figure(figsize=(4.1 * n_groups + 1.0, 5.8))
     gs = fig.add_gridspec(
         nrows=1,
         ncols=n_groups + 1,
@@ -307,8 +392,10 @@ def plot_all_groups_combined(group_records):
 
         group_label = get_group_label(df_group, group_id)
         function_text = get_functions_text(df_group)
+        instance_text = get_function_instance_text(df_group)
 
         print(f"Combined plot group {group_id}: {function_text}")
+        print(f"Instances: {instance_text}")
 
         X, shap_values, train_r2 = compute_shap(
             df_group,
@@ -328,6 +415,17 @@ def plot_all_groups_combined(group_records):
             xlabel=xlabel,
         )
 
+        axes[idx].text(
+            0.0,
+            -0.30,
+            f"n FI = {len(df_group[['fid', 'iid']].drop_duplicates())}\n"
+            f"Train $R^2$={train_r2:.3f}",
+            transform=axes[idx].transAxes,
+            fontsize=7.2,
+            ha="left",
+            va="top",
+        )
+
     add_shared_colorbar(fig, cax)
 
     fig.suptitle(
@@ -342,6 +440,10 @@ def plot_all_groups_combined(group_records):
 
     print(f"Saved: {out_file}")
 
+
+# ============================================================
+# Part 3: Group + partial function-instance comparison
+# ============================================================
 
 def plot_group_with_partial_functions(
     group_id: int,
@@ -486,18 +588,36 @@ def main():
     print("Using instance-level group data:")
     print(GROUP_DATA_DIR)
 
-    print("Output directory:")
+    print("\nOutput directory:")
     print(OUTPUT_DIR)
+
+    if not GROUP_DATA_DIR.exists():
+        raise FileNotFoundError(
+            f"Group data directory not found: {GROUP_DATA_DIR}\n"
+            "Please run Step3 first."
+        )
 
     group_files = discover_group_files(GROUP_DATA_DIR)
 
     if not group_files:
-        raise FileNotFoundError(f"No group files found in {GROUP_DATA_DIR}")
+        raise FileNotFoundError(
+            f"No group files found in {GROUP_DATA_DIR}\n"
+            "Expected files like de_final_5_group_0.pkl."
+        )
+
+    print("\nDiscovered group files:")
+    for gid, path in group_files:
+        print(f"G{gid}: {path}")
 
     group_records = []
 
     for group_id, file in group_files:
         df_group = pd.read_pickle(file)
+
+        required_cols = ["fid", "iid", "group_id", "group_label"]
+        missing = [c for c in required_cols if c not in df_group.columns]
+        if missing:
+            raise ValueError(f"Missing required columns in {file}: {missing}")
 
         group_records.append(
             {
@@ -507,13 +627,17 @@ def main():
             }
         )
 
-    # Part 1:
-    # 不再输出单个 group beeswarm，因为你已经成功生成过。
-    # 这里只输出所有 group 拼接图。
+    # Part 1: each group separately
+    for record in group_records:
+        plot_single_group(
+            group_id=record["group_id"],
+            df_group=record["df"],
+        )
+
+    # Part 2: all groups combined
     plot_all_groups_combined(group_records)
 
-    # Part 2:
-    # group + function plot，但每个 function 只使用当前 group 中实际出现的 instances。
+    # Part 3: group + partial function-instance comparison
     df_all = load_full_data()
 
     for record in group_records:
@@ -524,6 +648,7 @@ def main():
         )
 
     print("\nDone.")
+    print("Single group plots:", GROUP_SINGLE_OUT_DIR)
     print("Combined group plot:", GROUP_COMBINED_OUT_DIR)
     print("Group with partial function-instance plots:", GROUP_WITH_PARTIAL_FUNCTIONS_OUT_DIR)
 

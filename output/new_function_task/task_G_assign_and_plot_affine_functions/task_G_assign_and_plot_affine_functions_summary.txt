@@ -1,0 +1,163 @@
+================================================================================
+NEW FUNCTION TASK G: ASSIGN AND PLOT QUENTIN AFFINE FUNCTIONS
+================================================================================
+Project root: /data/s3795888/ioh_project/my_landscape_experiments
+BBOB feature file: /data/s3795888/ioh_project/my_landscape_experiments/data/features_summary_dim_5_sobol.csv
+Affine feature CSV: /data/s3795888/ioh_project/my_landscape_experiments/data/BBOB_features_generalisation_alpha_tony.csv
+Output dir: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions
+Intermediate output dir: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment
+
+================================================================================
+1. LOAD BBOB INSTANCE-LEVEL FEATURE DATA
+================================================================================
+Loading: /data/s3795888/ioh_project/my_landscape_experiments/data/features_summary_dim_5_sobol.csv
+Original shape: (5542080, 8)
+After filtering # samples == 5000: (782400, 8)
+After filtering target features: (24000, 8)
+Instance-level wide shape: (120, 5)
+BBOB instance-level feature preview:
+ Function  Instance  eps_ratio   adj_r2  label
+        1         1   0.666266 0.488447  f1_i1
+        1         2   0.795596 0.809553  f1_i2
+        1         3   0.726126 0.851309  f1_i3
+        1         4   0.741742 0.705045  f1_i4
+        1         5   0.727928 0.705438  f1_i5
+       10         1   6.114314 0.629881 f10_i1
+       10         2   6.166567 0.704312 f10_i2
+       10         3   5.991792 0.001979 f10_i3
+       10         4   6.314114 0.825704 f10_i4
+       10         5   6.279880 0.758952 f10_i5
+
+================================================================================
+2. LOAD QUENTIN AFFINE FUNCTION FEATURE DATA
+================================================================================
+Loading: /data/s3795888/ioh_project/my_landscape_experiments/data/BBOB_features_generalisation_alpha_tony.csv
+Affine feature shape: (100, 59)
+Affine function counts:
+ fid1  fid2  alpha  n_runs
+    1    23    0.9      20
+    3     6    0.9      20
+    9    12    0.9      20
+   10     6    0.9      20
+   15     8    0.9      20
+Affine feature preview:
+ fid1  fid2  alpha  rid  eps_ratio   adj_r2 function_tag
+    1    23    0.9    0   0.485485 0.609454       f1_f23
+    1    23    0.9    1   0.505506 0.596538       f1_f23
+    1    23    0.9    2   0.545546 0.617117       f1_f23
+    1    23    0.9    3   0.505506 0.593569       f1_f23
+    1    23    0.9    4   0.485485 0.600478       f1_f23
+    1    23    0.9    5   0.525526 0.609147       f1_f23
+    1    23    0.9    6   0.525526 0.616973       f1_f23
+    1    23    0.9    7   0.485485 0.616831       f1_f23
+    1    23    0.9    8   0.505506 0.607154       f1_f23
+    1    23    0.9    9   0.505506 0.601099       f1_f23
+
+################################################################################
+PROCESSING SCHEME: 0307_main
+################################################################################
+Main function-level scheme used in the thesis: eps split 3.0, adj_r2 splits 0.3 and 0.7.
+
+Affine assignment summary:
+ fid1  fid2  alpha  mean_eps_ratio  std_eps_ratio  mean_adj_r2  std_adj_r2  n_runs majority_group group_counts
+    1    23    0.9        0.504505       0.026364     0.607037    0.006699      20             G1   {"G1": 20}
+    3     6    0.9        1.691692       0.034903     0.401781    0.008107      20             G1   {"G1": 20}
+    9    12    0.9        4.430430       0.036441     0.040342    0.011422      20             G3   {"G3": 20}
+   10     6    0.9        6.000000       0.050927     0.778109    0.009834      20             G5   {"G5": 20}
+   15     8    0.9        1.942943       0.034736     0.510147    0.037153      20             G1   {"G1": 20}
+[OK] BBOB assignment saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/0307_main/bbob_instance_assignment_0307_main.csv
+[OK] Affine runs assignment saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/0307_main/affine_runs_assignment_0307_main.csv
+[OK] Affine summary saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/0307_main/affine_summary_assignment_0307_main.csv
+[OK] Scheme config saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/0307_main/scheme_config_0307_main.json
+
+================================================================================
+PLOT SCHEME: 0307_main
+================================================================================
+[OK] Plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_functions_assignment_0307_main.png
+[OK] PDF saved to:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_functions_assignment_0307_main.pdf
+
+================================================================================
+PLOT INDIVIDUAL AFFINE FUNCTIONS: 0307_main
+================================================================================
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f1_f23_assignment_0307_main.png
+[OK] Individual PDF saved to:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f1_f23_assignment_0307_main.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f3_f6_assignment_0307_main.png
+[OK] Individual PDF saved to:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f3_f6_assignment_0307_main.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f9_f12_assignment_0307_main.png
+[OK] Individual PDF saved to:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f9_f12_assignment_0307_main.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f10_f6_assignment_0307_main.png
+[OK] Individual PDF saved to:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f10_f6_assignment_0307_main.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f15_f8_assignment_0307_main.png
+[OK] Individual PDF saved to:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f15_f8_assignment_0307_main.pdf
+
+################################################################################
+PROCESSING SCHEME: eps2bins_4_r025050075_instance
+################################################################################
+Instance-level fine-grained scheme: eps split 3.0, adj_r2 splits 0.25, 0.50 and 0.75.
+
+Affine assignment summary:
+ fid1  fid2  alpha  mean_eps_ratio  std_eps_ratio  mean_adj_r2  std_adj_r2  n_runs majority_group        group_counts
+    1    23    0.9        0.504505       0.026364     0.607037    0.006699      20             G2          {"G2": 20}
+    3     6    0.9        1.691692       0.034903     0.401781    0.008107      20             G1          {"G1": 20}
+    9    12    0.9        4.430430       0.036441     0.040342    0.011422      20             G4          {"G4": 20}
+   10     6    0.9        6.000000       0.050927     0.778109    0.009834      20             G7 {"G6": 1, "G7": 19}
+   15     8    0.9        1.942943       0.034736     0.510147    0.037153      20             G2 {"G1": 8, "G2": 12}
+[OK] BBOB assignment saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/eps2bins_4_r025050075_instance/bbob_instance_assignment_eps2bins_4_r025050075_instance.csv
+[OK] Affine runs assignment saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/eps2bins_4_r025050075_instance/affine_runs_assignment_eps2bins_4_r025050075_instance.csv
+[OK] Affine summary saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/eps2bins_4_r025050075_instance/affine_summary_assignment_eps2bins_4_r025050075_instance.csv
+[OK] Scheme config saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/eps2bins_4_r025050075_instance/scheme_config_eps2bins_4_r025050075_instance.json
+
+================================================================================
+PLOT SCHEME: eps2bins_4_r025050075_instance
+================================================================================
+[OK] Plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_functions_assignment_eps2bins_4_r025050075_instance.png
+[OK] PDF saved to:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_functions_assignment_eps2bins_4_r025050075_instance.pdf
+
+================================================================================
+PLOT INDIVIDUAL AFFINE FUNCTIONS: eps2bins_4_r025050075_instance
+================================================================================
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f1_f23_assignment_eps2bins_4_r025050075_instance.png
+[OK] Individual PDF saved to:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f1_f23_assignment_eps2bins_4_r025050075_instance.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f3_f6_assignment_eps2bins_4_r025050075_instance.png
+[OK] Individual PDF saved to:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f3_f6_assignment_eps2bins_4_r025050075_instance.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f9_f12_assignment_eps2bins_4_r025050075_instance.png
+[OK] Individual PDF saved to:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f9_f12_assignment_eps2bins_4_r025050075_instance.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f10_f6_assignment_eps2bins_4_r025050075_instance.png
+[OK] Individual PDF saved to:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f10_f6_assignment_eps2bins_4_r025050075_instance.pdf
+[OK] Individual plot saved to: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f15_f8_assignment_eps2bins_4_r025050075_instance.png
+[OK] Individual PDF saved to:  /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f15_f8_assignment_eps2bins_4_r025050075_instance.pdf
+
+================================================================================
+TASK G CONCLUSION
+================================================================================
+[SUCCESS] Quentin affine functions assigned and plotted.
+
+Combined plots:
+  0307_main: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_functions_assignment_0307_main.png
+  eps2bins_4_r025050075_instance: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_functions_assignment_eps2bins_4_r025050075_instance.png
+
+Intermediate files:
+  Scheme: 0307_main
+    bbob_file: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/0307_main/bbob_instance_assignment_0307_main.csv
+    affine_runs_file: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/0307_main/affine_runs_assignment_0307_main.csv
+    affine_summary_file: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/0307_main/affine_summary_assignment_0307_main.csv
+    scheme_json_file: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/0307_main/scheme_config_0307_main.json
+  Scheme: eps2bins_4_r025050075_instance
+    bbob_file: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/eps2bins_4_r025050075_instance/bbob_instance_assignment_eps2bins_4_r025050075_instance.csv
+    affine_runs_file: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/eps2bins_4_r025050075_instance/affine_runs_assignment_eps2bins_4_r025050075_instance.csv
+    affine_summary_file: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/eps2bins_4_r025050075_instance/affine_summary_assignment_eps2bins_4_r025050075_instance.csv
+    scheme_json_file: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/eps2bins_4_r025050075_instance/scheme_config_eps2bins_4_r025050075_instance.json
+
+Individual plots:
+  0307_main | f1_f23: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f1_f23_assignment_0307_main.png
+  0307_main | f3_f6: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f3_f6_assignment_0307_main.png
+  0307_main | f9_f12: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f9_f12_assignment_0307_main.png
+  0307_main | f10_f6: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f10_f6_assignment_0307_main.png
+  0307_main | f15_f8: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f15_f8_assignment_0307_main.png
+  eps2bins_4_r025050075_instance | f1_f23: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f1_f23_assignment_eps2bins_4_r025050075_instance.png
+  eps2bins_4_r025050075_instance | f3_f6: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f3_f6_assignment_eps2bins_4_r025050075_instance.png
+  eps2bins_4_r025050075_instance | f9_f12: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f9_f12_assignment_eps2bins_4_r025050075_instance.png
+  eps2bins_4_r025050075_instance | f10_f6: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f10_f6_assignment_eps2bins_4_r025050075_instance.png
+  eps2bins_4_r025050075_instance | f15_f8: /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_G_assign_and_plot_affine_functions/affine_function_f15_f8_assignment_eps2bins_4_r025050075_instance.png
+
+Next step: run H0 modDE performance experiments on these affine functions, then run H SHAP.

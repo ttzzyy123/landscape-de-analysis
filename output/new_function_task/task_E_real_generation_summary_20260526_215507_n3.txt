@@ -1,0 +1,130 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n3
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260526_215507
+Function tag:     n3
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n3.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n3_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n3_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n3_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260526_215507_n3.txt
+Target features:  ['Separable', 'Homogeneous']
+Budget:           55
+Fitness sharing:  True
+Niche radius:     0.5
+Adaptive radius:  True
+Elitism:          False
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['Separable', 'Homogeneous']
+  dims     = [5]
+  prompt length = 1529
+Initialized LLaMEA:
+  n_parents   = 8
+  n_offspring = 16
+  budget      = 55
+  log         = True
+  max_workers = 4
+  elitism     = False
+  niching     = sharing
+  distance    = ela_distance
+  radius      = 0.5
+  adaptive    = True
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: landscape
+Description:   A separable, smooth, and homogeneous optimization benchmark function that creates a bowl-shaped landscape where the steepness of the walls continuously increases with distance from the global optimum at the origin.
+Fitness:       0.9984185099601746
+Feedback:      The optimization landscape landscape scored on:Separable 1.000, Homogeneous 0.997,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+
+class landscape:
+    
+    def __init__(self, dim=5):
+        self.dim = dim
+        # C: Controls the maximum additional scaling factor for steepness. Higher C means steeper edges.
+        # k: Controls how quickly the arctan term approaches its maximum value, influencing the transition rate of steepness.
+        self.C = 0.8  # Positive constant for steepness scaling
+        self.k = 0.5  # Positive constant for arctan argument scaling
+
+    def f(self, x):
+        """
+        Evaluates the Scaled Arc-Bowl function for a given input vector x.
+
+        The function is defined as a sum of individual dimensional components:
+        f(x) = sum_{i=1}^{dim} (x_i^2 * (1 + C * arctan(k * x_i^2)))
+
+        This creates a bowl-shaped landscape. The x_i^2 term ensures a quadratic base,
+        while the (1 + C * arctan(k * x_i^2)) term provides a smooth, non-linear
+        scaling factor. As |x_i| increases, arctan(k * x_i^2) smoothly increases
+        from 0 towards pi/2, making the function increasingly steeper further from
+        the origin.
+
+        The global minimum is at x = [0, ..., 0], where f(x) = 0.
+
+        Args:
+            x (np.ndarray): A real-valued sample vector of dimension `self.dim`.
+
+        Returns:
+            float: The scalar evaluation of the function at x.
+        """
+        if not isinstance(x, np.ndarray):
+            x = np.array(x)
+        if x.shape[0] != self.dim:
+            raise ValueError(f"Input vector x must have dimension {self.dim}, but got {x.shape[0]}")
+
+        # Calculate the term for each dimension: x_i^2 * (1 + C * arctan(k * x_i^2))
+        # np.arctan computes the element-wise arctangent.
+        term_per_dim = x**2 * (1 + self.C * np.arctan(self.k * x**2))
+        
+        # Sum the terms across all dimensions to get the final function value
+        return np.sum(term_per_dim)
+
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = 0.0
+[OK] f(test_point_2) = 6.854590436003225
+[OK] f(test_point_3) = 134.74958746583076
+[OK] f(test_point_4) = 86.11815311818607
+Determinism check y1=108.49684503677699, y2=108.49684503677699
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n3_samples_dim5_n1000.csv
+y min:  2.4194950338680434
+y max:  194.56463128302653
+y mean: 87.62317483607241
+y std:  36.92615807111541
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n3.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n3_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n3_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n3_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n3.
+Feature target used: ['Separable', 'Homogeneous']
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.

@@ -1,0 +1,122 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n8
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260526_215507
+Function tag:     n8
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n8.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n8_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n8_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n8_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260526_215507_n8.txt
+Target features:  ['Homogeneous', 'Basins']
+Budget:           55
+Fitness sharing:  True
+Niche radius:     0.5
+Adaptive radius:  True
+Elitism:          False
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['Homogeneous', 'Basins']
+  dims     = [5]
+  prompt length = 1455
+Initialized LLaMEA:
+  n_parents   = 8
+  n_offspring = 16
+  budget      = 55
+  log         = True
+  max_workers = 4
+  elitism     = False
+  niching     = sharing
+  distance    = ela_distance
+  radius      = 0.5
+  adaptive    = True
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: landscape
+Description:   A Rastrigin-inspired function with a significantly flattened quadratic component to ensure uniform ruggedness and basin sizes across the search space.
+Fitness:       0.9993214011192322
+Feedback:      The optimization landscape landscape scored on:Homogeneous 1.000, Basins 0.999,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+
+class landscape:
+    
+    def __init__(self, dim=5):
+        self.dim = dim
+        # Amplitude of the cosine waves and a constant offset for the Rastrigin-like term.
+        self.A = 10.0 
+        # Frequency of the cosine waves, set to ensure local minima at integer points.
+        self.period_freq = 2 * np.pi 
+        # This scale factor significantly flattens the quadratic bowl component.
+        # For the given search space [-5, 5] for each dimension, (x/self.quad_scale)^2 
+        # will range from 0 to (5/5)^2 = 1.
+        # This makes the periodic term (amplitude A=10) much more dominant than the quadratic term
+        # across the entire domain, thus promoting homogeneous search space appearance and
+        # more uniform basin sizes.
+        self.quad_scale = 5.0 
+
+    def f(self, x):
+        # Ensure x is a numpy array for vectorized operations
+        x = np.asarray(x)
+        
+        # Term 1: The flattened quadratic bowl component.
+        # This provides a gentle global trend towards the origin.
+        term1 = (x / self.quad_scale)**2
+        
+        # Term 2: The periodic component creating many local minima.
+        # The constant amplitude self.A ensures these ripples are significant
+        # and contribute to the function's ruggedness across the entire domain.
+        term2 = self.A * np.cos(self.period_freq * x)
+        
+        # The function value is the sum of (term1 - term2) over all dimensions,
+        # plus an offset (self.A * self.dim) to ensure the global minimum is 0 at x = [0, ..., 0].
+        # At x=0, term1=0, term2=self.A, so sum(-self.A) + self.A * self.dim = -self.A * self.dim + self.A * self.dim = 0.
+        return np.sum(term1 - term2) + self.A * self.dim
+
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = 0.0
+[OK] f(test_point_2) = 0.19999999999999574
+[OK] f(test_point_3) = 42.5
+[OK] f(test_point_4) = 49.32995108931311
+Determinism check y1=48.319873139320805, y2=48.319873139320805
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n8_samples_dim5_n1000.csv
+y min:  7.478691066612612
+y max:  96.0525695692587
+y mean: 51.84294855394312
+y std:  15.94074881047373
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n8.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n8_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n8_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n8_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n8.
+Feature target used: ['Homogeneous', 'Basins']
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.

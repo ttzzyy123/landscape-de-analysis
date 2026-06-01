@@ -1,0 +1,133 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n5
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260526_215507
+Function tag:     n5
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n5.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n5_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n5_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n5_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260526_215507_n5.txt
+Target features:  ['GlobalLocal', 'NOT Basins']
+Budget:           55
+Fitness sharing:  True
+Niche radius:     0.5
+Adaptive radius:  True
+Elitism:          False
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['GlobalLocal', 'NOT Basins']
+  dims     = [5]
+  prompt length = 1597
+Initialized LLaMEA:
+  n_parents   = 8
+  n_offspring = 16
+  budget      = 55
+  log         = True
+  max_workers = 4
+  elitism     = False
+  niching     = sharing
+  distance    = ela_distance
+  radius      = 0.5
+  adaptive    = True
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: landscape
+Description:   A multi-modal landscape with a deep global minimum, a regular oscillatory term, and an amplitude-modulated high-frequency term to achieve strong global-local contrast and varied basin sizes.
+Fitness:       0.4972460263525136
+Feedback:      The optimization landscape landscape scored on:GlobalLocal 0.001, NOT Basins 0.993,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+
+class landscape:
+    
+    def __init__(self, dim):
+        """
+        Initializes the optimization landscape for a given number of dimensions.
+
+        Args:
+            dim (int): The number of dimensions for the search space.
+        """
+        self.dim = dim
+
+    def f(self, x):
+        """
+        Evaluates the novel benchmark function at a given point x.
+        The search space for each dimension x_i is [-5.0, 5.0].
+
+        The function is designed to have the following properties:
+        -   Minimization problem: The global optimum is the minimum value.
+        -   Global Local Minima Contrast: The global minimum is significantly
+            lower than any local minima, making it easily distinguishable.
+        -   NOT Basin Size Homogeneity: The basins of attraction for different
+            minima vary in size and "width", creating a non-uniform search landscape.
+
+        Args:
+            x (np.ndarray): A real-valued sample point (vector) in the search space.
+                            Must have shape (self.dim,).
+
+        Returns:
+            float: The scalar fitness value of the function at point x.
+        """
+        # Ensure x is a numpy array and has the correct dimension
+        x = np.asarray(x)
+        if x.shape != (self.dim,):
+            raise ValueError(f"Input vector x must have dimension {self.dim}, but got {x.shape[0]}")
+
+        # Term 1: Deep global minimum at (0, ..., 0)
+        # This term creates a very low function value at the origin,
+        # ensuring high global-local minima contrast. Its influence quickly
+        # diminishes as x moves away from the origin, resembling a deep well.
+        term_global_well = -300.0 * np.exp(-np.sum(x**2) / (self.dim * 0.5))
+
+        # Term 2: Primary oscillatory component for local minima
+        # Creates a grid of local minima, relatively uniformly spaced.
+        # These local minima are much higher than the global minimum.
+        # This term contributes 0 at intege
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = -300.0
+[OK] f(test_point_2) = -40.60058497098381
+[OK] f(test_point_3) = 91.99999999583362
+[OK] f(test_point_4) = 105.19274253068879
+Determinism check y1=123.262101421323, y2=123.262101421323
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n5_samples_dim5_n1000.csv
+y min:  12.572898528715063
+y max:  214.05825791320228
+y mean: 114.92145102384754
+y std:  33.03271400068772
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n5.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n5_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n5_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n5_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n5.
+Feature target used: ['GlobalLocal', 'NOT Basins']
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.

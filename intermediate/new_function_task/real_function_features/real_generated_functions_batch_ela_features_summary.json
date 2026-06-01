@@ -1,146 +1,146 @@
 [
   {
     "status": "success",
-    "run_id": "20260519_225148",
+    "run_id": "20260526_215507",
     "function_tag": "n1",
-    "full_id": "20260519_225148_n1",
-    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n1.py",
+    "full_id": "20260526_215507_n1",
+    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n1.py",
     "feature_means": {
-      "ic.eps.ratio": 0.7177177177177174,
-      "ela_meta.lin_simple.adj_r2": 8.318745637208025e-05
+      "ic.eps.ratio": 0.7617617617617615,
+      "ela_meta.lin_simple.adj_r2": 0.001794750722710714
     },
     "feature_stds": {
-      "ic.eps.ratio": 0.022826334836819537,
-      "ela_meta.lin_simple.adj_r2": 0.0032294585315546147
+      "ic.eps.ratio": 0.0358129005405371,
+      "ela_meta.lin_simple.adj_r2": 0.0035702526356651615
     },
-    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n1_ela_features_repeats.csv",
-    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n1_ela_features_summary.json",
-    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260519_225148_n1.txt"
+    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n1_ela_features_repeats.csv",
+    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n1_ela_features_summary.json",
+    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260526_215507_n1.txt"
   },
   {
     "status": "success",
-    "run_id": "20260519_225148",
+    "run_id": "20260526_215507",
     "function_tag": "n2",
-    "full_id": "20260519_225148_n2",
-    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n2.py",
+    "full_id": "20260526_215507_n2",
+    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n2.py",
     "feature_means": {
-      "ic.eps.ratio": 1.0100100100100096,
-      "ela_meta.lin_simple.adj_r2": -0.0001639399768946559
+      "ic.eps.ratio": 0.7057057057057055,
+      "ela_meta.lin_simple.adj_r2": 0.0004190242358597995
     },
     "feature_stds": {
-      "ic.eps.ratio": 0.026102912533343927,
-      "ela_meta.lin_simple.adj_r2": 0.0017334611886408052
+      "ic.eps.ratio": 0.024519416844676404,
+      "ela_meta.lin_simple.adj_r2": 0.0042271675528311355
     },
-    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n2_ela_features_repeats.csv",
-    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n2_ela_features_summary.json",
-    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260519_225148_n2.txt"
+    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n2_ela_features_repeats.csv",
+    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n2_ela_features_summary.json",
+    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260526_215507_n2.txt"
   },
   {
     "status": "success",
-    "run_id": "20260519_225148",
+    "run_id": "20260526_215507",
     "function_tag": "n3",
-    "full_id": "20260519_225148_n3",
-    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n3.py",
+    "full_id": "20260526_215507_n3",
+    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n3.py",
     "feature_means": {
-      "ic.eps.ratio": 0.9459459459459456,
-      "ela_meta.lin_simple.adj_r2": -0.0016749025549629426
+      "ic.eps.ratio": 0.9499499499499494,
+      "ela_meta.lin_simple.adj_r2": 0.0005099589183582998
     },
     "feature_stds": {
-      "ic.eps.ratio": 0.020020020020019902,
-      "ela_meta.lin_simple.adj_r2": 0.0008991270391908474
+      "ic.eps.ratio": 0.021930833133339853,
+      "ela_meta.lin_simple.adj_r2": 0.004113024954700759
     },
-    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n3_ela_features_repeats.csv",
-    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n3_ela_features_summary.json",
-    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260519_225148_n3.txt"
+    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n3_ela_features_repeats.csv",
+    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n3_ela_features_summary.json",
+    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260526_215507_n3.txt"
   },
   {
     "status": "success",
-    "run_id": "20260519_225148",
+    "run_id": "20260526_215507",
     "function_tag": "n4",
-    "full_id": "20260519_225148_n4",
-    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n4.py",
+    "full_id": "20260526_215507_n4",
+    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n4.py",
+    "feature_means": {
+      "ic.eps.ratio": -0.08308308308308306,
+      "ela_meta.lin_simple.adj_r2": -0.00045417055695566865
+    },
+    "feature_stds": {
+      "ic.eps.ratio": 0.010965416566670012,
+      "ela_meta.lin_simple.adj_r2": 0.0028772970973454416
+    },
+    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n4_ela_features_repeats.csv",
+    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n4_ela_features_summary.json",
+    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260526_215507_n4.txt"
+  },
+  {
+    "status": "success",
+    "run_id": "20260526_215507",
+    "function_tag": "n5",
+    "full_id": "20260526_215507_n5",
+    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n5.py",
+    "feature_means": {
+      "ic.eps.ratio": 1.2262262262262256,
+      "ela_meta.lin_simple.adj_r2": 0.0009694329549818637
+    },
+    "feature_stds": {
+      "ic.eps.ratio": 0.028312583831293186,
+      "ela_meta.lin_simple.adj_r2": 0.0031065401154482595
+    },
+    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n5_ela_features_repeats.csv",
+    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n5_ela_features_summary.json",
+    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260526_215507_n5.txt"
+  },
+  {
+    "status": "success",
+    "run_id": "20260526_215507",
+    "function_tag": "n6",
+    "full_id": "20260526_215507_n6",
+    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n6.py",
+    "feature_means": {
+      "ic.eps.ratio": 0.9699699699699696,
+      "ela_meta.lin_simple.adj_r2": 0.24152975219291667
+    },
+    "feature_stds": {
+      "ic.eps.ratio": 0.016749950481162696,
+      "ela_meta.lin_simple.adj_r2": 0.023650260443758737
+    },
+    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n6_ela_features_repeats.csv",
+    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n6_ela_features_summary.json",
+    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260526_215507_n6.txt"
+  },
+  {
+    "status": "success",
+    "run_id": "20260526_215507",
+    "function_tag": "n7",
+    "full_id": "20260526_215507_n7",
+    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n7.py",
+    "feature_means": {
+      "ic.eps.ratio": 0.9699699699699694,
+      "ela_meta.lin_simple.adj_r2": -0.0007132280535561364
+    },
+    "feature_stds": {
+      "ic.eps.ratio": 0.021930833133340006,
+      "ela_meta.lin_simple.adj_r2": 0.0011820816961068158
+    },
+    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n7_ela_features_repeats.csv",
+    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n7_ela_features_summary.json",
+    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260526_215507_n7.txt"
+  },
+  {
+    "status": "success",
+    "run_id": "20260526_215507",
+    "function_tag": "n8",
+    "full_id": "20260526_215507_n8",
+    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n8.py",
     "feature_means": {
       "ic.eps.ratio": 0.9299299299299296,
-      "ela_meta.lin_simple.adj_r2": 0.0018732115145408956
+      "ela_meta.lin_simple.adj_r2": 0.001881784963552846
     },
     "feature_stds": {
       "ic.eps.ratio": 0.03289624970000994,
-      "ela_meta.lin_simple.adj_r2": 0.0020593582798781244
+      "ela_meta.lin_simple.adj_r2": 0.0020546050196015146
     },
-    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n4_ela_features_repeats.csv",
-    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n4_ela_features_summary.json",
-    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260519_225148_n4.txt"
-  },
-  {
-    "status": "success",
-    "run_id": "20260519_225148",
-    "function_tag": "n5",
-    "full_id": "20260519_225148_n5",
-    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n5.py",
-    "feature_means": {
-      "ic.eps.ratio": 1.2942942942942937,
-      "ela_meta.lin_simple.adj_r2": -0.0012294882372006154
-    },
-    "feature_stds": {
-      "ic.eps.ratio": 0.01790645027026858,
-      "ela_meta.lin_simple.adj_r2": 0.0018671225704203047
-    },
-    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n5_ela_features_repeats.csv",
-    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n5_ela_features_summary.json",
-    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260519_225148_n5.txt"
-  },
-  {
-    "status": "success",
-    "run_id": "20260519_225148",
-    "function_tag": "n6",
-    "full_id": "20260519_225148_n6",
-    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n6.py",
-    "feature_means": {
-      "ic.eps.ratio": 1.3783783783783778,
-      "ela_meta.lin_simple.adj_r2": -0.002577325487933857
-    },
-    "feature_stds": {
-      "ic.eps.ratio": 0.01790645027026867,
-      "ela_meta.lin_simple.adj_r2": 0.0009786367523251637
-    },
-    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n6_ela_features_repeats.csv",
-    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n6_ela_features_summary.json",
-    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260519_225148_n6.txt"
-  },
-  {
-    "status": "success",
-    "run_id": "20260519_225148",
-    "function_tag": "n7",
-    "full_id": "20260519_225148_n7",
-    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n7.py",
-    "feature_means": {
-      "ic.eps.ratio": 1.8028028028028025,
-      "ela_meta.lin_simple.adj_r2": -0.0016223332974737215
-    },
-    "feature_stds": {
-      "ic.eps.ratio": 0.008953225135134388,
-      "ela_meta.lin_simple.adj_r2": 0.001354322624028822
-    },
-    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n7_ela_features_repeats.csv",
-    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n7_ela_features_summary.json",
-    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260519_225148_n7.txt"
-  },
-  {
-    "status": "success",
-    "run_id": "20260519_225148",
-    "function_tag": "n8",
-    "full_id": "20260519_225148_n8",
-    "function_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n8.py",
-    "feature_means": {
-      "ic.eps.ratio": -0.07907907907907907,
-      "ela_meta.lin_simple.adj_r2": -0.0003861242976324064
-    },
-    "feature_stds": {
-      "ic.eps.ratio": 0.02193083313333998,
-      "ela_meta.lin_simple.adj_r2": 0.002554065329895313
-    },
-    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n8_ela_features_repeats.csv",
-    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260519_225148_n8_ela_features_summary.json",
-    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260519_225148_n8.txt"
+    "repeats_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n8_ela_features_repeats.csv",
+    "summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features/real_generated_function_20260526_215507_n8_ela_features_summary.json",
+    "text_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_F_compute_real_generated_function_ela_features_summary_20260526_215507_n8.txt"
   }
 ]

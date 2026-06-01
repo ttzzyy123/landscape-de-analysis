@@ -18,11 +18,17 @@ import numpy as np
 # 1. Generate multiple real continuous optimization functions in one run
 # 2. Save them as n1, n2, ... under the same unified directories
 # 3. Do not overwrite previous generated functions because every run has a new RUN_ID
-# 4. Use paired/combined high-level targets, following the strategy used in the
-#    LLaMEA paper to improve landscape diversity.
+# 4. Use paired/combined high-level targets.
+# 5. Enable the repository's built-in ELA-space fitness sharing / niching:
+#      niching="sharing", distance_metric=ela_distance,
+#      niche_radius=0.5, adaptive_niche_radius=True.
+#    This is the key diversity mechanism from the LLaMEA paper.
 #
 # Manual override:
 #   LLAMEA_FEATURES=Multimodality,GlobalLocal python scripts/new_function_task_E_real_automatic_landscape_generation.py
+#
+# Sharing override:
+#   LLAMEA_ENABLE_SHARING=false python scripts/new_function_task_E_real_automatic_landscape_generation.py
 #
 # API key safety:
 # - This script can load API keys from:
@@ -63,11 +69,26 @@ LOWER_BOUND = -5.0
 UPPER_BOUND = 5.0
 RANDOM_SEED = 42
 
-LLAMEA_BUDGET = int(os.environ.get("LLAMEA_BUDGET", "3"))
-N_PARENTS = int(os.environ.get("LLAMEA_N_PARENTS", "1"))
-N_OFFSPRING = int(os.environ.get("LLAMEA_N_OFFSPRING", "1"))
-MAX_WORKERS = int(os.environ.get("LLAMEA_MAX_WORKERS", "1"))
+# Paper-style default settings for population-level generation.
+# The LLaMEA paper uses a parent population μ=8 and offspring population λ=16,
+# with a comma strategy / no elitism to encourage exploration.
+LLAMEA_BUDGET = int(os.environ.get("LLAMEA_BUDGET", "55"))
+N_PARENTS = int(os.environ.get("LLAMEA_N_PARENTS", "8"))
+N_OFFSPRING = int(os.environ.get("LLAMEA_N_OFFSPRING", "16"))
+MAX_WORKERS = int(os.environ.get("LLAMEA_MAX_WORKERS", "4"))
 EVAL_TIMEOUT = int(os.environ.get("LLAMEA_EVAL_TIMEOUT", "60"))
+
+# Enable the repository's built-in ELA-space fitness sharing / niching.
+ENABLE_FITNESS_SHARING = os.environ.get("LLAMEA_ENABLE_SHARING", "true").lower() in {
+    "1", "true", "yes", "y"
+}
+NICHE_RADIUS = float(os.environ.get("LLAMEA_NICHE_RADIUS", "0.5"))
+ADAPTIVE_NICHE_RADIUS = os.environ.get("LLAMEA_ADAPTIVE_NICHE_RADIUS", "true").lower() in {
+    "1", "true", "yes", "y"
+}
+ELITISM = os.environ.get("LLAMEA_ELITISM", "false").lower() in {
+    "1", "true", "yes", "y"
+}
 
 # ============================================================
 # Feature target strategy
@@ -268,13 +289,13 @@ def import_llamea_components(lines):
     try:
         import llamea
         from llamea import LLaMEA
-        from ELA import ELAproblem
+        from ELA import ELAproblem, ela_distance
 
         available = dir(llamea)
-        write_line(lines, "[OK] Imported LLaMEA and ELAproblem")
+        write_line(lines, "[OK] Imported LLaMEA, ELAproblem, and ela_distance")
         write_line(lines, f"Available llamea exports: {available}")
 
-        return llamea, LLaMEA, ELAproblem
+        return llamea, LLaMEA, ELAproblem, ela_distance
 
     except Exception as e:
         write_line(lines, "[ERROR] Failed to import LLaMEA components")
@@ -581,6 +602,12 @@ y = obj.f(x)
         "n_offspring": N_OFFSPRING,
         "max_workers": MAX_WORKERS,
         "eval_timeout": EVAL_TIMEOUT,
+        "fitness_sharing_enabled": ENABLE_FITNESS_SHARING,
+        "niching": "sharing" if ENABLE_FITNESS_SHARING else None,
+        "distance_metric": "ela_distance" if ENABLE_FITNESS_SHARING else None,
+        "niche_radius": NICHE_RADIUS,
+        "adaptive_niche_radius": ADAPTIVE_NICHE_RADIUS,
+        "elitism": ELITISM,
         "validation_result": validation_result,
         "sampling_summary": sampling_summary,
         "next_step": (
@@ -618,7 +645,7 @@ y = obj.f(x)
     write_line(lines, f"[OK] Samples saved to: {paths['samples_file']}")
 
 
-def run_single_generation(function_tag, llamea_module, LLaMEA, ELAproblem, llm, llm_info):
+def run_single_generation(function_tag, llamea_module, LLaMEA, ELAproblem, ela_distance, llm, llm_info):
     """
     Generate one real LLM function and save it independently.
     """
@@ -641,6 +668,10 @@ def run_single_generation(function_tag, llamea_module, LLaMEA, ELAproblem, llm, 
     write_line(lines, f"Summary file:     {paths['summary_file']}")
     write_line(lines, f"Target features:  {feature_targets}")
     write_line(lines, f"Budget:           {LLAMEA_BUDGET}")
+    write_line(lines, f"Fitness sharing:  {ENABLE_FITNESS_SHARING}")
+    write_line(lines, f"Niche radius:     {NICHE_RADIUS}")
+    write_line(lines, f"Adaptive radius:  {ADAPTIVE_NICHE_RADIUS}")
+    write_line(lines, f"Elitism:          {ELITISM}")
 
     try:
         write_line(lines, "\n" + "=" * 80)
@@ -669,12 +700,16 @@ def run_single_generation(function_tag, llamea_module, LLaMEA, ELAproblem, llm, 
             n_offspring=N_OFFSPRING,
             role_prompt="You are an expert in continuous black-box optimization benchmark generation.",
             task_prompt=task_prompt,
-            experiment_name=f"new-function-task-E-real-generation-{RUN_ID}-{function_tag}",
-            elitism=True,
+            experiment_name=f"new-function-task-E-real-generation-{RUN_ID}-{function_tag}-sharing",
+            elitism=ELITISM,
             budget=LLAMEA_BUDGET,
             log=True,
             minimization=False,
             max_workers=MAX_WORKERS,
+            niching="sharing" if ENABLE_FITNESS_SHARING else None,
+            distance_metric=ela_distance if ENABLE_FITNESS_SHARING else None,
+            niche_radius=NICHE_RADIUS,
+            adaptive_niche_radius=ADAPTIVE_NICHE_RADIUS,
         )
 
         write_line(lines, "Initialized LLaMEA:")
@@ -683,6 +718,11 @@ def run_single_generation(function_tag, llamea_module, LLaMEA, ELAproblem, llm, 
         write_line(lines, f"  budget      = {LLAMEA_BUDGET}")
         write_line(lines, "  log         = True")
         write_line(lines, f"  max_workers = {MAX_WORKERS}")
+        write_line(lines, f"  elitism     = {ELITISM}")
+        write_line(lines, f"  niching     = {'sharing' if ENABLE_FITNESS_SHARING else None}")
+        write_line(lines, f"  distance    = {'ela_distance' if ENABLE_FITNESS_SHARING else None}")
+        write_line(lines, f"  radius      = {NICHE_RADIUS}")
+        write_line(lines, f"  adaptive    = {ADAPTIVE_NICHE_RADIUS}")
 
         result = optimizer.run()
 
@@ -773,7 +813,7 @@ def main():
     try:
         load_local_env_file(master_lines)
         add_external_package_to_path(master_lines)
-        llamea_module, LLaMEA, ELAproblem = import_llamea_components(master_lines)
+        llamea_module, LLaMEA, ELAproblem, ela_distance = import_llamea_components(master_lines)
         llm, llm_info = create_real_llm(llamea_module, master_lines)
 
         results = []
@@ -792,6 +832,7 @@ def main():
                 llamea_module=llamea_module,
                 LLaMEA=LLaMEA,
                 ELAproblem=ELAproblem,
+                ela_distance=ela_distance,
                 llm=llm,
                 llm_info=llm_info,
             )

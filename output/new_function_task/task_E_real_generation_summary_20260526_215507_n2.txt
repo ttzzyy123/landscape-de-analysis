@@ -1,0 +1,136 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n2
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260526_215507
+Function tag:     n2
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n2.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n2_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n2_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n2_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260526_215507_n2.txt
+Target features:  ['NOT Homogeneous', 'Multimodality']
+Budget:           55
+Fitness sharing:  True
+Niche radius:     0.5
+Adaptive radius:  True
+Elitism:          False
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['NOT Homogeneous', 'Multimodality']
+  dims     = [5]
+  prompt length = 1436
+Initialized LLaMEA:
+  n_parents   = 8
+  n_offspring = 16
+  budget      = 55
+  log         = True
+  max_workers = 4
+  elitism     = False
+  niching     = sharing
+  distance    = ela_distance
+  radius      = 0.5
+  adaptive    = True
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: landscape
+Description:   A landscape whose multimodality and ruggedness dynamically transform across distinct radial zones, exhibiting phase transitions in its functional form and creating varying local minima depths and frequencies.
+Fitness:       0.7566374987363815
+Feedback:      The optimization landscape landscape scored on:NOT Homogeneous 0.521, Multimodality 0.993,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+
+class landscape:
+    
+    def __init__(self, dim=5):
+        self.dim = dim
+        # Define transition points for different behavioral phases
+        # These values are chosen to create distinct regions within the [-5, 5] search space
+        self.transition_point_1 = 1.2
+        self.transition_point_2 = 3.0
+        
+        # Coefficients for modulating multimodality and ruggedness in each phase
+        # These values control amplitude and frequency of oscillations
+        self.a1, self.b1 = 0.05, 4.0 * np.pi  # Gentle oscillations near origin
+        self.a2, self.b2 = 0.4, 8.0 * np.pi   # Moderate oscillations in mid-range
+        self.a3, self.b3 = 1.2, 12.0 * np.pi  # Strong oscillations in outer range
+        self.a4, self.b4 = 0.08, 20.0 * np.pi # Very high frequency noise for extreme ruggedness
+
+    def f(self, x):
+        """
+        Evaluates the "Adaptive Terrain Modulator" function for a given input vector x.
+
+        The function constructs a non-homogeneous, multimodal landscape by applying
+        different mathematical forms and oscillation patterns based on the magnitude
+        of each dimension's coordinate. The global minimum is at x=0, with f(0)=0.
+
+        Args:
+            x (np.ndarray): A real-valued sample vector.
+
+        Returns:
+            float: The function value.
+        """
+        if not isinstance(x, np.ndarray):
+            x = np.array(x)
+
+        if x.shape[0] != self.dim:
+            raise ValueError(f"Input vector x must have dimension {self.dim}")
+        
+        total_value = 0.0
+        
+        for i in range(self.dim):
+            xi = x[i]
+            abs_xi = np.abs(xi)
+            
+            # Base quadratic structure to guide towards the global minimum at x=0
+            # This term ensures that values generally increase away from the origin
+            current_dim_value = xi**2 
+            
+            # Phase 1: Inner Region (|x_i| < self.transition_point_1)
+            # Characterized by 
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = 0.0
+[OK] f(test_point_2) = 5.25
+[OK] f(test_point_3) = 75.82460812529143
+[OK] f(test_point_4) = 39.335218925621916
+Determinism check y1=58.942708394011284, y2=58.942708394011284
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n2_samples_dim5_n1000.csv
+y min:  2.0776612216173134
+y max:  114.81527805612839
+y mean: 44.67327966855258
+y std:  19.684115322051596
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n2.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n2_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n2_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n2_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n2.
+Feature target used: ['NOT Homogeneous', 'Multimodality']
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.

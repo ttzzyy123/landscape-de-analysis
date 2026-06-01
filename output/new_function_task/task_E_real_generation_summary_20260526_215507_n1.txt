@@ -1,0 +1,138 @@
+================================================================================
+NEW FUNCTION TASK E: REAL GENERATION n1
+================================================================================
+Project root:     /data/s3795888/ioh_project/my_landscape_experiments
+Extracted dir:    /data/s3795888/ioh_project/my_landscape_experiments/external/LLaMEA-paper-ela/XAI-liacs-LLaMEA-6d8b3c1
+Run ID:           20260526_215507
+Function tag:     n1
+Function file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n1.py
+Metadata file:    /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n1_metadata.json
+Solution jsonl:   /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n1_solution.jsonl
+Samples file:     /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n1_samples_dim5_n1000.csv
+Summary file:     /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task/task_E_real_generation_summary_20260526_215507_n1.txt
+Target features:  ['Multimodality', 'GlobalLocal']
+Budget:           55
+Fitness sharing:  True
+Niche radius:     0.5
+Adaptive radius:  True
+Elitism:          False
+
+================================================================================
+4. RUN LLAMEA REAL GENERATION
+================================================================================
+Created ELAproblem:
+  features = ['Multimodality', 'GlobalLocal']
+  dims     = [5]
+  prompt length = 1505
+Initialized LLaMEA:
+  n_parents   = 8
+  n_offspring = 16
+  budget      = 55
+  log         = True
+  max_workers = 4
+  elitism     = False
+  niching     = sharing
+  distance    = ela_distance
+  radius      = 0.5
+  adaptive    = True
+[OK] optimizer.run() completed.
+
+================================================================================
+5. VALIDATE GENERATED SOLUTION OBJECT
+================================================================================
+Solution type: <class 'llamea.solution.Solution'>
+Solution name: landscape
+Description:   A multimodal landscape combining a quadratic bowl with high-frequency sine ripples, and a sharp, deep negative Gaussian well at the origin to establish a strong global-local minimum contrast.
+Fitness:       0.5072510242462158
+Feedback:      The optimization landscape landscape scored on:Multimodality 1.000, GlobalLocal 0.015,  (higher is better, 1.0 is the best).
+Error:         
+
+Code preview:
+import numpy as np
+
+class landscape:
+    
+    def __init__(self, dim=5):
+        self.dim = dim
+        
+        # Parameters for the "Deep Rift Landscape" function
+        # A: Amplitude of the multimodal sine ripples.
+        # B: Frequency of the sine ripples, controls the density of local minima.
+        # C: Depth of the global minimum, defining the magnitude of the negative Gaussian dip.
+        # D: Width/steepness of the global minimum's well (Gaussian term).
+        self.A = 10.0
+        self.B = 5.0
+        self.C = 20.0
+        self.D = 0.5
+
+        # The function is defined for x_i in [-5.0, 5.0] for all dimensions.
+        # These bounds are not stored in the class itself but are part of the problem definition.
+
+    def f(self, x):
+        """
+        Evaluates the "Deep Rift Landscape" function for a given input vector x.
+
+        The function is defined as:
+        f(x) = sum(x_i^2) + A * sum(sin(B * x_i)^2) - C * exp(-D * sum(x_i^2))
+
+        Properties:
+        - The `sum(x_i^2)` term provides a general quadratic bowl structure.
+        - The `A * sum(sin(B * x_i)^2)` term introduces multimodality through
+          high-frequency ripples, where local minima of this term occur when
+          sin(B*x_i) is zero.
+        - The `-C * exp(-D * sum(x_i^2))` term creates a deep, sharp negative
+          Gaussian dip centered at the origin (x=0), ensuring the global minimum
+          is significantly lower than other local minima.
+
+        The global minimum is at x = [0, ..., 0] with a value of -C.
+
+        Args:
+            x (np.ndarray): A real-valued sample vector.
+
+        Returns:
+            float: The function value at x.
+        """
+        x = np.asarray(x)
+        if x.shape[0] != self.dim:
+            raise ValueError(f"Input vector x must have dimension {self.dim}, but got {x.shape[0]}")
+
+        # Calculate the sum of squares, often used as a distance metric from the origin
+        sum_sq_x = np.sum(x**2)
+
+        # Term 1: Base quadratic bow
+
+================================================================================
+6. VALIDATE GENERATED FUNCTION CODE
+================================================================================
+[OK] exec(code) succeeded.
+[OK] Class instantiated with dim=5.
+[OK] f(test_point_1) = -20.0
+[OK] f(test_point_2) = 49.33508825443333
+[OK] f(test_point_3) = 62.9383115964436
+[OK] f(test_point_4) = 67.36898621265198
+Determinism check y1=65.49535457889901, y2=65.49535457889901
+[OK] Generated function is callable and deterministic.
+
+================================================================================
+7. SAMPLE REAL GENERATED FUNCTION
+================================================================================
+[OK] Saved samples to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n1_samples_dim5_n1000.csv
+y min:  11.647921102962494
+y max:  124.17033547612226
+y mean: 66.68711520533786
+y std:  18.613226119395083
+
+================================================================================
+8. SAVE REAL GENERATED FUNCTION AND METADATA
+================================================================================
+[OK] Function saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n1.py
+[OK] Metadata saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n1_metadata.json
+[OK] Solution jsonl saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata/real_generated_function_20260526_215507_n1_solution.jsonl
+[OK] Samples saved to: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_samples/real_generated_function_20260526_215507_n1_samples_dim5_n1000.csv
+
+================================================================================
+TASK E SINGLE GENERATION CONCLUSION
+================================================================================
+[SUCCESS] Real automatic landscape generation completed for n1.
+Feature target used: ['Multimodality', 'GlobalLocal']
+Next step: compute ic.eps.ratio and ela_meta.lin_simple.adj_r2 for this function.

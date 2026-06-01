@@ -1,0 +1,18 @@
+{
+  "scheme_name": "0307_main",
+  "scheme_note": "Main function-level scheme used in the thesis: eps split 3.0, adj_r2 splits 0.3 and 0.7.",
+  "eps_bins": [
+    null,
+    3.0,
+    null
+  ],
+  "r2_bins": [
+    null,
+    0.3,
+    0.7,
+    null
+  ],
+  "bbob_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/0307_main/bbob_instance_assignment_0307_main.csv",
+  "affine_runs_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/0307_main/affine_runs_assignment_0307_main.csv",
+  "affine_summary_file": "/data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/affine_function_group_assignment/0307_main/affine_summary_assignment_0307_main.csv"
+}

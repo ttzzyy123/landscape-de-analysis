@@ -6,7 +6,7 @@ Real function dir:  /data/s3795888/ioh_project/my_landscape_experiments/intermed
 Metadata dir:       /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_metadata
 Feature output dir: /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_function_features
 Output dir:         /data/s3795888/ioh_project/my_landscape_experiments/output/new_function_task
-TARGET_RUN_ID:      20260519_225148
+TARGET_RUN_ID:      20260526_215507
 Target features:    ['ic.eps.ratio', 'ela_meta.lin_simple.adj_r2']
 DIM:                5
 N_REPEATS:          5
@@ -15,50 +15,50 @@ SAMPLE_SIZE:        1250
 ================================================================================
 1. FIND TARGET REAL GENERATED FUNCTIONS
 ================================================================================
-Search pattern: real_generated_function_20260519_225148_n*.py
+Search pattern: real_generated_function_20260526_215507_n*.py
 Found 8 candidate function file(s).
-[OK] Candidate: real_generated_function_20260519_225148_n1.py
-     run_id: 20260519_225148
+[OK] Candidate: real_generated_function_20260526_215507_n1.py
+     run_id: 20260526_215507
      tag:    n1
-     id:     20260519_225148_n1
-[OK] Candidate: real_generated_function_20260519_225148_n2.py
-     run_id: 20260519_225148
+     id:     20260526_215507_n1
+[OK] Candidate: real_generated_function_20260526_215507_n2.py
+     run_id: 20260526_215507
      tag:    n2
-     id:     20260519_225148_n2
-[OK] Candidate: real_generated_function_20260519_225148_n3.py
-     run_id: 20260519_225148
+     id:     20260526_215507_n2
+[OK] Candidate: real_generated_function_20260526_215507_n3.py
+     run_id: 20260526_215507
      tag:    n3
-     id:     20260519_225148_n3
-[OK] Candidate: real_generated_function_20260519_225148_n4.py
-     run_id: 20260519_225148
+     id:     20260526_215507_n3
+[OK] Candidate: real_generated_function_20260526_215507_n4.py
+     run_id: 20260526_215507
      tag:    n4
-     id:     20260519_225148_n4
-[OK] Candidate: real_generated_function_20260519_225148_n5.py
-     run_id: 20260519_225148
+     id:     20260526_215507_n4
+[OK] Candidate: real_generated_function_20260526_215507_n5.py
+     run_id: 20260526_215507
      tag:    n5
-     id:     20260519_225148_n5
-[OK] Candidate: real_generated_function_20260519_225148_n6.py
-     run_id: 20260519_225148
+     id:     20260526_215507_n5
+[OK] Candidate: real_generated_function_20260526_215507_n6.py
+     run_id: 20260526_215507
      tag:    n6
-     id:     20260519_225148_n6
-[OK] Candidate: real_generated_function_20260519_225148_n7.py
-     run_id: 20260519_225148
+     id:     20260526_215507_n6
+[OK] Candidate: real_generated_function_20260526_215507_n7.py
+     run_id: 20260526_215507
      tag:    n7
-     id:     20260519_225148_n7
-[OK] Candidate: real_generated_function_20260519_225148_n8.py
-     run_id: 20260519_225148
+     id:     20260526_215507_n7
+[OK] Candidate: real_generated_function_20260526_215507_n8.py
+     run_id: 20260526_215507
      tag:    n8
-     id:     20260519_225148_n8
+     id:     20260526_215507_n8
 
 Using 8 valid function file(s):
- - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n1.py
- - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n2.py
- - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n3.py
- - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n4.py
- - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n5.py
- - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n6.py
- - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n7.py
- - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260519_225148_n8.py
+ - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n1.py
+ - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n2.py
+ - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n3.py
+ - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n4.py
+ - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n5.py
+ - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n6.py
+ - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n7.py
+ - /data/s3795888/ioh_project/my_landscape_experiments/intermediate/new_function_task/real_generated_functions/real_generated_function_20260526_215507_n8.py
 
 ================================================================================
 7. SAVE MASTER BATCH OUTPUTS
@@ -70,34 +70,34 @@ Using 8 valid function file(s):
 Success: 8
 Failed:  0
 
-- 20260519_225148_n1: success
-  ic.eps.ratio: 0.7177177177177174
-  ela_meta.lin_simple.adj_r2: 8.318745637208025e-05
+- 20260526_215507_n1: success
+  ic.eps.ratio: 0.7617617617617615
+  ela_meta.lin_simple.adj_r2: 0.001794750722710714
 
-- 20260519_225148_n2: success
-  ic.eps.ratio: 1.0100100100100096
-  ela_meta.lin_simple.adj_r2: -0.0001639399768946559
+- 20260526_215507_n2: success
+  ic.eps.ratio: 0.7057057057057055
+  ela_meta.lin_simple.adj_r2: 0.0004190242358597995
 
-- 20260519_225148_n3: success
-  ic.eps.ratio: 0.9459459459459456
-  ela_meta.lin_simple.adj_r2: -0.0016749025549629426
+- 20260526_215507_n3: success
+  ic.eps.ratio: 0.9499499499499494
+  ela_meta.lin_simple.adj_r2: 0.0005099589183582998
 
-- 20260519_225148_n4: success
+- 20260526_215507_n4: success
+  ic.eps.ratio: -0.08308308308308306
+  ela_meta.lin_simple.adj_r2: -0.00045417055695566865
+
+- 20260526_215507_n5: success
+  ic.eps.ratio: 1.2262262262262256
+  ela_meta.lin_simple.adj_r2: 0.0009694329549818637
+
+- 20260526_215507_n6: success
+  ic.eps.ratio: 0.9699699699699696
+  ela_meta.lin_simple.adj_r2: 0.24152975219291667
+
+- 20260526_215507_n7: success
+  ic.eps.ratio: 0.9699699699699694
+  ela_meta.lin_simple.adj_r2: -0.0007132280535561364
+
+- 20260526_215507_n8: success
   ic.eps.ratio: 0.9299299299299296
-  ela_meta.lin_simple.adj_r2: 0.0018732115145408956
-
-- 20260519_225148_n5: success
-  ic.eps.ratio: 1.2942942942942937
-  ela_meta.lin_simple.adj_r2: -0.0012294882372006154
-
-- 20260519_225148_n6: success
-  ic.eps.ratio: 1.3783783783783778
-  ela_meta.lin_simple.adj_r2: -0.002577325487933857
-
-- 20260519_225148_n7: success
-  ic.eps.ratio: 1.8028028028028025
-  ela_meta.lin_simple.adj_r2: -0.0016223332974737215
-
-- 20260519_225148_n8: success
-  ic.eps.ratio: -0.07907907907907907
-  ela_meta.lin_simple.adj_r2: -0.0003861242976324064
+  ela_meta.lin_simple.adj_r2: 0.001881784963552846

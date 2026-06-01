@@ -10,51 +10,32 @@ import matplotlib.pyplot as plt
 
 
 # ============================================================
-# New Function Task G
-# Batch assign and plot real generated functions against BBOB groups
-#
-# Goal:
-# 1. Load original BBOB dim=5 feature data
-# 2. Extract the two thesis features:
-#      - ic.eps.ratio
-#      - ela_meta.lin_simple.adj_r2
-# 3. Aggregate BBOB instances to one point per BBOB function
-# 4. Load Task F batch ELA summary for generated functions n1/n3
-# 5. Assign each generated function to existing eps2bins_3_r025065 groups
-# 6. Plot:
-#      - one combined plot: BBOB + all generated functions
-#      - one individual plot per generated function
+# Task G for Quentin affine BBOB functions
+# Assign and plot affine-combined functions into ELA grouping schemes
 # ============================================================
-
 
 PROJECT_ROOT = Path("/data/s3795888/ioh_project/my_landscape_experiments")
 
 BBOB_FEATURE_FILE = PROJECT_ROOT / "data" / "features_summary_dim_5_sobol.csv"
 
-REAL_FEATURE_DIR = (
+AFFINE_FEATURE_CSV = (
     PROJECT_ROOT
-    / "intermediate"
-    / "new_function_task"
-    / "real_function_features"
-)
-
-BATCH_FEATURE_SUMMARY_CSV = (
-    REAL_FEATURE_DIR
-    / "real_generated_functions_batch_ela_features_summary.csv"
+    / "data"
+    / "BBOB_features_generalisation_alpha_tony.csv"
 )
 
 OUTPUT_DIR = (
     PROJECT_ROOT
     / "output"
     / "new_function_task"
-    / "task_G_assign_and_plot_real_generated_function"
+    / "task_G_assign_and_plot_affine_functions"
 )
 
 INTERMEDIATE_OUT_DIR = (
     PROJECT_ROOT
     / "intermediate"
     / "new_function_task"
-    / "real_function_group_assignment"
+    / "affine_function_group_assignment"
 )
 
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -62,48 +43,45 @@ INTERMEDIATE_OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # ============================================================
-# Scheme settings
+# Feature names
 # ============================================================
-
-SCHEME_NAME = "eps2bins_3_r025065"
-ASSIGNMENT_STRATEGY = "ambiguous_on_tie"
-
-EPS_SPLIT = 3.0
-ADJ_SPLITS = [0.25, 0.65]
 
 TARGET_FEATURES = [
     "ic.eps.ratio",
     "ela_meta.lin_simple.adj_r2",
 ]
 
-FUNCTION_TO_GROUP = {
-    1: "G3",
-    2: "G7",
-    3: "G2",
-    4: "G2",
-    5: "G3",
-    6: "G7",
-    7: "G0",
-    8: "G6",
-    9: "G5",
-    10: "G7",
-    11: "G4",
-    12: "G6",
-    13: "G3",
-    14: "G2",
-    15: "G2",
-    16: "G1",
-    17: "G2",
-    18: "G2",
-    19: "G1",
-    20: "G7",
-    21: "G1",
-    22: "G1",
-    23: "G1",
-    24: "G1",
-}
+EPS_COL = "eps_ratio"
+R2_COL = "adj_r2"
 
-GROUP_ORDER = ["G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7"]
+AFFINE_EPS_CANDIDATES = [
+    "ic.eps_ratio",
+    "ic.eps.ratio",
+    "eps_ratio",
+]
+
+AFFINE_R2_CANDIDATES = [
+    "ela_meta.lin_simple.adj_r2",
+    "adj_r2",
+]
+
+
+# ============================================================
+# Grouping schemes
+# ============================================================
+
+SCHEMES = {
+    "0307_main": {
+        "scheme_note": "Main function-level scheme used in the thesis: eps split 3.0, adj_r2 splits 0.3 and 0.7.",
+        "eps_bins": [-np.inf, 3.0, np.inf],
+        "r2_bins": [-np.inf, 0.3, 0.7, np.inf],
+    },
+    "eps2bins_4_r025050075_instance": {
+        "scheme_note": "Instance-level fine-grained scheme: eps split 3.0, adj_r2 splits 0.25, 0.50 and 0.75.",
+        "eps_bins": [-np.inf, 3.0, np.inf],
+        "r2_bins": [-np.inf, 0.25, 0.50, 0.75, np.inf],
+    },
+}
 
 GROUP_COLORS = {
     "G0": "tab:blue",
@@ -116,13 +94,6 @@ GROUP_COLORS = {
     "G7": "tab:gray",
 }
 
-NEW_MARKERS = {
-    "n1": "*",
-    "n2": "P",
-    "n3": "X",
-    "single": "*",
-}
-
 SPECIAL_BBOB_LABELS = {
     7: "f7*",
     11: "f11*",
@@ -133,28 +104,100 @@ SPECIAL_BBOB_LABELS = {
 # Utilities
 # ============================================================
 
-
 def write_line(lines, text=""):
     print(text)
-    lines.append(text)
+    lines.append(str(text))
 
 
-def load_bbob_feature_points(lines):
+def read_csv_auto(path):
+    try:
+        df = pd.read_csv(path, sep=";")
+        if len(df.columns) <= 1:
+            df = pd.read_csv(path)
+    except Exception:
+        df = pd.read_csv(path)
+
+    df.columns = [str(c).strip() for c in df.columns]
+    return df
+
+
+def find_first_existing_column(df, candidates, file_name):
+    for c in candidates:
+        if c in df.columns:
+            return c
+    raise RuntimeError(
+        f"Could not find any of columns {candidates} in {file_name}. "
+        f"Available columns: {list(df.columns)}"
+    )
+
+
+def make_group_label(eps_bin, r2_bin, n_r2_bins):
+    group_id = int(eps_bin) * int(n_r2_bins) + int(r2_bin)
+    return f"G{group_id}"
+
+
+def assign_grid_groups(df, eps_bins, r2_bins):
+    out = df.copy()
+
+    out["eps_bin"] = pd.cut(
+        out[EPS_COL],
+        bins=eps_bins,
+        labels=False,
+        include_lowest=True,
+    )
+
+    out["r2_bin"] = pd.cut(
+        out[R2_COL],
+        bins=r2_bins,
+        labels=False,
+        include_lowest=True,
+    )
+
+    if out["eps_bin"].isna().any() or out["r2_bin"].isna().any():
+        bad = out[out["eps_bin"].isna() | out["r2_bin"].isna()]
+        raise RuntimeError(
+            "Some points could not be assigned to bins:\n"
+            + bad[[EPS_COL, R2_COL]].to_string(index=False)
+        )
+
+    n_r2_bins = len(r2_bins) - 1
+
+    out["group_id"] = (
+        out["eps_bin"].astype(int) * n_r2_bins
+        + out["r2_bin"].astype(int)
+    )
+
+    out["group"] = "G" + out["group_id"].astype(int).astype(str)
+
+    return out
+
+
+def group_sort_key(group_name):
+    return int(str(group_name).replace("G", ""))
+
+
+# ============================================================
+# Load BBOB features
+# ============================================================
+
+def load_bbob_instance_feature_points(lines):
     write_line(lines, "\n" + "=" * 80)
-    write_line(lines, "1. LOAD BBOB FEATURE DATA")
+    write_line(lines, "1. LOAD BBOB INSTANCE-LEVEL FEATURE DATA")
     write_line(lines, "=" * 80)
 
     if not BBOB_FEATURE_FILE.exists():
         raise FileNotFoundError(f"BBOB feature file not found: {BBOB_FEATURE_FILE}")
 
     write_line(lines, f"Loading: {BBOB_FEATURE_FILE}")
-    df = pd.read_csv(BBOB_FEATURE_FILE, sep=";")
-    df.columns = [c.strip() for c in df.columns]
+    df = read_csv_auto(BBOB_FEATURE_FILE)
 
     required_columns = ["Feature name", "# samples", "Function", "Instance", "Value"]
     missing = [c for c in required_columns if c not in df.columns]
     if missing:
-        raise RuntimeError(f"Missing required columns in BBOB feature file: {missing}")
+        raise RuntimeError(
+            f"Missing required columns in BBOB feature file: {missing}\n"
+            f"Available columns: {list(df.columns)}"
+        )
 
     for col in ["Feature name", "# samples", "Function", "Instance"]:
         df[col] = df[col].astype(str).str.strip()
@@ -163,429 +206,355 @@ def load_bbob_feature_points(lines):
 
     write_line(lines, f"Original shape: {df.shape}")
 
-    df = df[df["# samples"] == "5000"]
+    df = df[df["# samples"] == "5000"].copy()
     write_line(lines, f"After filtering # samples == 5000: {df.shape}")
 
-    df = df[df["Feature name"].isin(TARGET_FEATURES)]
+    df = df[df["Feature name"].isin(TARGET_FEATURES)].copy()
     write_line(lines, f"After filtering target features: {df.shape}")
 
-    df_wide = df.pivot_table(
-        index=["Function", "Instance"],
-        columns="Feature name",
-        values="Value",
-    ).reset_index()
+    df_wide = (
+        df.pivot_table(
+            index=["Function", "Instance"],
+            columns="Feature name",
+            values="Value",
+            aggfunc="mean",
+        )
+        .reset_index()
+    )
 
     df_wide.columns.name = None
 
     df_wide = df_wide.rename(
         columns={
-            "ic.eps.ratio": "eps_ratio",
-            "ela_meta.lin_simple.adj_r2": "adj_r2",
+            "ic.eps.ratio": EPS_COL,
+            "ela_meta.lin_simple.adj_r2": R2_COL,
         }
     )
 
     df_wide["Function"] = pd.to_numeric(df_wide["Function"], errors="coerce").astype(int)
     df_wide["Instance"] = pd.to_numeric(df_wide["Instance"], errors="coerce").astype(int)
 
+    df_wide["label"] = (
+        "f"
+        + df_wide["Function"].astype(str)
+        + "_i"
+        + df_wide["Instance"].astype(str)
+    )
+
+    df_wide = df_wide[["Function", "Instance", EPS_COL, R2_COL, "label"]].copy()
+
     write_line(lines, f"Instance-level wide shape: {df_wide.shape}")
+    write_line(lines, "BBOB instance-level feature preview:")
+    write_line(lines, df_wide.head(10).to_string(index=False))
 
-    df_func = (
-        df_wide.groupby("Function", as_index=False)
-        .agg(
-            eps_ratio=("eps_ratio", "mean"),
-            adj_r2=("adj_r2", "mean"),
-            eps_ratio_std=("eps_ratio", "std"),
-            adj_r2_std=("adj_r2", "std"),
-            n_instances=("Instance", "nunique"),
-        )
-    )
-
-    df_func["label"] = df_func["Function"].apply(
-        lambda f: SPECIAL_BBOB_LABELS.get(int(f), f"f{int(f)}")
-    )
-    df_func["group"] = df_func["Function"].map(FUNCTION_TO_GROUP)
-
-    if df_func["group"].isna().any():
-        missing_f = df_func[df_func["group"].isna()]["Function"].tolist()
-        raise RuntimeError(f"Some BBOB functions have no group assignment: {missing_f}")
-
-    write_line(lines, "BBOB function-level points:")
-    write_line(lines, df_func[["Function", "eps_ratio", "adj_r2", "group"]].to_string(index=False))
-
-    return df_wide, df_func
+    return df_wide
 
 
-def load_generated_feature_points(lines):
+# ============================================================
+# Load affine features from Quentin
+# ============================================================
+
+def load_affine_feature_points(lines):
     write_line(lines, "\n" + "=" * 80)
-    write_line(lines, "2. LOAD GENERATED FUNCTION FEATURE SUMMARY")
+    write_line(lines, "2. LOAD QUENTIN AFFINE FUNCTION FEATURE DATA")
     write_line(lines, "=" * 80)
 
-    if not BATCH_FEATURE_SUMMARY_CSV.exists():
-        raise FileNotFoundError(
-            f"Batch feature summary CSV not found: {BATCH_FEATURE_SUMMARY_CSV}"
+    if not AFFINE_FEATURE_CSV.exists():
+        raise FileNotFoundError(f"Affine feature CSV not found: {AFFINE_FEATURE_CSV}")
+
+    write_line(lines, f"Loading: {AFFINE_FEATURE_CSV}")
+    df = read_csv_auto(AFFINE_FEATURE_CSV)
+
+    eps_source_col = find_first_existing_column(
+        df,
+        AFFINE_EPS_CANDIDATES,
+        "affine feature CSV",
+    )
+
+    r2_source_col = find_first_existing_column(
+        df,
+        AFFINE_R2_CANDIDATES,
+        "affine feature CSV",
+    )
+
+    rename_map = {
+        eps_source_col: EPS_COL,
+        r2_source_col: R2_COL,
+    }
+
+    df = df.rename(columns=rename_map)
+
+    required_base = ["fid1", "fid2", "alpha", EPS_COL, R2_COL]
+    missing = [c for c in required_base if c not in df.columns]
+    if missing:
+        raise RuntimeError(
+            f"Missing required columns in affine feature CSV: {missing}\n"
+            f"Available columns: {list(df.columns)}"
         )
 
-    write_line(lines, f"Loading: {BATCH_FEATURE_SUMMARY_CSV}")
-    df = pd.read_csv(BATCH_FEATURE_SUMMARY_CSV)
+    if "rid" not in df.columns:
+        df["rid"] = df.groupby(["fid1", "fid2", "alpha"]).cumcount() + 1
 
-    required_columns = [
-        "status",
-        "run_id",
-        "function_tag",
-        "full_id",
-        "function_file",
-        "summary_file",
-        "ic.eps.ratio_mean",
-        "ela_meta.lin_simple.adj_r2_mean",
-    ]
+    df["fid1"] = pd.to_numeric(df["fid1"], errors="coerce").astype(int)
+    df["fid2"] = pd.to_numeric(df["fid2"], errors="coerce").astype(int)
+    df["alpha"] = pd.to_numeric(df["alpha"], errors="coerce")
+    df["rid"] = pd.to_numeric(df["rid"], errors="coerce").astype(int)
+    df[EPS_COL] = pd.to_numeric(df[EPS_COL], errors="coerce")
+    df[R2_COL] = pd.to_numeric(df[R2_COL], errors="coerce")
 
-    missing = [c for c in required_columns if c not in df.columns]
-    if missing:
-        raise RuntimeError(f"Missing required columns in batch summary CSV: {missing}")
+    df = df.dropna(subset=[EPS_COL, R2_COL]).copy()
 
-    df = df[df["status"] == "success"].copy()
+    df["function_tag"] = (
+        "f"
+        + df["fid1"].astype(str)
+        + "_f"
+        + df["fid2"].astype(str)
+    )
 
-    if df.empty:
-        raise RuntimeError("No successful generated functions found in batch summary CSV.")
+    df["function_name"] = (
+        "affine_"
+        + df["function_tag"]
+        + "_alpha_"
+        + df["alpha"].astype(str)
+    )
 
-    df["eps_ratio"] = pd.to_numeric(df["ic.eps.ratio_mean"], errors="coerce")
-    df["adj_r2"] = pd.to_numeric(df["ela_meta.lin_simple.adj_r2_mean"], errors="coerce")
-    df["eps_ratio_std"] = pd.to_numeric(df.get("ic.eps.ratio_std", np.nan), errors="coerce")
-    df["adj_r2_std"] = pd.to_numeric(df.get("ela_meta.lin_simple.adj_r2_std", np.nan), errors="coerce")
+    df["run_label"] = (
+        df["function_tag"]
+        + "_r"
+        + df["rid"].astype(str)
+    )
 
-    df["label"] = df["function_tag"].astype(str)
-    df["new_function_label"] = "new_" + df["function_tag"].astype(str)
-
-    df = df.sort_values(["run_id", "function_tag"]).reset_index(drop=True)
-
-    write_line(lines, f"Loaded {len(df)} successful generated function(s):")
+    write_line(lines, f"Affine feature shape: {df.shape}")
+    write_line(lines, "Affine function counts:")
     write_line(
         lines,
-        df[
-            [
-                "full_id",
-                "function_tag",
-                "eps_ratio",
-                "adj_r2",
-                "function_file",
-            ]
-        ].to_string(index=False),
+        df.groupby(["fid1", "fid2", "alpha"]).size().reset_index(name="n_runs").to_string(index=False),
+    )
+
+    write_line(lines, "Affine feature preview:")
+    write_line(
+        lines,
+        df[["fid1", "fid2", "alpha", "rid", EPS_COL, R2_COL, "function_tag"]]
+        .head(10)
+        .to_string(index=False),
     )
 
     return df
 
 
-def assign_point_to_group(eps, adj):
-    if eps < EPS_SPLIT and adj < ADJ_SPLITS[0]:
-        return "G1", "eps_ratio < 3.0 and adj_r2 < 0.25"
+# ============================================================
+# Summaries
+# ============================================================
 
-    if eps < EPS_SPLIT and ADJ_SPLITS[0] <= adj < ADJ_SPLITS[1]:
-        return "G2", "eps_ratio < 3.0 and 0.25 <= adj_r2 < 0.65"
+def summarize_affine_assignment(df_affine_assigned):
+    def group_counts_json(x):
+        counts = x.value_counts()
+        counts_dict = {str(k): int(v) for k, v in counts.items()}
+        return json.dumps(counts_dict, sort_keys=True)
 
-    if eps < EPS_SPLIT and adj >= ADJ_SPLITS[1]:
-        return "G3", "eps_ratio < 3.0 and adj_r2 >= 0.65"
-
-    if eps >= EPS_SPLIT and adj < ADJ_SPLITS[0]:
-        return "G5", "eps_ratio >= 3.0 and adj_r2 < 0.25"
-
-    if eps >= EPS_SPLIT and ADJ_SPLITS[0] <= adj < ADJ_SPLITS[1]:
-        return "right_middle_bin_needs_manual_rule", "eps_ratio >= 3.0 and 0.25 <= adj_r2 < 0.65"
-
-    return "G7", "eps_ratio >= 3.0 and adj_r2 >= 0.65"
-
-
-def assign_generated_functions_to_groups(df_new, lines):
-    write_line(lines, "\n" + "=" * 80)
-    write_line(lines, "3. ASSIGN GENERATED FUNCTIONS TO EXISTING BIN/GROUP")
-    write_line(lines, "=" * 80)
-
-    assignments = []
-
-    for _, row in df_new.iterrows():
-        assigned_group, bin_description = assign_point_to_group(
-            float(row["eps_ratio"]),
-            float(row["adj_r2"]),
+    summary = (
+        df_affine_assigned
+        .groupby(["fid1", "fid2", "alpha", "function_tag", "function_name"], as_index=False)
+        .agg(
+            mean_eps_ratio=(EPS_COL, "mean"),
+            std_eps_ratio=(EPS_COL, "std"),
+            mean_adj_r2=(R2_COL, "mean"),
+            std_adj_r2=(R2_COL, "std"),
+            n_runs=("rid", "size"),
+            majority_group=("group", lambda x: str(x.value_counts().idxmax())),
+            group_counts=("group", group_counts_json),
         )
-
-        assignment = {
-            "scheme": SCHEME_NAME,
-            "assignment_strategy": ASSIGNMENT_STRATEGY,
-            "new_function_label": row["new_function_label"],
-            "function_tag": row["function_tag"],
-            "run_id": row["run_id"],
-            "full_id": row["full_id"],
-            "function_file": row["function_file"],
-            "summary_file": row["summary_file"],
-            "eps_ratio": float(row["eps_ratio"]),
-            "adj_r2": float(row["adj_r2"]),
-            "eps_ratio_std": float(row["eps_ratio_std"]) if not pd.isna(row["eps_ratio_std"]) else None,
-            "adj_r2_std": float(row["adj_r2_std"]) if not pd.isna(row["adj_r2_std"]) else None,
-            "assigned_group": assigned_group,
-            "bin_description": bin_description,
-            "note": (
-                "The generated function is assigned according to the same visible "
-                "eps2bins_3_r025065 boundaries used for the BBOB landscape grouping."
-            ),
-        }
-
-        assignments.append(assignment)
-
-        write_line(lines, "")
-        write_line(lines, f"Assignment for {row['full_id']}:")
-        write_line(lines, json.dumps(assignment, indent=2))
-
-    df_assign = pd.DataFrame(assignments)
-
-    return df_assign, assignments
-
-
-def save_assignment_outputs(df_instance, df_func, df_new, df_assign, assignments, lines):
-    write_line(lines, "\n" + "=" * 80)
-    write_line(lines, "4. SAVE ASSIGNMENT TABLES")
-    write_line(lines, "=" * 80)
-
-    bbob_instance_file = INTERMEDIATE_OUT_DIR / "bbob_dim5_selected_features_by_instance.csv"
-    bbob_function_file = INTERMEDIATE_OUT_DIR / "bbob_dim5_selected_features_by_function_mean.csv"
-
-    batch_assignment_csv = INTERMEDIATE_OUT_DIR / "real_generated_functions_group_assignment_batch.csv"
-    batch_assignment_json = INTERMEDIATE_OUT_DIR / "real_generated_functions_group_assignment_batch.json"
-    batch_points_csv = INTERMEDIATE_OUT_DIR / "real_generated_functions_feature_points_batch.csv"
-
-    df_instance.to_csv(bbob_instance_file, index=False)
-    df_func.to_csv(bbob_function_file, index=False)
-
-    df_new_with_group = df_new.merge(
-        df_assign[["full_id", "assigned_group", "bin_description"]],
-        on="full_id",
-        how="left",
     )
-    df_new_with_group.to_csv(batch_points_csv, index=False)
 
-    df_assign.to_csv(batch_assignment_csv, index=False)
-    batch_assignment_json.write_text(json.dumps(assignments, indent=2), encoding="utf-8")
+    summary["n_runs"] = summary["n_runs"].astype(int)
+    summary = summary.sort_values(["fid1", "fid2"]).reset_index(drop=True)
+    return summary
 
-    write_line(lines, f"[OK] BBOB instance table saved to: {bbob_instance_file}")
-    write_line(lines, f"[OK] BBOB function table saved to: {bbob_function_file}")
-    write_line(lines, f"[OK] Batch generated points saved to: {batch_points_csv}")
-    write_line(lines, f"[OK] Batch assignment CSV saved to: {batch_assignment_csv}")
-    write_line(lines, f"[OK] Batch assignment JSON saved to: {batch_assignment_json}")
+# ============================================================
+# Plot helpers
+# ============================================================
 
-    for assignment in assignments:
-        full_id = assignment["full_id"]
-        single_assignment_file = (
-            INTERMEDIATE_OUT_DIR
-            / f"real_generated_function_{full_id}_group_assignment.json"
-        )
-        single_point_file = (
-            INTERMEDIATE_OUT_DIR
-            / f"real_generated_function_{full_id}_feature_point.csv"
-        )
+def add_boundaries(ax, eps_bins, r2_bins):
+    for x in eps_bins[1:-1]:
+        ax.axvline(x, color="black", linestyle="--", linewidth=1.4, alpha=0.8)
 
-        single_assignment_file.write_text(
-            json.dumps(assignment, indent=2),
-            encoding="utf-8",
-        )
-
-        pd.DataFrame([assignment]).to_csv(single_point_file, index=False)
-
-        write_line(lines, f"[OK] Single assignment saved to: {single_assignment_file}")
-        write_line(lines, f"[OK] Single point saved to: {single_point_file}")
-
-    return {
-        "bbob_instance_file": str(bbob_instance_file),
-        "bbob_function_file": str(bbob_function_file),
-        "batch_points_csv": str(batch_points_csv),
-        "batch_assignment_csv": str(batch_assignment_csv),
-        "batch_assignment_json": str(batch_assignment_json),
-    }
+    for y in r2_bins[1:-1]:
+        ax.axhline(y, color="black", linestyle="--", linewidth=1.4, alpha=0.8)
 
 
-def add_bbob_points(ax, df_func):
-    for group in GROUP_ORDER:
-        sub = df_func[df_func["group"] == group]
+def add_bbob_instance_points(ax, df_bbob_assigned):
+    groups = sorted(df_bbob_assigned["group"].unique(), key=group_sort_key)
+
+    for group in groups:
+        sub = df_bbob_assigned[df_bbob_assigned["group"] == group]
+        color = GROUP_COLORS.get(group, None)
 
         ax.scatter(
-            sub["eps_ratio"],
-            sub["adj_r2"],
-            s=90,
-            color=GROUP_COLORS[group],
+            sub[EPS_COL],
+            sub[R2_COL],
+            s=65,
+            color=color,
             label=group,
-            alpha=0.95,
+            alpha=0.75,
         )
 
         for _, row in sub.iterrows():
             ax.text(
-                row["eps_ratio"] + 0.04,
-                row["adj_r2"] + 0.008,
+                row[EPS_COL] + 0.025,
+                row[R2_COL] + 0.006,
                 row["label"],
-                fontsize=11,
+                fontsize=7,
+                alpha=0.85,
             )
 
 
-def add_bin_boundaries(ax):
-    ax.axvline(EPS_SPLIT, color="black", linestyle="--", linewidth=1.5)
-    ax.axhline(ADJ_SPLITS[0], color="black", linestyle="--", linewidth=1.5)
-    ax.axhline(ADJ_SPLITS[1], color="black", linestyle="--", linewidth=1.5)
+def add_affine_points(ax, df_affine_assigned, affine_summary):
+    ax.scatter(
+        df_affine_assigned[EPS_COL],
+        df_affine_assigned[R2_COL],
+        s=90,
+        marker="x",
+        color="black",
+        linewidths=2.0,
+        label="Affine 20 runs",
+        zorder=8,
+    )
+
+    ax.scatter(
+        affine_summary["mean_eps_ratio"],
+        affine_summary["mean_adj_r2"],
+        s=260,
+        marker="*",
+        color="red",
+        edgecolors="black",
+        linewidths=0.9,
+        label="Affine mean",
+        zorder=10,
+    )
+
+    for _, row in affine_summary.iterrows():
+        label = (
+            f"f{int(row['fid1'])}+f{int(row['fid2'])}\n"
+            f"{row['majority_group']}"
+        )
+
+        ax.text(
+            row["mean_eps_ratio"] + 0.06,
+            row["mean_adj_r2"] + 0.016,
+            label,
+            fontsize=11,
+            fontweight="bold",
+            color="black",
+            zorder=11,
+        )
 
 
-def finalize_axes(ax, df_func, df_new, title):
+def finalize_axes(ax, title, df_bbob, df_affine):
     ax.set_xlabel("eps_ratio", fontsize=14)
     ax.set_ylabel("adj_r2", fontsize=14)
     ax.set_title(title, fontsize=16)
 
-    xmin = min(0.0, df_func["eps_ratio"].min(), df_new["eps_ratio"].min()) - 0.1
-    xmax = max(7.7, df_func["eps_ratio"].max(), df_new["eps_ratio"].max()) + 0.25
-    ymin = min(-0.05, df_func["adj_r2"].min(), df_new["adj_r2"].min()) - 0.02
-    ymax = max(1.05, df_func["adj_r2"].max(), df_new["adj_r2"].max()) + 0.02
+    xmin = min(0.0, df_bbob[EPS_COL].min(), df_affine[EPS_COL].min()) - 0.1
+    xmax = max(7.8, df_bbob[EPS_COL].max(), df_affine[EPS_COL].max()) + 0.35
+
+    ymin = min(-0.05, df_bbob[R2_COL].min(), df_affine[R2_COL].min()) - 0.02
+    ymax = max(1.05, df_bbob[R2_COL].max(), df_affine[R2_COL].max()) + 0.03
 
     ax.set_xlim(xmin, xmax)
     ax.set_ylim(ymin, ymax)
 
     ax.tick_params(axis="both", labelsize=12)
     ax.legend(
-        title="Group / Generated",
+        title="Group / Affine",
         loc="upper left",
         bbox_to_anchor=(1.02, 1.0),
-        fontsize=11,
+        fontsize=10,
         title_fontsize=12,
     )
+
     ax.grid(False)
 
 
-def plot_combined_generated_functions(df_func, df_new, df_assign, lines):
+def plot_scheme(scheme_name, cfg, df_bbob_assigned, df_affine_assigned, affine_summary, lines):
     write_line(lines, "\n" + "=" * 80)
-    write_line(lines, "5. PLOT COMBINED GENERATED FUNCTIONS")
+    write_line(lines, f"PLOT SCHEME: {scheme_name}")
     write_line(lines, "=" * 80)
 
-    df_plot = df_new.merge(
-        df_assign[["full_id", "assigned_group"]],
-        on="full_id",
-        how="left",
-    )
+    fig, ax = plt.subplots(figsize=(14, 9))
 
-    fig, ax = plt.subplots(figsize=(10.8, 7.6))
-
-    add_bbob_points(ax, df_func)
-
-    for _, row in df_plot.iterrows():
-        marker = NEW_MARKERS.get(str(row["function_tag"]), "D")
-
-        ax.scatter(
-            [row["eps_ratio"]],
-            [row["adj_r2"]],
-            s=280,
-            color="black",
-            marker=marker,
-            label=f"{row['new_function_label']} ({row['assigned_group']})",
-            edgecolors="white",
-            linewidths=1.2,
-            zorder=10,
-        )
-
-        ax.text(
-            row["eps_ratio"] + 0.06,
-            row["adj_r2"] + 0.018,
-            row["new_function_label"],
-            fontsize=12,
-            fontweight="bold",
-            color="black",
-            zorder=11,
-        )
-
-    add_bin_boundaries(ax)
+    add_bbob_instance_points(ax, df_bbob_assigned)
+    add_affine_points(ax, df_affine_assigned, affine_summary)
+    add_boundaries(ax, cfg["eps_bins"], cfg["r2_bins"])
 
     title = (
-        f"{SCHEME_NAME}\n"
-        f"Assignment: {ASSIGNMENT_STRATEGY}\n"
-        f"with real generated functions"
+        f"Affine BBOB functions assigned to ELA grouping\n"
+        f"{scheme_name}"
     )
 
-    finalize_axes(ax, df_func, df_plot, title)
+    finalize_axes(ax, title, df_bbob_assigned, df_affine_assigned)
     fig.tight_layout()
 
-    plot_file = OUTPUT_DIR / "real_generated_functions_batch_with_bbob_groups_plot.png"
-    pdf_file = OUTPUT_DIR / "real_generated_functions_batch_with_bbob_groups_plot.pdf"
+    png_file = OUTPUT_DIR / f"affine_functions_assignment_{scheme_name}.png"
+    pdf_file = OUTPUT_DIR / f"affine_functions_assignment_{scheme_name}.pdf"
 
-    fig.savefig(plot_file, dpi=300, bbox_inches="tight")
+    fig.savefig(png_file, dpi=300, bbox_inches="tight")
     fig.savefig(pdf_file, bbox_inches="tight")
     plt.close(fig)
 
-    write_line(lines, f"[OK] Combined plot saved to: {plot_file}")
-    write_line(lines, f"[OK] Combined PDF saved to: {pdf_file}")
+    write_line(lines, f"[OK] Plot saved to: {png_file}")
+    write_line(lines, f"[OK] PDF saved to:  {pdf_file}")
 
-    return plot_file, pdf_file
+    return png_file, pdf_file
 
 
-def plot_individual_generated_functions(df_func, df_new, df_assign, lines):
+def plot_individual_affine_functions(
+    scheme_name,
+    cfg,
+    df_bbob_assigned,
+    df_affine_assigned,
+    affine_summary,
+    lines,
+):
     write_line(lines, "\n" + "=" * 80)
-    write_line(lines, "6. PLOT INDIVIDUAL GENERATED FUNCTIONS")
+    write_line(lines, f"PLOT INDIVIDUAL AFFINE FUNCTIONS: {scheme_name}")
     write_line(lines, "=" * 80)
-
-    df_plot = df_new.merge(
-        df_assign[["full_id", "assigned_group"]],
-        on="full_id",
-        how="left",
-    )
 
     outputs = []
 
-    for _, row in df_plot.iterrows():
-        fig, ax = plt.subplots(figsize=(10.5, 7.5))
+    for _, summary_row in affine_summary.iterrows():
+        function_tag = summary_row["function_tag"]
+        sub_affine = df_affine_assigned[df_affine_assigned["function_tag"] == function_tag].copy()
+        sub_summary = pd.DataFrame([summary_row])
 
-        add_bbob_points(ax, df_func)
+        fig, ax = plt.subplots(figsize=(14, 9))
 
-        marker = NEW_MARKERS.get(str(row["function_tag"]), "*")
-
-        ax.scatter(
-            [row["eps_ratio"]],
-            [row["adj_r2"]],
-            s=280,
-            color="black",
-            marker=marker,
-            label=f"{row['new_function_label']} ({row['assigned_group']})",
-            edgecolors="white",
-            linewidths=1.2,
-            zorder=10,
-        )
-
-        ax.text(
-            row["eps_ratio"] + 0.06,
-            row["adj_r2"] + 0.018,
-            row["new_function_label"],
-            fontsize=12,
-            fontweight="bold",
-            color="black",
-            zorder=11,
-        )
-
-        add_bin_boundaries(ax)
-
-        single_df = pd.DataFrame([row])
+        add_bbob_instance_points(ax, df_bbob_assigned)
+        add_affine_points(ax, sub_affine, sub_summary)
+        add_boundaries(ax, cfg["eps_bins"], cfg["r2_bins"])
 
         title = (
-            f"{SCHEME_NAME}\n"
-            f"Assignment: {ASSIGNMENT_STRATEGY}\n"
-            f"with {row['new_function_label']}"
+            f"Affine function {function_tag} assigned to ELA grouping\n"
+            f"{scheme_name}"
         )
 
-        finalize_axes(ax, df_func, single_df, title)
+        finalize_axes(ax, title, df_bbob_assigned, sub_affine)
         fig.tight_layout()
 
-        full_id = row["full_id"]
-        plot_file = OUTPUT_DIR / f"real_generated_function_{full_id}_with_bbob_groups_plot.png"
-        pdf_file = OUTPUT_DIR / f"real_generated_function_{full_id}_with_bbob_groups_plot.pdf"
+        png_file = OUTPUT_DIR / f"affine_function_{function_tag}_assignment_{scheme_name}.png"
+        pdf_file = OUTPUT_DIR / f"affine_function_{function_tag}_assignment_{scheme_name}.pdf"
 
-        fig.savefig(plot_file, dpi=300, bbox_inches="tight")
+        fig.savefig(png_file, dpi=300, bbox_inches="tight")
         fig.savefig(pdf_file, bbox_inches="tight")
         plt.close(fig)
 
-        write_line(lines, f"[OK] Individual plot saved to: {plot_file}")
-        write_line(lines, f"[OK] Individual PDF saved to: {pdf_file}")
+        write_line(lines, f"[OK] Individual plot saved to: {png_file}")
+        write_line(lines, f"[OK] Individual PDF saved to:  {pdf_file}")
 
         outputs.append(
             {
-                "full_id": full_id,
-                "plot_file": str(plot_file),
+                "scheme": scheme_name,
+                "function_tag": function_tag,
+                "plot_file": str(png_file),
                 "pdf_file": str(pdf_file),
             }
         )
@@ -593,82 +562,178 @@ def plot_individual_generated_functions(df_func, df_new, df_assign, lines):
     return outputs
 
 
+# ============================================================
+# Save outputs
+# ============================================================
+
+def save_scheme_outputs(
+    scheme_name,
+    cfg,
+    df_bbob_assigned,
+    df_affine_assigned,
+    affine_summary,
+    lines,
+):
+    scheme_dir = INTERMEDIATE_OUT_DIR / scheme_name
+    scheme_dir.mkdir(parents=True, exist_ok=True)
+
+    bbob_file = scheme_dir / f"bbob_instance_assignment_{scheme_name}.csv"
+    affine_runs_file = scheme_dir / f"affine_runs_assignment_{scheme_name}.csv"
+    affine_summary_file = scheme_dir / f"affine_summary_assignment_{scheme_name}.csv"
+    scheme_json_file = scheme_dir / f"scheme_config_{scheme_name}.json"
+
+    df_bbob_assigned.to_csv(bbob_file, index=False)
+    df_affine_assigned.to_csv(affine_runs_file, index=False)
+    affine_summary.to_csv(affine_summary_file, index=False)
+
+    scheme_json = {
+        "scheme_name": scheme_name,
+        "scheme_note": cfg["scheme_note"],
+        "eps_bins": [None if np.isneginf(x) or np.isposinf(x) else float(x) for x in cfg["eps_bins"]],
+        "r2_bins": [None if np.isneginf(x) or np.isposinf(x) else float(x) for x in cfg["r2_bins"]],
+        "bbob_file": str(bbob_file),
+        "affine_runs_file": str(affine_runs_file),
+        "affine_summary_file": str(affine_summary_file),
+    }
+
+    scheme_json_file.write_text(json.dumps(scheme_json, indent=2), encoding="utf-8")
+
+    write_line(lines, f"[OK] BBOB assignment saved to: {bbob_file}")
+    write_line(lines, f"[OK] Affine runs assignment saved to: {affine_runs_file}")
+    write_line(lines, f"[OK] Affine summary saved to: {affine_summary_file}")
+    write_line(lines, f"[OK] Scheme config saved to: {scheme_json_file}")
+
+    return {
+        "bbob_file": str(bbob_file),
+        "affine_runs_file": str(affine_runs_file),
+        "affine_summary_file": str(affine_summary_file),
+        "scheme_json_file": str(scheme_json_file),
+    }
+
+
+# ============================================================
+# Main
+# ============================================================
+
 def main():
     lines = []
 
-    summary_file = OUTPUT_DIR / "task_G_assign_and_plot_real_generated_function_summary.txt"
+    summary_file = OUTPUT_DIR / "task_G_assign_and_plot_affine_functions_summary.txt"
 
     write_line(lines, "=" * 80)
-    write_line(lines, "NEW FUNCTION TASK G: BATCH ASSIGN AND PLOT REAL GENERATED FUNCTIONS")
+    write_line(lines, "NEW FUNCTION TASK G: ASSIGN AND PLOT QUENTIN AFFINE FUNCTIONS")
     write_line(lines, "=" * 80)
     write_line(lines, f"Project root: {PROJECT_ROOT}")
     write_line(lines, f"BBOB feature file: {BBOB_FEATURE_FILE}")
-    write_line(lines, f"Real feature dir: {REAL_FEATURE_DIR}")
-    write_line(lines, f"Batch feature CSV: {BATCH_FEATURE_SUMMARY_CSV}")
+    write_line(lines, f"Affine feature CSV: {AFFINE_FEATURE_CSV}")
     write_line(lines, f"Output dir: {OUTPUT_DIR}")
-    write_line(lines, f"Scheme: {SCHEME_NAME}")
-    write_line(lines, f"Assignment strategy: {ASSIGNMENT_STRATEGY}")
+    write_line(lines, f"Intermediate output dir: {INTERMEDIATE_OUT_DIR}")
 
     try:
-        df_instance, df_func = load_bbob_feature_points(lines)
-        df_new = load_generated_feature_points(lines)
+        df_bbob = load_bbob_instance_feature_points(lines)
+        df_affine = load_affine_feature_points(lines)
 
-        df_assign, assignments = assign_generated_functions_to_groups(df_new, lines)
+        all_saved_files = {}
+        all_plots = []
+        all_individual_plots = []
 
-        saved_files = save_assignment_outputs(
-            df_instance=df_instance,
-            df_func=df_func,
-            df_new=df_new,
-            df_assign=df_assign,
-            assignments=assignments,
-            lines=lines,
-        )
+        for scheme_name, cfg in SCHEMES.items():
+            write_line(lines, "\n" + "#" * 80)
+            write_line(lines, f"PROCESSING SCHEME: {scheme_name}")
+            write_line(lines, "#" * 80)
+            write_line(lines, cfg["scheme_note"])
 
-        combined_plot, combined_pdf = plot_combined_generated_functions(
-            df_func=df_func,
-            df_new=df_new,
-            df_assign=df_assign,
-            lines=lines,
-        )
+            df_bbob_assigned = assign_grid_groups(
+                df_bbob,
+                eps_bins=cfg["eps_bins"],
+                r2_bins=cfg["r2_bins"],
+            )
 
-        individual_outputs = plot_individual_generated_functions(
-            df_func=df_func,
-            df_new=df_new,
-            df_assign=df_assign,
-            lines=lines,
-        )
+            df_affine_assigned = assign_grid_groups(
+                df_affine,
+                eps_bins=cfg["eps_bins"],
+                r2_bins=cfg["r2_bins"],
+            )
+
+            affine_summary = summarize_affine_assignment(df_affine_assigned)
+
+            write_line(lines, "\nAffine assignment summary:")
+            write_line(
+                lines,
+                affine_summary[
+                    [
+                        "fid1",
+                        "fid2",
+                        "alpha",
+                        "mean_eps_ratio",
+                        "std_eps_ratio",
+                        "mean_adj_r2",
+                        "std_adj_r2",
+                        "n_runs",
+                        "majority_group",
+                        "group_counts",
+                    ]
+                ].to_string(index=False),
+            )
+
+            saved_files = save_scheme_outputs(
+                scheme_name=scheme_name,
+                cfg=cfg,
+                df_bbob_assigned=df_bbob_assigned,
+                df_affine_assigned=df_affine_assigned,
+                affine_summary=affine_summary,
+                lines=lines,
+            )
+
+            combined_png, combined_pdf = plot_scheme(
+                scheme_name=scheme_name,
+                cfg=cfg,
+                df_bbob_assigned=df_bbob_assigned,
+                df_affine_assigned=df_affine_assigned,
+                affine_summary=affine_summary,
+                lines=lines,
+            )
+
+            individual_plots = plot_individual_affine_functions(
+                scheme_name=scheme_name,
+                cfg=cfg,
+                df_bbob_assigned=df_bbob_assigned,
+                df_affine_assigned=df_affine_assigned,
+                affine_summary=affine_summary,
+                lines=lines,
+            )
+
+            all_saved_files[scheme_name] = saved_files
+            all_plots.append(
+                {
+                    "scheme": scheme_name,
+                    "png": str(combined_png),
+                    "pdf": str(combined_pdf),
+                }
+            )
+            all_individual_plots.extend(individual_plots)
 
         write_line(lines, "\n" + "=" * 80)
         write_line(lines, "TASK G CONCLUSION")
         write_line(lines, "=" * 80)
-        write_line(lines, "[SUCCESS] Generated functions assigned and plotted.")
+        write_line(lines, "[SUCCESS] Quentin affine functions assigned and plotted.")
 
-        for assignment in assignments:
-            write_line(
-                lines,
-                (
-                    f"{assignment['new_function_label']} "
-                    f"({assignment['full_id']}) -> {assignment['assigned_group']} "
-                    f"| eps_ratio={assignment['eps_ratio']} "
-                    f"| adj_r2={assignment['adj_r2']}"
-                ),
-            )
+        write_line(lines, "\nCombined plots:")
+        for item in all_plots:
+            write_line(lines, f"  {item['scheme']}: {item['png']}")
 
-        write_line(lines, "")
-        write_line(lines, f"Combined plot: {combined_plot}")
-        write_line(lines, f"Combined PDF:  {combined_pdf}")
-        write_line(lines, "")
-        write_line(lines, "Saved assignment files:")
-        for k, v in saved_files.items():
-            write_line(lines, f"  {k}: {v}")
+        write_line(lines, "\nIntermediate files:")
+        for scheme_name, files in all_saved_files.items():
+            write_line(lines, f"  Scheme: {scheme_name}")
+            for k, v in files.items():
+                write_line(lines, f"    {k}: {v}")
+
+        write_line(lines, "\nIndividual plots:")
+        for item in all_individual_plots:
+            write_line(lines, f"  {item['scheme']} | {item['function_tag']}: {item['plot_file']}")
 
         write_line(lines, "")
-        write_line(lines, "Individual plots:")
-        for item in individual_outputs:
-            write_line(lines, f"  {item['full_id']}: {item['plot_file']}")
-
-        write_line(lines, "")
-        write_line(lines, "Next step: select representative generated function(s) for modDE/H SHAP analysis.")
+        write_line(lines, "Next step: run H0 modDE performance experiments on these affine functions, then run H SHAP.")
 
     except Exception as e:
         write_line(lines, "\n" + "=" * 80)
