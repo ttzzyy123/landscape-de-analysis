@@ -6,8 +6,8 @@ Purpose:
 - Align all outputs to eps2bins_3_r0307_main_tiebreak.
 
 Outputs:
-- output/0307_main_comparison/hall_of_fame_0307.csv
-- output/0307_main_comparison/hall_of_fame_0307.md
+- output\0307_main_comparison\hall_of_fame_0307.csv
+- output\0307_main_comparison\hall_of_fame_0307.md
 
 Selection rule:
 - For each function, group rows by DE configuration.
@@ -18,6 +18,7 @@ Row counts by function_type:
 {
   "bbob_original": 25,
   "affine": 6,
+  "bbob_group_mean": 6,
   "llamea_generated": 5
 }
 

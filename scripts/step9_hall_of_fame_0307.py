@@ -132,6 +132,18 @@ def load_bbob_0307_mapping():
     candidates = [
         PROJECT_ROOT
         / "output"
+        / "manual_binning_assignment_strategies"
+        / "eps2bins_3_r0307_main"
+        / "majority_with_mean_tiebreak"
+        / "function_group_mapping_for_step3.csv",
+        PROJECT_ROOT
+        / "output"
+        / "manual_binning_assignment_strategies"
+        / "eps2bins_3_r0307_main"
+        / "mean_based"
+        / "function_group_mapping_for_step3.csv",
+        PROJECT_ROOT
+        / "output"
         / "manual_binning_experiments_tiebreak"
         / "eps2bins_3_r0307_main"
         / "function_group_mapping_for_step3.csv",
@@ -389,6 +401,99 @@ def build_bbob_hall_of_fame():
     return records
 
 
+def mode_value(series):
+    clean = series.dropna()
+    clean = clean[~clean.astype(str).str.lower().isin(["", "nan", "none"])]
+    if clean.empty:
+        return None
+    return clean.astype(str).mode().iloc[0]
+
+
+def build_bbob_group_mean_reference(records):
+    """
+    Build group-level BBOB reference rows from per-function BBOB HoF rows.
+
+    These rows are intended for generated-function prediction: a generated
+    function assigned to Gk is compared against the average BBOB HoF behavior
+    inside Gk, rather than against one arbitrary/single best BBOB function.
+    """
+    if not records:
+        return []
+
+    df = pd.DataFrame(records)
+    if df.empty:
+        return []
+
+    bbob = df[
+        df["function_type"].eq("bbob_original")
+        & (~df["function_id"].astype(str).eq("All"))
+        & df["assigned_group_0307"].notna()
+    ].copy()
+    if bbob.empty:
+        return []
+
+    numeric_mean_cols = [
+        "CR",
+        "F",
+        "lambda_",
+        "mutation_n_comps",
+        "lpsr",
+        "use_archive",
+        "actual_aucLarge_mean",
+    ]
+    categorical_mode_cols = [
+        "adaptation_method",
+        "crossover",
+        "mutation_base",
+        "mutation_reference",
+    ]
+
+    group_rows = []
+    for group_id, sub in bbob.groupby("assigned_group_0307", sort=True):
+        auc = pd.to_numeric(sub["actual_auc_mean"], errors="coerce").dropna()
+        if auc.empty:
+            continue
+
+        record = {
+            "function_type": "bbob_group_mean",
+            "function_id": str(group_id),
+            "function_name": f"{group_id} BBOB group mean",
+            "fid": "GroupMean",
+            "scheme": SCHEME_NAME,
+            "assigned_group_0307": group_id,
+            "group_label_0307": mode_value(sub.get("group_label_0307", pd.Series(dtype=object))),
+            "source_file": "aggregate_of_bbob_hall_of_fame_rows",
+            "ranking_metric": "group_mean_of_bbob_function_hof",
+            "aggregation_method": "mean_numeric_mode_categorical",
+            "group_n_bbob_functions": int(len(sub)),
+            "group_bbob_functions": ",".join(sub["function_id"].astype(str).tolist()),
+            "actual_auc_mean": float(auc.mean()),
+            "actual_auc_std": float(auc.std(ddof=0)),
+            "actual_auc_median": float(auc.median()),
+            "actual_auc_min": float(auc.min()),
+            "actual_auc_max": float(auc.max()),
+            "n_rows": int(len(sub)),
+            "n_seeds": int(pd.to_numeric(sub.get("n_seeds", pd.Series(dtype=float)), errors="coerce").sum()),
+        }
+
+        for col in numeric_mean_cols:
+            if col in sub.columns:
+                vals = pd.to_numeric(sub[col], errors="coerce").dropna()
+                record[col] = float(vals.mean()) if not vals.empty else None
+
+        for col in categorical_mode_cols:
+            if col in sub.columns:
+                record[col] = mode_value(sub[col])
+                mode = record[col]
+                if mode is not None:
+                    valid = sub[col].dropna().astype(str)
+                    record[f"{col}_mode_fraction"] = float((valid == str(mode)).mean()) if len(valid) else None
+
+        group_rows.append(record)
+
+    return group_rows
+
+
 # ============================================================
 # Affine functions
 # ============================================================
@@ -492,6 +597,84 @@ def build_affine_hall_of_fame():
 # Real generated LLaMEA functions
 # ============================================================
 
+def recursive_find_key(obj, candidates):
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if k in candidates:
+                if isinstance(v, (int, float)):
+                    return v
+                if isinstance(v, dict):
+                    for inner_key in ["mean", "value", "avg"]:
+                        if inner_key in v and isinstance(v[inner_key], (int, float)):
+                            return v[inner_key]
+            found = recursive_find_key(v, candidates)
+            if found is not None:
+                return found
+    elif isinstance(obj, list):
+        for item in obj:
+            found = recursive_find_key(item, candidates)
+            if found is not None:
+                return found
+    return None
+
+
+def clean_real_feature_id(path_or_id):
+    text = str(path_or_id)
+    text = text.replace("real_generated_function_", "")
+    text = text.replace("_ela_features_summary", "")
+    text = text.replace(".json", "")
+    text = text.replace(".py", "")
+    return text
+
+
+def load_real_feature_json_summary(feature_dir: Path):
+    rows = []
+    for p in sorted(feature_dir.glob("real_generated_function_*_ela_features_summary.json")):
+        data = safe_read_json(p)
+        if data is None:
+            continue
+
+        rows.append(
+            {
+                "full_id": clean_real_feature_id(p.name),
+                "eps_ratio": recursive_find_key(
+                    data,
+                    {
+                        "ic.eps.ratio",
+                        "ic.eps.ratio_mean",
+                        "eps_ratio",
+                        "eps_ratio_mean",
+                    },
+                ),
+                "adj_r2": recursive_find_key(
+                    data,
+                    {
+                        "ela_meta.lin_simple.adj_r2",
+                        "ela_meta.lin_simple.adj_r2_mean",
+                        "adj_r2",
+                        "adj_r2_mean",
+                    },
+                ),
+                "eps_ratio_std": recursive_find_key(
+                    data,
+                    {
+                        "ic.eps.ratio_std",
+                        "eps_ratio_std",
+                    },
+                ),
+                "adj_r2_std": recursive_find_key(
+                    data,
+                    {
+                        "ela_meta.lin_simple.adj_r2_std",
+                        "adj_r2_std",
+                    },
+                ),
+            }
+        )
+
+    return pd.DataFrame(rows)
+
+
 def load_real_feature_summary():
     candidates = [
         PROJECT_ROOT
@@ -502,10 +685,40 @@ def load_real_feature_summary():
     ]
 
     path = find_existing_file(candidates)
-    if path is None:
-        return pd.DataFrame()
+    feature_dir = PROJECT_ROOT / "intermediate" / "new_function_task" / "real_function_features"
+    json_df = load_real_feature_json_summary(feature_dir)
 
-    return pd.read_csv(path)
+    if path is None:
+        return json_df
+
+    df = pd.read_csv(path)
+    rename = {
+        "ic.eps.ratio_mean": "eps_ratio",
+        "ic.eps.ratio_std": "eps_ratio_std",
+        "ela_meta.lin_simple.adj_r2_mean": "adj_r2",
+        "ela_meta.lin_simple.adj_r2_std": "adj_r2_std",
+    }
+    df = df.rename(columns={k: v for k, v in rename.items() if k in df.columns})
+    if "full_id" in df.columns:
+        df["full_id"] = df["full_id"].map(clean_real_feature_id)
+
+    if json_df.empty:
+        return df
+    if df.empty or "full_id" not in df.columns:
+        return json_df
+
+    # Prefer CSV values when available, but add older functions that only
+    # exist as per-function JSON summaries.
+    combined = pd.concat([df, json_df], ignore_index=True, sort=False)
+    for col in ["eps_ratio", "adj_r2", "eps_ratio_std", "adj_r2_std"]:
+        if col in combined.columns:
+            combined[col] = pd.to_numeric(combined[col], errors="coerce")
+    combined = (
+        combined.sort_values("full_id")
+        .groupby("full_id", as_index=False, dropna=False)
+        .first()
+    )
+    return combined
 
 
 def parse_real_id_from_name(path: Path):
@@ -717,6 +930,9 @@ def main():
 
     log("\nCollecting BBOB original functions...")
     records.extend(build_bbob_hall_of_fame())
+
+    log("\nCollecting BBOB group mean reference rows...")
+    records.extend(build_bbob_group_mean_reference(records))
 
     log("\nCollecting affine functions...")
     records.extend(build_affine_hall_of_fame())

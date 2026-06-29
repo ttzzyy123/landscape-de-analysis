@@ -30,6 +30,15 @@ TARGET_COL = os.getenv("STEP8B_TARGET", "auc")
 SAMPLE_SIZE = int(os.getenv("STEP8B_SAMPLE_SIZE", "10000"))
 MODEL_ITERATIONS = int(os.getenv("STEP8B_ITERATIONS", "250"))
 RANDOM_STATE = int(os.getenv("STEP8B_RANDOM_STATE", "42"))
+FORCE_REEXPORT_RAW = os.getenv("STEP8B_FORCE_REEXPORT_RAW", "0").lower() in {"1", "true", "yes", "y"}
+
+CATEGORICAL_VALUE_MAPS = {
+    "crossover": {"bin": 0.0, "exp": 1.0},
+    "mutation_base": {"best": 0.0, "rand": 1.0, "target": 2.0},
+    "mutation_reference": {"NA": 0.0, "best": 1.0, "pbest": 2.0, "rand": 3.0},
+    "lpsr": {False: 0.0, True: 1.0, "False": 0.0, "True": 1.0, "false": 0.0, "true": 1.0},
+    "use_archive": {False: 0.0, True: 1.0, "False": 0.0, "True": 1.0, "false": 0.0, "true": 1.0},
+}
 
 INSTANCE_SCHEME = "eps2bins_4_r025050075_instance"
 
@@ -95,6 +104,13 @@ def safe_read_pickle(path: Path):
     try:
         return pd.read_pickle(path)
     except Exception as e:
+        csv_fallback = Path(str(path) + ".csv")
+        if csv_fallback.exists():
+            try:
+                return pd.read_csv(csv_fallback)
+            except Exception as e2:
+                warnings.warn(f"Could not read pickle {path}: {e}; CSV fallback failed: {e2}")
+                return None
         warnings.warn(f"Could not read pickle {path}: {e}")
         return None
 
@@ -284,7 +300,6 @@ def choose_feature_columns(df: pd.DataFrame):
         "lpsr",
         "mutation_n_comps",
         "use_archive",
-        "adaptation_method",
         "crossover",
         "mutation_base",
         "mutation_reference",
@@ -296,6 +311,9 @@ def choose_feature_columns(df: pd.DataFrame):
 
     cols = [c for c in preferred if c in df.columns and c != TARGET_COL]
 
+    if cols:
+        return cols
+
     # Add other usable columns, but avoid lists / object blobs.
     for c in df.columns:
         if c in cols or c in exclude or c == TARGET_COL:
@@ -306,6 +324,30 @@ def choose_feature_columns(df: pd.DataFrame):
             cols.append(c)
 
     return cols
+
+
+def encode_feature_matrix(X_raw: pd.DataFrame) -> pd.DataFrame:
+    X = pd.DataFrame(index=X_raw.index)
+
+    for col in X_raw.columns:
+        s = X_raw[col]
+
+        if col in CATEGORICAL_VALUE_MAPS:
+            mapped = s.map(CATEGORICAL_VALUE_MAPS[col])
+            if mapped.isna().any():
+                mapped = mapped.fillna(s.astype(str).map(CATEGORICAL_VALUE_MAPS[col]))
+            X[col] = pd.to_numeric(mapped, errors="coerce")
+        elif pd.api.types.is_bool_dtype(s):
+            X[col] = s.astype(float)
+        elif pd.api.types.is_numeric_dtype(s):
+            X[col] = pd.to_numeric(s, errors="coerce")
+        else:
+            cats = pd.Categorical(s.astype(str).fillna("NA"))
+            X[col] = cats.codes.astype(float)
+
+        X[col] = X[col].replace([np.inf, -np.inf], np.nan).fillna(0.0)
+
+    return X
 
 
 def shap_importance_from_df(df: pd.DataFrame, out_csv: Path, title: str = ""):
@@ -323,13 +365,10 @@ def shap_importance_from_df(df: pd.DataFrame, out_csv: Path, title: str = ""):
     if not feature_cols:
         raise ValueError("No usable feature columns found.")
 
-    X = df[feature_cols].copy()
+    X_raw = df[feature_cols].copy()
     y = df[TARGET_COL].astype(float).copy()
 
-    # One-hot encode categorical columns for robust CatBoost/SHAP compatibility.
-    X = pd.get_dummies(X, dummy_na=True)
-    X = X.loc[:, ~X.columns.duplicated()]
-    X = X.replace([np.inf, -np.inf], np.nan).fillna(0)
+    X = encode_feature_matrix(X_raw)
 
     model = CatBoostRegressor(
         iterations=MODEL_ITERATIONS,
@@ -345,9 +384,10 @@ def shap_importance_from_df(df: pd.DataFrame, out_csv: Path, title: str = ""):
 
     pool = Pool(X, y)
     shap_values = model.get_feature_importance(pool, type="ShapValues")
+    shap_feature_values = np.asarray(shap_values[:, :-1], dtype=float)
 
     # Last column is expected value.
-    vals = np.abs(shap_values[:, :-1]).mean(axis=0)
+    vals = np.abs(shap_feature_values).mean(axis=0)
 
     imp = pd.DataFrame(
         {
@@ -358,6 +398,28 @@ def shap_importance_from_df(df: pd.DataFrame, out_csv: Path, title: str = ""):
 
     imp = normalize_importance(imp)
     imp.to_csv(out_csv, index=False)
+
+    raw_out_csv = Path(str(out_csv).replace("_individual_shap_importance.csv", "_raw_shap_values_long.csv"))
+    raw_rows = []
+    sample_ids = np.arange(len(X), dtype=int)
+    for j, feature in enumerate(X.columns):
+        raw_rows.append(
+            pd.DataFrame(
+                {
+                    "sample_id": sample_ids,
+                    "feature": str(feature),
+                    "feature_value": pd.to_numeric(X.iloc[:, j], errors="coerce").to_numpy(dtype=float),
+                    "shap_value": shap_feature_values[:, j],
+                    "abs_shap_value": np.abs(shap_feature_values[:, j]),
+                }
+            )
+        )
+    raw_long = pd.concat(raw_rows, ignore_index=True)
+    raw_long["target"] = TARGET_COL
+    raw_long["model_train_rows"] = len(X)
+    raw_long["model_iterations"] = MODEL_ITERATIONS
+    raw_long["random_state"] = RANDOM_STATE
+    raw_long.to_csv(raw_out_csv, index=False)
 
     return imp
 
@@ -605,11 +667,13 @@ def collect_modde_pkls():
 
     if REAL_MODDE_DIR.exists():
         for p in REAL_MODDE_DIR.rglob("*.pkl"):
-            files.append(("real", p))
+            if p.name.endswith("_processed.pkl"):
+                files.append(("real", p))
 
     if AFFINE_MODDE_DIR.exists():
         for p in AFFINE_MODDE_DIR.rglob("*.pkl"):
-            files.append(("affine", p))
+            if p.name.endswith("_processed.pkl"):
+                files.append(("affine", p))
 
     return sorted(files, key=lambda x: str(x[1]))
 
@@ -733,7 +797,9 @@ def run_47_generated_affine_exports():
 
         out_csv = out_base / f"{name}_individual_shap_importance.csv"
 
-        if out_csv.exists():
+        out_raw_csv = out_base / f"{name}_raw_shap_values_long.csv"
+
+        if out_csv.exists() and out_raw_csv.exists() and not FORCE_REEXPORT_RAW:
             vec = vector_from_importance_csv(out_csv)
         else:
             df = safe_read_pickle(pkl_path)

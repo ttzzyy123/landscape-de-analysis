@@ -2,104 +2,104 @@
 
 For each generated function and hyperparameter, this table compares the shape of the assigned group SHAP distribution with the individual function SHAP distribution. Raw SHAP values are used when available; otherwise the script falls back to summary-level importance values.
 
-| function_type | function_id | assigned_group_0307 | hyperparameter | shape_distance_metric | wasserstein_distance | ks_statistic | group_n_values | function_n_values | group_std_shap | function_std_shap | group_distribution_mode | function_distribution_mode | status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| affine | f10_f6 | G5 | CR | wasserstein_1d_and_ks_statistic | 0.144763 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f10_f6 | G5 | instance | wasserstein_1d_and_ks_statistic | 0.059615 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f10_f6 | G5 | seed | wasserstein_1d_and_ks_statistic | 0.0267616 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f10_f6 | G5 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.0257325 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f10_f6 | G5 | mutation_base | wasserstein_1d_and_ks_statistic | 0.0246434 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f10_f6 | G5 | lambda_ | wasserstein_1d_and_ks_statistic | 0.021329 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f10_f6 | G5 | crossover | wasserstein_1d_and_ks_statistic | 0.0162852 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f10_f6 | G5 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.0144468 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f10_f6 | G5 | F | wasserstein_1d_and_ks_statistic | 0.00840483 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f10_f6 | G5 | lpsr | wasserstein_1d_and_ks_statistic | 0.00693535 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f10_f6 | G5 | use_archive | wasserstein_1d_and_ks_statistic | 7.7269e-05 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f15_f8 | G1 | instance | wasserstein_1d_and_ks_statistic | 0.0635451 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f15_f8 | G1 | mutation_base | wasserstein_1d_and_ks_statistic | 0.0315718 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f15_f8 | G1 | lambda_ | wasserstein_1d_and_ks_statistic | 0.0261091 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f15_f8 | G1 | crossover | wasserstein_1d_and_ks_statistic | 0.0232979 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f15_f8 | G1 | F | wasserstein_1d_and_ks_statistic | 0.0229634 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f15_f8 | G1 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.0089063 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f15_f8 | G1 | use_archive | wasserstein_1d_and_ks_statistic | 0.00613766 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f15_f8 | G1 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.00439547 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f15_f8 | G1 | lpsr | wasserstein_1d_and_ks_statistic | 0.00333513 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f15_f8 | G1 | CR | wasserstein_1d_and_ks_statistic | 0.00262361 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f15_f8 | G1 | seed | wasserstein_1d_and_ks_statistic | 0.00167691 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f1_f23 | G1 | instance | wasserstein_1d_and_ks_statistic | 0.0635451 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f1_f23 | G1 | lambda_ | wasserstein_1d_and_ks_statistic | 0.0601189 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f1_f23 | G1 | seed | wasserstein_1d_and_ks_statistic | 0.0445066 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f1_f23 | G1 | F | wasserstein_1d_and_ks_statistic | 0.0426258 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f1_f23 | G1 | lpsr | wasserstein_1d_and_ks_statistic | 0.038398 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f1_f23 | G1 | mutation_base | wasserstein_1d_and_ks_statistic | 0.0377141 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f1_f23 | G1 | crossover | wasserstein_1d_and_ks_statistic | 0.0309868 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f1_f23 | G1 | CR | wasserstein_1d_and_ks_statistic | 0.0146881 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f1_f23 | G1 | use_archive | wasserstein_1d_and_ks_statistic | 0.0139287 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f1_f23 | G1 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.0128559 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f1_f23 | G1 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.00165441 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f3_f6 | G1 | CR | wasserstein_1d_and_ks_statistic | 0.0795596 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f3_f6 | G1 | F | wasserstein_1d_and_ks_statistic | 0.0660626 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f3_f6 | G1 | instance | wasserstein_1d_and_ks_statistic | 0.0635451 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f3_f6 | G1 | lambda_ | wasserstein_1d_and_ks_statistic | 0.0424137 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f3_f6 | G1 | lpsr | wasserstein_1d_and_ks_statistic | 0.0333747 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f3_f6 | G1 | seed | wasserstein_1d_and_ks_statistic | 0.0177567 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f3_f6 | G1 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.0152815 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f3_f6 | G1 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.00771775 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f3_f6 | G1 | use_archive | wasserstein_1d_and_ks_statistic | 0.00760033 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f3_f6 | G1 | mutation_base | wasserstein_1d_and_ks_statistic | 0.00661571 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f3_f6 | G1 | crossover | wasserstein_1d_and_ks_statistic | 0.0014045 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f9_f12 | G3 | instance | wasserstein_1d_and_ks_statistic | 0.0482758 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f9_f12 | G3 | CR | wasserstein_1d_and_ks_statistic | 0.044907 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f9_f12 | G3 | lambda_ | wasserstein_1d_and_ks_statistic | 0.0318082 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f9_f12 | G3 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.0295043 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f9_f12 | G3 | mutation_base | wasserstein_1d_and_ks_statistic | 0.0205892 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f9_f12 | G3 | seed | wasserstein_1d_and_ks_statistic | 0.0164026 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f9_f12 | G3 | lpsr | wasserstein_1d_and_ks_statistic | 0.0141595 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f9_f12 | G3 | crossover | wasserstein_1d_and_ks_statistic | 0.0113228 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f9_f12 | G3 | F | wasserstein_1d_and_ks_statistic | 0.00703677 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f9_f12 | G3 | use_archive | wasserstein_1d_and_ks_statistic | 0.00564952 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| affine | f9_f12 | G3 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.00102752 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260516_115256 | G0 | lambda_ | wasserstein_1d_and_ks_statistic | 0.0808173 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260516_115256 | G0 | instance | wasserstein_1d_and_ks_statistic | 0.0795381 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260516_115256 | G0 | lpsr | wasserstein_1d_and_ks_statistic | 0.0605523 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260516_115256 | G0 | seed | wasserstein_1d_and_ks_statistic | 0.0553027 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260516_115256 | G0 | F | wasserstein_1d_and_ks_statistic | 0.0361463 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260516_115256 | G0 | crossover | wasserstein_1d_and_ks_statistic | 0.0314602 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260516_115256 | G0 | mutation_base | wasserstein_1d_and_ks_statistic | 0.0270812 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260516_115256 | G0 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.0214088 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260516_115256 | G0 | use_archive | wasserstein_1d_and_ks_statistic | 0.00880663 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260516_115256 | G0 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.00822554 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260516_115256 | G0 | CR | wasserstein_1d_and_ks_statistic | 0.000144893 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n3 | G1 | CR | wasserstein_1d_and_ks_statistic | 0.144406 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n3 | G1 | instance | wasserstein_1d_and_ks_statistic | 0.0635451 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n3 | G1 | F | wasserstein_1d_and_ks_statistic | 0.0575087 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n3 | G1 | crossover | wasserstein_1d_and_ks_statistic | 0.0214112 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n3 | G1 | lpsr | wasserstein_1d_and_ks_statistic | 0.0171371 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n3 | G1 | seed | wasserstein_1d_and_ks_statistic | 0.0137238 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n3 | G1 | lambda_ | wasserstein_1d_and_ks_statistic | 0.0126331 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n3 | G1 | use_archive | wasserstein_1d_and_ks_statistic | 0.0109435 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n3 | G1 | mutation_base | wasserstein_1d_and_ks_statistic | 0.00716072 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n3 | G1 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.00467077 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n3 | G1 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.00376011 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n5 | G0 | instance | wasserstein_1d_and_ks_statistic | 0.0795381 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n5 | G0 | F | wasserstein_1d_and_ks_statistic | 0.0549461 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n5 | G0 | CR | wasserstein_1d_and_ks_statistic | 0.0403494 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n5 | G0 | use_archive | wasserstein_1d_and_ks_statistic | 0.026352 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n5 | G0 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.0262909 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n5 | G0 | lambda_ | wasserstein_1d_and_ks_statistic | 0.0216927 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n5 | G0 | crossover | wasserstein_1d_and_ks_statistic | 0.0186392 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n5 | G0 | seed | wasserstein_1d_and_ks_statistic | 0.0164239 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n5 | G0 | lpsr | wasserstein_1d_and_ks_statistic | 0.0121399 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n5 | G0 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.00491066 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n5 | G0 | mutation_base | wasserstein_1d_and_ks_statistic | 0.00407312 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n7 | G0 | lambda_ | wasserstein_1d_and_ks_statistic | 0.100625 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n7 | G0 | instance | wasserstein_1d_and_ks_statistic | 0.0795381 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n7 | G0 | F | wasserstein_1d_and_ks_statistic | 0.0777362 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n7 | G0 | seed | wasserstein_1d_and_ks_statistic | 0.0609877 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n7 | G0 | lpsr | wasserstein_1d_and_ks_statistic | 0.0501062 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n7 | G0 | crossover | wasserstein_1d_and_ks_statistic | 0.0407824 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n7 | G0 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.0294488 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n7 | G0 | mutation_base | wasserstein_1d_and_ks_statistic | 0.0265313 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n7 | G0 | CR | wasserstein_1d_and_ks_statistic | 0.0213509 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n7 | G0 | use_archive | wasserstein_1d_and_ks_statistic | 0.0196943 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
-| llamea_generated | 20260517_125137_n7 | G0 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.00319635 | 1 | 1 | 1 | 0 | 0 | summary:importance_norm | summary:importance_norm | ok |
+| function_type | function_id | assigned_group_0307 | hyperparameter | shape_distance_metric | wasserstein_distance | kl_divergence | ks_statistic | group_n_values | function_n_values | group_std_shap | function_std_shap | group_distribution_mode | function_distribution_mode | status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| affine | f10_f6 | G5 | F | wasserstein_1d_and_ks_statistic | 0.00863834 | 0.368443 | 0.18075 | 20000 | 3000 | 0.030446 | 0.0229199 | raw | raw | ok |
+| affine | f10_f6 | G5 | mutation_base | wasserstein_1d_and_ks_statistic | 0.00844955 | 4.00206 | 0.28305 | 20000 | 3000 | 0.0178137 | 0.00710293 | raw | raw | ok |
+| affine | f10_f6 | G5 | lpsr | wasserstein_1d_and_ks_statistic | 0.00804249 | 3.36744 | 0.2653 | 20000 | 3000 | 0.0167904 | 0.00775538 | raw | raw | ok |
+| affine | f10_f6 | G5 | instance | wasserstein_1d_and_ks_statistic | 0.00791316 | 21.035 | 0.52405 | 20000 | 1 | 0.0102456 | 0 | raw | raw | ok |
+| affine | f10_f6 | G5 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.0070458 | 5.4327 | 0.28525 | 20000 | 3000 | 0.0126898 | 0.00373408 | raw | raw | ok |
+| affine | f10_f6 | G5 | seed | wasserstein_1d_and_ks_statistic | 0.00687921 | 20.2371 | 0.51805 | 20000 | 1 | 0.0091294 | 0 | raw | raw | ok |
+| affine | f10_f6 | G5 | CR | wasserstein_1d_and_ks_statistic | 0.00658727 | 0.168713 | 0.14155 | 20000 | 3000 | 0.0232563 | 0.0316683 | raw | raw | ok |
+| affine | f10_f6 | G5 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.00567993 | 2.97379 | 0.2708 | 20000 | 3000 | 0.0111284 | 0.00420611 | raw | raw | ok |
+| affine | f10_f6 | G5 | crossover | wasserstein_1d_and_ks_statistic | 0.00567642 | 11.821 | 0.38945 | 20000 | 3000 | 0.00835587 | 0.00112409 | raw | raw | ok |
+| affine | f10_f6 | G5 | lambda_ | wasserstein_1d_and_ks_statistic | 0.00564623 | 0.338583 | 0.1658 | 20000 | 3000 | 0.0206072 | 0.0180998 | raw | raw | ok |
+| affine | f10_f6 | G5 | use_archive | wasserstein_1d_and_ks_statistic | 0.00442709 | 5.63301 | 0.20385 | 20000 | 3000 | 0.0103498 | 0.00379215 | raw | raw | ok |
+| affine | f15_f8 | G1 | F | wasserstein_1d_and_ks_statistic | 0.0190977 | 4.60174 | 0.3277 | 20000 | 3000 | 0.0359155 | 0.0141813 | raw | raw | ok |
+| affine | f15_f8 | G1 | lambda_ | wasserstein_1d_and_ks_statistic | 0.0124771 | 9.57547 | 0.37305 | 20000 | 3000 | 0.0241439 | 0.00811093 | raw | raw | ok |
+| affine | f15_f8 | G1 | lpsr | wasserstein_1d_and_ks_statistic | 0.010834 | 16.0557 | 0.40375 | 20000 | 3000 | 0.0177189 | 0.00482507 | raw | raw | ok |
+| affine | f15_f8 | G1 | mutation_base | wasserstein_1d_and_ks_statistic | 0.00984315 | 4.29699 | 0.2813 | 20000 | 3000 | 0.0208963 | 0.00866779 | raw | raw | ok |
+| affine | f15_f8 | G1 | instance | wasserstein_1d_and_ks_statistic | 0.00920265 | 21.3181 | 0.5354 | 20000 | 1 | 0.0123438 | 0 | raw | raw | ok |
+| affine | f15_f8 | G1 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.00868923 | 19.5619 | 0.34505 | 20000 | 3000 | 0.0154856 | 0.00423737 | raw | raw | ok |
+| affine | f15_f8 | G1 | CR | wasserstein_1d_and_ks_statistic | 0.00813758 | 4.08011 | 0.3334 | 20000 | 3000 | 0.0141842 | 0.00308377 | raw | raw | ok |
+| affine | f15_f8 | G1 | seed | wasserstein_1d_and_ks_statistic | 0.00807322 | 20.6992 | 0.524 | 20000 | 1 | 0.0109266 | 0 | raw | raw | ok |
+| affine | f15_f8 | G1 | crossover | wasserstein_1d_and_ks_statistic | 0.00692454 | 18.9773 | 0.44865 | 20000 | 3000 | 0.00968075 | 0.000591893 | raw | raw | ok |
+| affine | f15_f8 | G1 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.00675202 | 10.8425 | 0.3017 | 20000 | 3000 | 0.0117644 | 0.00277596 | raw | raw | ok |
+| affine | f15_f8 | G1 | use_archive | wasserstein_1d_and_ks_statistic | 0.00609249 | 12.2835 | 0.35125 | 20000 | 3000 | 0.0098602 | 0.00167532 | raw | raw | ok |
+| affine | f1_f23 | G1 | F | wasserstein_1d_and_ks_statistic | 0.0600809 | 0.945106 | 0.32715 | 20000 | 3000 | 0.0359155 | 0.106815 | raw | raw | ok |
+| affine | f1_f23 | G1 | lambda_ | wasserstein_1d_and_ks_statistic | 0.0447839 | 1.02701 | 0.3897 | 20000 | 3000 | 0.0241439 | 0.0779034 | raw | raw | ok |
+| affine | f1_f23 | G1 | mutation_base | wasserstein_1d_and_ks_statistic | 0.0324091 | 0.83552 | 0.3392 | 20000 | 3000 | 0.0208963 | 0.0605149 | raw | raw | ok |
+| affine | f1_f23 | G1 | lpsr | wasserstein_1d_and_ks_statistic | 0.0300375 | 21.4947 | 0.45875 | 20000 | 3000 | 0.0177189 | 0.0459704 | raw | raw | ok |
+| affine | f1_f23 | G1 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.0135966 | 0.679848 | 0.2629 | 20000 | 3000 | 0.0154856 | 0.0292114 | raw | raw | ok |
+| affine | f1_f23 | G1 | instance | wasserstein_1d_and_ks_statistic | 0.00920265 | 21.3181 | 0.5354 | 20000 | 1 | 0.0123438 | 0 | raw | raw | ok |
+| affine | f1_f23 | G1 | seed | wasserstein_1d_and_ks_statistic | 0.00807322 | 20.6992 | 0.524 | 20000 | 1 | 0.0109266 | 0 | raw | raw | ok |
+| affine | f1_f23 | G1 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.00544659 | 0.418096 | 0.1203 | 20000 | 3000 | 0.0117644 | 0.0175604 | raw | raw | ok |
+| affine | f1_f23 | G1 | CR | wasserstein_1d_and_ks_statistic | 0.0045887 | 0.487282 | 0.14705 | 20000 | 3000 | 0.0141842 | 0.016109 | raw | raw | ok |
+| affine | f1_f23 | G1 | crossover | wasserstein_1d_and_ks_statistic | 0.00450282 | 4.50257 | 0.2278 | 20000 | 3000 | 0.00968075 | 0.00347388 | raw | raw | ok |
+| affine | f1_f23 | G1 | use_archive | wasserstein_1d_and_ks_statistic | 0.00261921 | 0.824974 | 0.11505 | 20000 | 3000 | 0.0098602 | 0.0117544 | raw | raw | ok |
+| affine | f3_f6 | G1 | F | wasserstein_1d_and_ks_statistic | 0.01652 | 4.3671 | 0.25885 | 20000 | 3000 | 0.0359155 | 0.0169169 | raw | raw | ok |
+| affine | f3_f6 | G1 | instance | wasserstein_1d_and_ks_statistic | 0.00920265 | 21.3181 | 0.5354 | 20000 | 1 | 0.0123438 | 0 | raw | raw | ok |
+| affine | f3_f6 | G1 | seed | wasserstein_1d_and_ks_statistic | 0.00807322 | 20.6992 | 0.524 | 20000 | 1 | 0.0109266 | 0 | raw | raw | ok |
+| affine | f3_f6 | G1 | mutation_base | wasserstein_1d_and_ks_statistic | 0.00601748 | 1.97529 | 0.2204 | 20000 | 3000 | 0.0208963 | 0.0132457 | raw | raw | ok |
+| affine | f3_f6 | G1 | CR | wasserstein_1d_and_ks_statistic | 0.00532691 | 0.545996 | 0.17815 | 20000 | 3000 | 0.0141842 | 0.0176318 | raw | raw | ok |
+| affine | f3_f6 | G1 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.00496927 | 3.62747 | 0.2214 | 20000 | 3000 | 0.0117644 | 0.00581763 | raw | raw | ok |
+| affine | f3_f6 | G1 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.00455185 | 2.11855 | 0.16245 | 20000 | 3000 | 0.0154856 | 0.00955729 | raw | raw | ok |
+| affine | f3_f6 | G1 | use_archive | wasserstein_1d_and_ks_statistic | 0.0039881 | 4.01733 | 0.1981 | 20000 | 3000 | 0.0098602 | 0.00413928 | raw | raw | ok |
+| affine | f3_f6 | G1 | lpsr | wasserstein_1d_and_ks_statistic | 0.00369017 | 1.15695 | 0.1048 | 20000 | 3000 | 0.0177189 | 0.0144027 | raw | raw | ok |
+| affine | f3_f6 | G1 | lambda_ | wasserstein_1d_and_ks_statistic | 0.00314217 | 0.628261 | 0.0908 | 20000 | 3000 | 0.0241439 | 0.0212272 | raw | raw | ok |
+| affine | f3_f6 | G1 | crossover | wasserstein_1d_and_ks_statistic | 0.00288733 | 2.80213 | 0.12535 | 20000 | 3000 | 0.00968075 | 0.00570792 | raw | raw | ok |
+| affine | f9_f12 | G3 | F | wasserstein_1d_and_ks_statistic | 0.00985577 | 0.215446 | 0.1586 | 20000 | 3000 | 0.0268453 | 0.0386113 | raw | raw | ok |
+| affine | f9_f12 | G3 | lambda_ | wasserstein_1d_and_ks_statistic | 0.00791735 | 0.2564 | 0.17975 | 20000 | 3000 | 0.0156104 | 0.0263967 | raw | raw | ok |
+| affine | f9_f12 | G3 | CR | wasserstein_1d_and_ks_statistic | 0.00736021 | 0.367556 | 0.23655 | 20000 | 3000 | 0.0131079 | 0.022768 | raw | raw | ok |
+| affine | f9_f12 | G3 | instance | wasserstein_1d_and_ks_statistic | 0.00468124 | 19.0872 | 0.51645 | 20000 | 1 | 0.00655627 | 0 | raw | raw | ok |
+| affine | f9_f12 | G3 | lpsr | wasserstein_1d_and_ks_statistic | 0.00399926 | 5.42517 | 0.26045 | 20000 | 3000 | 0.0114082 | 0.0144197 | raw | raw | ok |
+| affine | f9_f12 | G3 | seed | wasserstein_1d_and_ks_statistic | 0.00396413 | 19.2901 | 0.51925 | 20000 | 1 | 0.00556137 | 0 | raw | raw | ok |
+| affine | f9_f12 | G3 | crossover | wasserstein_1d_and_ks_statistic | 0.00298803 | 6.63356 | 0.32915 | 20000 | 3000 | 0.00500977 | 0.000939679 | raw | raw | ok |
+| affine | f9_f12 | G3 | use_archive | wasserstein_1d_and_ks_statistic | 0.00199043 | 2.41022 | 0.11365 | 20000 | 3000 | 0.00629259 | 0.00316972 | raw | raw | ok |
+| affine | f9_f12 | G3 | mutation_base | wasserstein_1d_and_ks_statistic | 0.00156855 | 0.177033 | 0.06845 | 20000 | 3000 | 0.0155448 | 0.0159733 | raw | raw | ok |
+| affine | f9_f12 | G3 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.0012287 | 1.09005 | 0.06495 | 20000 | 3000 | 0.010426 | 0.00853062 | raw | raw | ok |
+| affine | f9_f12 | G3 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.000797338 | 0.223767 | 0.0818 | 20000 | 3000 | 0.00684231 | 0.00670616 | raw | raw | ok |
+| llamea_generated | 20260516_115256 | G0 | F | wasserstein_1d_and_ks_statistic | 0.0584807 | 1.22568 | 0.40608 | 20000 | 3005 | 0.0218554 | 0.0912805 | raw | raw | ok |
+| llamea_generated | 20260516_115256 | G0 | lambda_ | wasserstein_1d_and_ks_statistic | 0.0481036 | 1.86069 | 0.546826 | 20000 | 3005 | 0.0116133 | 0.0696113 | raw | raw | ok |
+| llamea_generated | 20260516_115256 | G0 | lpsr | wasserstein_1d_and_ks_statistic | 0.0361565 | 31.5493 | 0.492876 | 20000 | 3005 | 0.00996149 | 0.0446318 | raw | raw | ok |
+| llamea_generated | 20260516_115256 | G0 | mutation_base | wasserstein_1d_and_ks_statistic | 0.0341889 | 0.941458 | 0.309201 | 20000 | 3005 | 0.013749 | 0.0584985 | raw | raw | ok |
+| llamea_generated | 20260516_115256 | G0 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.0162504 | 1.37924 | 0.344451 | 20000 | 3005 | 0.0105736 | 0.0269237 | raw | raw | ok |
+| llamea_generated | 20260516_115256 | G0 | CR | wasserstein_1d_and_ks_statistic | 0.0149585 | 0.932609 | 0.349204 | 20000 | 3005 | 0.0104067 | 0.0275892 | raw | raw | ok |
+| llamea_generated | 20260516_115256 | G0 | use_archive | wasserstein_1d_and_ks_statistic | 0.00743262 | 1.47507 | 0.276384 | 20000 | 3005 | 0.00749984 | 0.0139846 | raw | raw | ok |
+| llamea_generated | 20260516_115256 | G0 | instance | wasserstein_1d_and_ks_statistic | 0.00707324 | 18.8689 | 0.51215 | 20000 | 1 | 0.0107373 | 0 | raw | raw | ok |
+| llamea_generated | 20260516_115256 | G0 | seed | wasserstein_1d_and_ks_statistic | 0.00622543 | 18.8844 | 0.50255 | 20000 | 1 | 0.00939067 | 0 | raw | raw | ok |
+| llamea_generated | 20260516_115256 | G0 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.00513269 | 0.429964 | 0.195697 | 20000 | 3005 | 0.00948535 | 0.0151439 | raw | raw | ok |
+| llamea_generated | 20260516_115256 | G0 | crossover | wasserstein_1d_and_ks_statistic | 0.00151418 | 1.71578 | 0.0807137 | 20000 | 3005 | 0.00748684 | 0.00451894 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n3 | G1 | CR | wasserstein_1d_and_ks_statistic | 0.0900322 | 2.60266 | 0.44905 | 20000 | 3000 | 0.0141842 | 0.116104 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n3 | G1 | lambda_ | wasserstein_1d_and_ks_statistic | 0.0444694 | 0.842994 | 0.3286 | 20000 | 3000 | 0.0241439 | 0.0771185 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n3 | G1 | F | wasserstein_1d_and_ks_statistic | 0.0360971 | 0.588103 | 0.25145 | 20000 | 3000 | 0.0359155 | 0.0786355 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n3 | G1 | crossover | wasserstein_1d_and_ks_statistic | 0.0261872 | 10.4369 | 0.4344 | 20000 | 3000 | 0.00968075 | 0.0356659 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n3 | G1 | lpsr | wasserstein_1d_and_ks_statistic | 0.0225159 | 6.98933 | 0.38935 | 20000 | 3000 | 0.0177189 | 0.0390256 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n3 | G1 | mutation_base | wasserstein_1d_and_ks_statistic | 0.0218714 | 0.295403 | 0.15015 | 20000 | 3000 | 0.0208963 | 0.0567623 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n3 | G1 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.0188277 | 0.789211 | 0.2808 | 20000 | 3000 | 0.0154856 | 0.0357018 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n3 | G1 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.01005 | 0.322727 | 0.19205 | 20000 | 3000 | 0.0117644 | 0.0249124 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n3 | G1 | instance | wasserstein_1d_and_ks_statistic | 0.00920265 | 21.3181 | 0.5354 | 20000 | 1 | 0.0123438 | 0 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n3 | G1 | seed | wasserstein_1d_and_ks_statistic | 0.00807322 | 20.6992 | 0.524 | 20000 | 1 | 0.0109266 | 0 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n3 | G1 | use_archive | wasserstein_1d_and_ks_statistic | 0.00211016 | 1.27257 | 0.09375 | 20000 | 3000 | 0.0098602 | 0.00717453 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n5 | G0 | instance | wasserstein_1d_and_ks_statistic | 0.00707324 | 18.8689 | 0.51215 | 20000 | 1 | 0.0107373 | 0 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n5 | G0 | seed | wasserstein_1d_and_ks_statistic | 0.00622543 | 18.8844 | 0.50255 | 20000 | 1 | 0.00939067 | 0 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n5 | G0 | mutation_base | wasserstein_1d_and_ks_statistic | 0.0045837 | 3.43423 | 0.22545 | 20000 | 3000 | 0.013749 | 0.00701124 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n5 | G0 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.00450299 | 8.81727 | 0.2882 | 20000 | 3000 | 0.00948535 | 0.00283822 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n5 | G0 | use_archive | wasserstein_1d_and_ks_statistic | 0.00404632 | 12.8441 | 0.3018 | 20000 | 3000 | 0.00749984 | 0.00136876 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n5 | G0 | lpsr | wasserstein_1d_and_ks_statistic | 0.00400443 | 14.3245 | 0.24775 | 20000 | 3000 | 0.00996149 | 0.00493323 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n5 | G0 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.00370982 | 7.83139 | 0.2106 | 20000 | 3000 | 0.0105736 | 0.00547119 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n5 | G0 | F | wasserstein_1d_and_ks_statistic | 0.00259312 | 0.466029 | 0.06585 | 20000 | 3000 | 0.0218554 | 0.0180918 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n5 | G0 | crossover | wasserstein_1d_and_ks_statistic | 0.00252012 | 7.13154 | 0.16665 | 20000 | 3000 | 0.00748684 | 0.00390978 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n5 | G0 | lambda_ | wasserstein_1d_and_ks_statistic | 0.00188186 | 2.50394 | 0.10995 | 20000 | 3000 | 0.0116133 | 0.00782502 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n5 | G0 | CR | wasserstein_1d_and_ks_statistic | 0.00176091 | 1.2362 | 0.09905 | 20000 | 3000 | 0.0104067 | 0.00748629 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n7 | G0 | F | wasserstein_1d_and_ks_statistic | 0.0783504 | 1.52327 | 0.4056 | 20000 | 3000 | 0.0218554 | 0.11291 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n7 | G0 | lambda_ | wasserstein_1d_and_ks_statistic | 0.0571582 | 1.92544 | 0.52875 | 20000 | 3000 | 0.0116133 | 0.079927 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n7 | G0 | mutation_base | wasserstein_1d_and_ks_statistic | 0.0371628 | 1.35197 | 0.41745 | 20000 | 3000 | 0.013749 | 0.0588339 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n7 | G0 | lpsr | wasserstein_1d_and_ks_statistic | 0.0368143 | 28.4173 | 0.48745 | 20000 | 3000 | 0.00996149 | 0.0449955 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n7 | G0 | mutation_n_comps | wasserstein_1d_and_ks_statistic | 0.0208682 | 1.46141 | 0.37625 | 20000 | 3000 | 0.0105736 | 0.0322424 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n7 | G0 | mutation_reference | wasserstein_1d_and_ks_statistic | 0.0075057 | 0.645573 | 0.18885 | 20000 | 3000 | 0.00948535 | 0.0178856 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n7 | G0 | CR | wasserstein_1d_and_ks_statistic | 0.00711889 | 0.410375 | 0.2093 | 20000 | 3000 | 0.0104067 | 0.0185002 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n7 | G0 | instance | wasserstein_1d_and_ks_statistic | 0.00707324 | 18.8689 | 0.51215 | 20000 | 1 | 0.0107373 | 0 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n7 | G0 | seed | wasserstein_1d_and_ks_statistic | 0.00622543 | 18.8844 | 0.50255 | 20000 | 1 | 0.00939067 | 0 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n7 | G0 | use_archive | wasserstein_1d_and_ks_statistic | 0.00501498 | 0.648896 | 0.17045 | 20000 | 3000 | 0.00749984 | 0.0131243 | raw | raw | ok |
+| llamea_generated | 20260517_125137_n7 | G0 | crossover | wasserstein_1d_and_ks_statistic | 0.00189923 | 1.73943 | 0.08565 | 20000 | 3000 | 0.00748684 | 0.00416124 | raw | raw | ok |

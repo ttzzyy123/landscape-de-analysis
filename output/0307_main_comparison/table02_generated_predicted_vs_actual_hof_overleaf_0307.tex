@@ -1,0 +1,33 @@
+\begin{table*}[htbp]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\caption{Generated functions: comparison between the predicted BBOB group-mean reference and the actual function-level Hall-of-Fame configuration under the 0307 grouping. Predicted rows use the mean AUC and numeric hyperparameter means of the assigned BBOB group; categorical hyperparameters use the group mode.}
+\label{tab:generated-predicted-actual-hof-0307}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lll l rr rr l r l l r l l}
+\toprule
+Type & Function & Group & Source & AUC & $\Delta$AUC & CR & F & crossover & $\lambda$ & lpsr & base & n\_comps & ref & archive \\
+\midrule
+affine & f10\_f6 & G5 & Actual & 0.624 & -0.117 & 0.838 & 0.330 & exp & 10 & False & best & 2 & NA & False \\
+affine & f10\_f6 & G5 & Predicted & 0.741 & -0.117 & 0.886 & 0.559 & bin & 12 & 0.500 & best & 1 & pbest & 0 \\
+affine & f15\_f8 & G1 & Actual & 0.300 & -0.348 & 0.635 & 0.167 & bin & 42 & True & best & 1 & pbest & False \\
+affine & f15\_f8 & G1 & Predicted & 0.648 & -0.348 & 0.759 & 0.469 & bin & 11.750 & 1 & best & 1 & pbest & 0.125 \\
+affine & f1\_f23 & G1 & Actual & 0.919 & 0.272 & 0.676 & 0.229 & bin & 14 & False & best & 1 & best & False \\
+affine & f1\_f23 & G1 & Predicted & 0.648 & 0.272 & 0.759 & 0.469 & bin & 11.750 & 1 & best & 1 & pbest & 0.125 \\
+affine & f3\_f6 & G1 & Actual & 0.430 & -0.218 & 0.369 & 0.869 & bin & 12 & True & best & 1 & NA & False \\
+affine & f3\_f6 & G1 & Predicted & 0.648 & -0.218 & 0.759 & 0.469 & bin & 11.750 & 1 & best & 1 & pbest & 0.125 \\
+affine & f9\_f12 & G3 & Actual & 0.673 & 0.174 & 0.838 & 0.330 & exp & 10 & False & best & 2 & NA & False \\
+affine & f9\_f12 & G3 & Predicted & 0.499 & 0.174 & 0.928 & 0.471 & bin & 11 & 0.500 & best & 1.500 & pbest & 0.500 \\
+LLaMEA & 20260516\_115256 & G0 & Actual & 0.893 & 0.494 & 0.674 & 0.186 & bin & 12 & True & best & 2 & best & False \\
+LLaMEA & 20260516\_115256 & G0 & Predicted & 0.399 & 0.494 & 0.767 & 0.251 & exp & 19.167 & 0.667 & best & 1.167 & pbest & 0 \\
+LLaMEA & 20260517\_125137\_n3 & G1 & Actual & 0.901 & 0.254 & 0.178 & 0.015 & bin & 13 & False & rand & 1 & pbest & True \\
+LLaMEA & 20260517\_125137\_n3 & G1 & Predicted & 0.648 & 0.254 & 0.759 & 0.469 & bin & 11.750 & 1 & best & 1 & pbest & 0.125 \\
+LLaMEA & 20260517\_125137\_n5 & G0 & Actual & 0.313 & -0.086 & 0.973 & 0.025 & exp & 24 & True & rand & 2 & rand & False \\
+LLaMEA & 20260517\_125137\_n5 & G0 & Predicted & 0.399 & -0.086 & 0.767 & 0.251 & exp & 19.167 & 0.667 & best & 1.167 & pbest & 0 \\
+LLaMEA & 20260517\_125137\_n7 & G0 & Actual & 0.919 & 0.520 & 0.869 & 0.177 & exp & 17 & False & best & 1 & rand & False \\
+LLaMEA & 20260517\_125137\_n7 & G0 & Predicted & 0.399 & 0.520 & 0.767 & 0.251 & exp & 19.167 & 0.667 & best & 1.167 & pbest & 0 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}

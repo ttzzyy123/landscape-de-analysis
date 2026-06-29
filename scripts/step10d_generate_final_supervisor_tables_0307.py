@@ -1,9 +1,9 @@
 from pathlib import Path
+import os
 import warnings
 
 import numpy as np
 import pandas as pd
-
 
 # ============================================================
 # Step 10D: Generate final supervisor-requested tables
@@ -19,7 +19,7 @@ import pandas as pd
 # Table 2:
 #   Generated functions predicted vs actual Hall-of-Fame table
 #   For affine and LLaMEA functions:
-#   group Hall-of-Fame winner as predicted config
+#   assigned BBOB group mean reference as predicted config
 #   vs function Hall-of-Fame winner as actual config.
 #
 # Table 3:
@@ -50,11 +50,29 @@ import pandas as pd
 # =========================
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-COMPARISON_DIR = PROJECT_ROOT / "output" / "0307_main_comparison"
+INPUT_COMPARISON_DIR = PROJECT_ROOT / "output" / "0307_main_comparison"
+
+COMPARISON_DIR = Path(
+    os.getenv(
+        "STEP10D_OUTPUT_DIR",
+        str(INPUT_COMPARISON_DIR),
+    )
+)
 COMPARISON_DIR.mkdir(parents=True, exist_ok=True)
 
-HALL_OF_FAME_CSV = COMPARISON_DIR / "hall_of_fame_0307.csv"
-SHAP_SIMILARITY_CSV = COMPARISON_DIR / "shap_similarity_0307.csv"
+HALL_OF_FAME_CSV = Path(
+    os.getenv(
+        "STEP10D_HALL_OF_FAME_CSV",
+        str(INPUT_COMPARISON_DIR / "hall_of_fame_0307.csv"),
+    )
+)
+
+SHAP_SIMILARITY_CSV = Path(
+    os.getenv(
+        "STEP10D_SHAP_SIMILARITY_CSV",
+        str(INPUT_COMPARISON_DIR / "shap_similarity_0307.csv"),
+    )
+)
 
 GROUP_SHAP_DIR = (
     PROJECT_ROOT
@@ -68,20 +86,48 @@ BBOB_INDIVIDUAL_SHAP_DIR = (
     / "shap_individual_manual_bins_niles"
 )
 
-AFFINE_SHAP_DIR = (
-    PROJECT_ROOT
-    / "output"
-    / "new_function_task"
-    / "task_H_individual_shap_affine_functions"
-)
+def default_raw_shap_base():
+    env_value = os.getenv("RAW_SHAP_LOCAL_BASE")
+    if env_value:
+        return Path(env_value)
 
-LLAMEA_SHAP_DIR = (
-    PROJECT_ROOT
-    / "output"
-    / "new_function_task"
-    / "task_H_individual_shap_real_generated_function"
-)
+    candidates = [
+        Path("/local/s3795888/my_landscape_experiments_raw_shap"),
+    ]
 
+    # Local Windows backup layout:
+    #   server_full_backup_20260624/
+    #     landscape-de-analysis-main/landscape-de-analysis-main/
+    #     my_landscape_experiments_raw_shap/
+    for parent in PROJECT_ROOT.parents:
+        candidates.append(parent / "my_landscape_experiments_raw_shap")
+
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+
+    return candidates[0]
+
+
+LOCAL_RAW_BASE = default_raw_shap_base()
+
+PROJECT_NEW_FUNCTION_SHAP_BASE = PROJECT_ROOT / "output" / "new_function_task"
+AFFINE_SHAP_DIR = PROJECT_NEW_FUNCTION_SHAP_BASE / "task_H_individual_shap_affine_functions"
+LLAMEA_SHAP_DIR = PROJECT_NEW_FUNCTION_SHAP_BASE / "task_H_individual_shap_real_generated_function"
+AFFINE_SHAP_FALLBACK_DIR = LOCAL_RAW_BASE / "task_H_individual_shap_affine_functions"
+LLAMEA_SHAP_FALLBACK_DIR = LOCAL_RAW_BASE / "task_H_individual_shap_real_generated_function"
+
+HYPERPARAMETERS = [
+    "CR",
+    "F",
+    "crossover",
+    "lambda_",
+    "lpsr",
+    "mutation_base",
+    "mutation_n_comps",
+    "mutation_reference",
+    "use_archive",
+]
 
 # =========================
 # Output files
@@ -89,13 +135,36 @@ LLAMEA_SHAP_DIR = (
 OUT_TABLE1_CSV = COMPARISON_DIR / "table01_bbob_group_hyperparameter_shap_distance_0307.csv"
 OUT_TABLE1_MD = COMPARISON_DIR / "table01_bbob_group_hyperparameter_shap_distance_0307.md"
 
+# Additional Table 1 outputs requested for Overleaf:
+# one row per BBOB function, with all hyperparameters shown as
+# group importance / function importance (group - function).
+OUT_TABLE1_DETAIL_CSV = COMPARISON_DIR / "table01_bbob_function_hyperparameter_shap_distance_detail_0307.csv"
+OUT_TABLE1_WIDE_CSV = COMPARISON_DIR / "table01_bbob_function_hyperparameter_shap_distance_wide_0307.csv"
+OUT_TABLE1_WIDE_MD = COMPARISON_DIR / "table01_bbob_function_hyperparameter_shap_distance_wide_0307.md"
+OUT_TABLE1_WIDE_TEX = COMPARISON_DIR / "table01_bbob_function_hyperparameter_shap_distance_wide_0307.tex"
+
 OUT_TABLE2_CSV = COMPARISON_DIR / "table02_generated_predicted_vs_actual_hof_0307.csv"
+OUT_TABLE2_WIDE_CSV = COMPARISON_DIR / "table02_generated_predicted_vs_actual_hof_wide_0307.csv"
+OUT_TABLE2_WIDE_MD = COMPARISON_DIR / "table02_generated_predicted_vs_actual_hof_wide_0307.md"
+OUT_TABLE2_WIDE_TEX = COMPARISON_DIR / "table02_generated_predicted_vs_actual_hof_wide_0307.tex"
 OUT_TABLE2_MD = COMPARISON_DIR / "table02_generated_predicted_vs_actual_hof_0307.md"
 
 OUT_TABLE3_CSV = COMPARISON_DIR / "table03_generated_shap_shape_distance_0307.csv"
+OUT_TABLE3_WIDE_CSV = COMPARISON_DIR / "table03_generated_shap_shape_distance_wide_0307.csv"
+OUT_TABLE3_WIDE_MD = COMPARISON_DIR / "table03_generated_shap_shape_distance_wide_0307.md"
+OUT_TABLE3_WIDE_TEX = COMPARISON_DIR / "table03_generated_shap_shape_distance_wide_0307.tex"
+OUT_TABLE3_WASSERSTEIN_WIDE_CSV = COMPARISON_DIR / "table03_generated_shap_shape_wasserstein_wide_0307.csv"
+OUT_TABLE3_WASSERSTEIN_WIDE_MD = COMPARISON_DIR / "table03_generated_shap_shape_wasserstein_wide_0307.md"
+OUT_TABLE3_WASSERSTEIN_WIDE_TEX = COMPARISON_DIR / "table03_generated_shap_shape_wasserstein_wide_0307.tex"
+OUT_TABLE3_KL_WIDE_CSV = COMPARISON_DIR / "table03_generated_shap_shape_kl_wide_0307.csv"
+OUT_TABLE3_KL_WIDE_MD = COMPARISON_DIR / "table03_generated_shap_shape_kl_wide_0307.md"
+OUT_TABLE3_KL_WIDE_TEX = COMPARISON_DIR / "table03_generated_shap_shape_kl_wide_0307.tex"
 OUT_TABLE3_MD = COMPARISON_DIR / "table03_generated_shap_shape_distance_0307.md"
 
 OUT_TABLE4_CSV = COMPARISON_DIR / "table04_generated_shap_value_distance_0307.csv"
+OUT_TABLE4_WIDE_CSV = COMPARISON_DIR / "table04_generated_shap_value_distance_wide_0307.csv"
+OUT_TABLE4_WIDE_MD = COMPARISON_DIR / "table04_generated_shap_value_distance_wide_0307.md"
+OUT_TABLE4_WIDE_TEX = COMPARISON_DIR / "table04_generated_shap_value_distance_wide_0307.tex"
 OUT_TABLE4_MD = COMPARISON_DIR / "table04_generated_shap_value_distance_0307.md"
 
 OUT_TABLE5_CSV = COMPARISON_DIR / "table05_generated_shap_similarity_summary_0307.csv"
@@ -269,6 +338,13 @@ def detect_importance_value_column(df):
     )
 
 
+def display_path(path):
+    path = Path(path)
+    try:
+        return str(path.relative_to(PROJECT_ROOT))
+    except ValueError:
+        return str(path)
+    
 def df_to_markdown_no_tabulate(df, max_rows=None):
     out_df = df.copy()
 
@@ -438,7 +514,7 @@ def candidate_raw_shap_files_for_individual(function_type, function_id):
         ]
 
     elif function_type == "affine":
-        base_dir = AFFINE_SHAP_DIR
+        base_dirs = [AFFINE_SHAP_DIR, AFFINE_SHAP_FALLBACK_DIR]
         patterns = [
             f"*{function_id}*raw*.csv",
             f"*{function_id}*shap_values*.csv",
@@ -447,7 +523,7 @@ def candidate_raw_shap_files_for_individual(function_type, function_id):
         ]
 
     elif function_type == "llamea_generated":
-        base_dir = LLAMEA_SHAP_DIR
+        base_dirs = [LLAMEA_SHAP_DIR, LLAMEA_SHAP_FALLBACK_DIR]
         patterns = [
             f"*{function_id}*raw*.csv",
             f"*{function_id}*shap_values*.csv",
@@ -458,9 +534,15 @@ def candidate_raw_shap_files_for_individual(function_type, function_id):
     else:
         return []
 
+    if function_type == "bbob_original":
+        base_dirs = [base_dir]
+
     files = []
-    for p in patterns:
-        files.extend(sorted(base_dir.glob(p)))
+    for base in base_dirs:
+        if not base.exists():
+            continue
+        for p in patterns:
+            files.extend(sorted(base.glob(p)))
 
     files = [
         f for f in files
@@ -543,6 +625,141 @@ def read_raw_shap_distribution_from_csv(path):
         )
 
     return out
+
+
+def read_raw_shap_records_from_csv(path):
+    """
+    Reads raw SHAP records with feature values for strict A/B matching.
+
+    Required long-format columns:
+        feature, feature_value, shap_value
+
+    Returns:
+        dict: feature -> DataFrame[feature_value, shap_value]
+    """
+    path = Path(path)
+    df = pd.read_csv(path)
+    lower_cols = {str(c).lower(): c for c in df.columns}
+
+    feature_col = None
+    value_col = None
+    shap_col = None
+
+    for c in ["feature", "variable", "hyperparameter", "parameter"]:
+        if c in lower_cols:
+            feature_col = lower_cols[c]
+            break
+
+    for c in ["feature_value", "x_value", "parameter_value", "value_x"]:
+        if c in lower_cols:
+            value_col = lower_cols[c]
+            break
+
+    for c in ["shap_value", "shap", "shap_values"]:
+        if c in lower_cols:
+            shap_col = lower_cols[c]
+            break
+
+    if feature_col is None or value_col is None or shap_col is None:
+        raise ValueError(
+            f"File does not contain strict raw-long SHAP records: {path}. "
+            f"Need feature, feature_value, shap_value. Columns: {df.columns.tolist()}"
+        )
+
+    out = {}
+    for feature, sub in df.groupby(feature_col):
+        tmp = pd.DataFrame(
+            {
+                "feature_value": pd.to_numeric(sub[value_col], errors="coerce"),
+                "shap_value": pd.to_numeric(sub[shap_col], errors="coerce"),
+            }
+        ).dropna()
+        if not tmp.empty:
+            out[feature_name_cleanup(feature)] = tmp.reset_index(drop=True)
+
+    if not out:
+        raise ValueError(f"No usable raw-long SHAP records in {path}")
+
+    return out
+
+
+def load_raw_group_records(group_id):
+    files = candidate_raw_shap_files_for_group(group_id)
+
+    last_error = None
+    for f in files:
+        try:
+            records = read_raw_shap_records_from_csv(f)
+            if records:
+                return records, f, "raw_long"
+        except Exception as e:
+            last_error = e
+
+    raise FileNotFoundError(
+        f"No usable raw-long group SHAP records found for group {group_id}. "
+        f"Candidates: {[str(x) for x in files]}. Last error: {last_error}"
+    )
+
+
+def load_raw_individual_records(function_type, function_id):
+    files = candidate_raw_shap_files_for_individual(function_type, function_id)
+
+    last_error = None
+    for f in files:
+        try:
+            records = read_raw_shap_records_from_csv(f)
+            if records:
+                return records, f, "raw_long"
+        except Exception as e:
+            last_error = e
+
+    raise FileNotFoundError(
+        f"No usable raw-long individual SHAP records found for "
+        f"{function_type} {function_id}. "
+        f"Candidates: {[str(x) for x in files]}. Last error: {last_error}"
+    )
+
+
+def nearest_feature_value_mean_abs_distance(group_records, function_records):
+    """
+    Strict A/B point matching distance.
+
+    For each generated-function point A=(feature_value, shap_value), find the
+    group point B with the nearest feature_value and average |A_shap - B_shap|.
+    Exact feature-value matches are therefore used whenever they exist.
+    """
+    if group_records is None or function_records is None:
+        return np.nan, 0, np.nan
+
+    g = group_records[["feature_value", "shap_value"]].dropna().copy()
+    f = function_records[["feature_value", "shap_value"]].dropna().copy()
+
+    if g.empty or f.empty:
+        return np.nan, 0, np.nan
+
+    g = g.sort_values("feature_value").reset_index(drop=True)
+    gx = g["feature_value"].to_numpy(dtype=float)
+    gy = g["shap_value"].to_numpy(dtype=float)
+    fx = f["feature_value"].to_numpy(dtype=float)
+    fy = f["shap_value"].to_numpy(dtype=float)
+
+    pos = np.searchsorted(gx, fx, side="left")
+    left = np.clip(pos - 1, 0, len(gx) - 1)
+    right = np.clip(pos, 0, len(gx) - 1)
+
+    left_gap = np.abs(fx - gx[left])
+    right_gap = np.abs(fx - gx[right])
+    use_right = right_gap < left_gap
+    nearest = np.where(use_right, right, left)
+
+    shap_gap = np.abs(fy - gy[nearest])
+    feature_value_gap = np.abs(fx - gx[nearest])
+
+    return (
+        float(np.mean(shap_gap)),
+        int(len(shap_gap)),
+        float(np.mean(feature_value_gap)),
+    )
 
 
 def load_raw_group_distribution(group_id):
@@ -667,6 +884,45 @@ def ks_statistic_1d(x, y):
     cdf_y = np.searchsorted(y_sorted, values, side="right") / len(y_sorted)
 
     return float(np.max(np.abs(cdf_x - cdf_y)))
+
+
+def kl_divergence_1d(x, y, bins=40, epsilon=1e-12):
+    """
+    Histogram-based Kullback-Leibler divergence KL(group || function).
+
+    The two empirical distributions are binned on a shared range and smoothed
+    with epsilon so that zero-probability bins do not make the divergence
+    infinite. Smaller values mean more similar distribution shapes.
+    """
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+
+    x = x[np.isfinite(x)]
+    y = y[np.isfinite(y)]
+
+    if len(x) == 0 or len(y) == 0:
+        return np.nan
+
+    all_values = np.concatenate([x, y])
+    lo = float(np.min(all_values))
+    hi = float(np.max(all_values))
+
+    if not np.isfinite(lo) or not np.isfinite(hi):
+        return np.nan
+
+    if abs(hi - lo) <= 1e-15:
+        return 0.0
+
+    hist_x, bin_edges = np.histogram(x, bins=bins, range=(lo, hi), density=False)
+    hist_y, _ = np.histogram(y, bins=bin_edges, density=False)
+
+    p = hist_x.astype(float) + epsilon
+    q = hist_y.astype(float) + epsilon
+
+    p = p / np.sum(p)
+    q = q / np.sum(q)
+
+    return float(np.sum(p * np.log(p / q)))
 
 
 def skewness(x):
@@ -810,15 +1066,47 @@ def compare_config_values(pred, actual):
 
 def build_group_hof_winner_table(hof):
     """
-    Predicted group Hall-of-Fame winner.
+    Predicted group Hall-of-Fame reference.
 
     Rule:
-      - Use BBOB original functions only.
-      - Exclude All rows.
-      - Within each assigned group, select the BBOB function Hall-of-Fame
-        row with the highest actual_auc_mean.
-      - This row is the group's predicted best configuration.
+      - Prefer Step 9's bbob_group_mean rows when present.
+      - These rows average numeric BBOB HoF values inside each assigned group.
+      - Categorical settings are represented by the group mode.
+      - If older Hall-of-Fame files do not contain group-mean rows, compute
+        the same reference directly from BBOB original HoF rows.
     """
+    group_mean = hof[
+        (hof["function_type"].eq("bbob_group_mean"))
+        & (~hof["function_id"].astype(str).eq("All"))
+    ].copy()
+
+    if not group_mean.empty:
+        rows = []
+        group_mean["actual_auc_mean"] = pd.to_numeric(
+            group_mean["actual_auc_mean"],
+            errors="coerce",
+        )
+
+        for _, r in group_mean.iterrows():
+            group_id = r["assigned_group_0307"]
+            item = {
+                "assigned_group_0307": group_id,
+                "predicted_source_function_type": r["function_type"],
+                "predicted_source_function_id": r.get("function_id", group_id),
+                "predicted_source_auc_mean": safe_float(r["actual_auc_mean"]),
+                "group_n_bbob_functions": r.get("group_n_bbob_functions", np.nan),
+                "group_bbob_functions": r.get("group_bbob_functions", ""),
+                "predicted_config_signature": config_signature(r),
+                "prediction_reference_method": "bbob_group_mean_row",
+            }
+
+            for c in CONFIG_COLS:
+                item[c] = r.get(c, np.nan)
+
+            rows.append(item)
+
+        return pd.DataFrame(rows)
+
     bbob = hof[
         (hof["function_type"].eq("bbob_original"))
         & (~hof["function_id"].astype(str).eq("All"))
@@ -834,20 +1122,32 @@ def build_group_hof_winner_table(hof):
         if sub.empty:
             continue
 
-        winner = sub.sort_values("actual_auc_mean", ascending=False).iloc[0]
+        auc = sub["actual_auc_mean"].dropna()
+        if auc.empty:
+            continue
 
         item = {
             "assigned_group_0307": group_id,
-            "predicted_source_function_type": winner["function_type"],
-            "predicted_source_function_id": winner["function_id"],
-            "predicted_source_auc_mean": safe_float(winner["actual_auc_mean"]),
+            "predicted_source_function_type": "bbob_group_mean",
+            "predicted_source_function_id": str(group_id),
+            "predicted_source_auc_mean": float(auc.mean()),
             "group_n_bbob_functions": len(sub),
             "group_bbob_functions": ",".join(sub["function_id"].astype(str).tolist()),
-            "predicted_config_signature": config_signature(winner),
+            "prediction_reference_method": "computed_from_bbob_hof_rows",
         }
 
-        for c in CONFIG_COLS:
-            item[c] = winner.get(c, np.nan)
+        for c in ["CR", "F", "lambda_", "mutation_n_comps", "lpsr", "use_archive"]:
+            if c in sub.columns:
+                vals = pd.to_numeric(sub[c], errors="coerce").dropna()
+                item[c] = float(vals.mean()) if not vals.empty else np.nan
+
+        for c in ["crossover", "mutation_base", "mutation_reference"]:
+            if c in sub.columns:
+                vals = sub[c].dropna().astype(str)
+                vals = vals[~vals.str.lower().isin(["", "nan", "none"])]
+                item[c] = vals.mode().iloc[0] if not vals.empty else np.nan
+
+        item["predicted_config_signature"] = config_signature(pd.Series(item))
 
         rows.append(item)
 
@@ -889,8 +1189,8 @@ def build_table1_bbob_group_shap_distance(hof):
                         "function_shap_importance_norm": float(iv),
                         "signed_difference_function_minus_group": float(iv - gv),
                         "distance": float(abs(iv - gv)),
-                        "source_group_shap": str(Path(group_path).relative_to(PROJECT_ROOT)),
-                        "source_function_shap": str(Path(individual_path).relative_to(PROJECT_ROOT)),
+                        "source_group_shap": display_path(group_path),
+                        "source_function_shap": display_path(individual_path),
                         "group_value_column": group_value_col,
                         "function_value_column": individual_value_col,
                         "status": "ok",
@@ -980,7 +1280,7 @@ def build_table2_generated_predicted_vs_actual_hof(hof):
                     "function_type": function_type,
                     "function_id": function_id,
                     "assigned_group_0307": canonical_group_label(group_id),
-                    "config_source": "group HoF predicted",
+                    "config_source": "group mean predicted",
                     "auc_mean": np.nan,
                     "delta_auc_actual_minus_predicted": np.nan,
                     "config_match_count": np.nan,
@@ -1021,6 +1321,7 @@ def build_table2_generated_predicted_vs_actual_hof(hof):
             "predicted_source_bbob_function": pred.get("predicted_source_function_id", ""),
             "group_n_bbob_functions": pred.get("group_n_bbob_functions", np.nan),
             "group_bbob_functions": pred.get("group_bbob_functions", ""),
+            "prediction_reference_method": pred.get("prediction_reference_method", ""),
             "delta_auc_actual_minus_predicted": delta_auc,
             "config_match_count": match_count,
             "config_available_count": available_count,
@@ -1031,12 +1332,13 @@ def build_table2_generated_predicted_vs_actual_hof(hof):
 
         pred_row = {
             **common,
-            "config_source": "group HoF predicted",
+            "config_source": "group mean predicted",
             "auc_mean": predicted_auc,
             "config_signature": pred.get("predicted_config_signature", ""),
             "note": (
-                "Predicted configuration is the Hall-of-Fame winner among "
-                "BBOB functions in the assigned group."
+                "Predicted reference is the assigned group's mean BBOB "
+                "Hall-of-Fame behavior; numeric hyperparameters are means "
+                "and categorical hyperparameters are modes."
             ),
         }
 
@@ -1102,6 +1404,7 @@ def build_table3_generated_shape_distance(hof):
                         "hyperparameter": feature,
                         "shape_distance_metric": "wasserstein_1d_and_ks_statistic",
                         "wasserstein_distance": wasserstein_1d(gv, iv),
+                        "kl_divergence": kl_divergence_1d(gv, iv),
                         "ks_statistic": ks_statistic_1d(gv, iv),
                         "group_n_values": len(gv),
                         "function_n_values": len(iv),
@@ -1111,8 +1414,8 @@ def build_table3_generated_shape_distance(hof):
                         "function_skewness": skewness(iv),
                         "group_kurtosis_excess": kurtosis_excess(gv),
                         "function_kurtosis_excess": kurtosis_excess(iv),
-                        "source_group_shap": str(Path(group_path).relative_to(PROJECT_ROOT)),
-                        "source_function_shap": str(Path(individual_path).relative_to(PROJECT_ROOT)),
+                        "source_group_shap": display_path(group_path),
+                        "source_function_shap": display_path(individual_path),
                         "group_distribution_mode": group_mode,
                         "function_distribution_mode": individual_mode,
                         "status": "ok",
@@ -1133,6 +1436,7 @@ def build_table3_generated_shape_distance(hof):
                     "hyperparameter": "",
                     "shape_distance_metric": "wasserstein_1d_and_ks_statistic",
                     "wasserstein_distance": np.nan,
+                    "kl_divergence": np.nan,
                     "ks_statistic": np.nan,
                     "group_n_values": np.nan,
                     "function_n_values": np.nan,
@@ -1184,6 +1488,18 @@ def build_table4_generated_value_distance(hof):
                 function_type,
                 function_id,
             )
+            try:
+                group_records, group_records_path, group_records_mode = load_raw_group_records(group_id)
+            except Exception:
+                group_records, group_records_path, group_records_mode = {}, "", ""
+
+            try:
+                individual_records, individual_records_path, individual_records_mode = load_raw_individual_records(
+                    function_type,
+                    function_id,
+                )
+            except Exception:
+                individual_records, individual_records_path, individual_records_mode = {}, "", ""
 
             # Also load normalized importance for importance-distance columns.
             group_imp, group_imp_path, group_imp_col = load_group_importance_vector(group_id)
@@ -1192,12 +1508,10 @@ def build_table4_generated_value_distance(hof):
                 function_id,
             )
 
-            features = sorted(
-                set(group_dist.keys())
-                | set(individual_dist.keys())
-                | set(group_imp.keys())
-                | set(ind_imp.keys())
-            )
+            feature_candidates = set(individual_dist.keys()) | set(ind_imp.keys())
+            preferred_features = [hp for hp in HYPERPARAMETERS if hp in feature_candidates]
+            remaining_features = sorted(f for f in feature_candidates if f not in preferred_features)
+            features = preferred_features + remaining_features
 
             for feature in features:
                 gv = np.asarray(group_dist.get(feature, np.array([0.0])), dtype=float)
@@ -1208,6 +1522,13 @@ def build_table4_generated_value_distance(hof):
 
                 group_mean_abs = float(np.mean(np.abs(gv))) if len(gv) > 0 else np.nan
                 function_mean_abs = float(np.mean(np.abs(iv))) if len(iv) > 0 else np.nan
+                value_wasserstein = wasserstein_1d(gv, iv)
+                matched_distance, matched_n_pairs, matched_mean_feature_gap = (
+                    nearest_feature_value_mean_abs_distance(
+                        group_records.get(feature),
+                        individual_records.get(feature),
+                    )
+                )
 
                 signed_diff = function_mean - group_mean
                 abs_diff = abs(signed_diff)
@@ -1232,20 +1553,29 @@ def build_table4_generated_value_distance(hof):
                         "function_mean_abs_shap": function_mean_abs,
                         "signed_difference_abs_shap_function_minus_group": function_mean_abs - group_mean_abs,
                         "absolute_difference_mean_abs_shap": abs(function_mean_abs - group_mean_abs),
+                        "wasserstein_distance": value_wasserstein,
+                        "matched_feature_value_mean_abs_distance": matched_distance,
+                        "matched_n_pairs": matched_n_pairs,
+                        "matched_mean_feature_value_gap": matched_mean_feature_gap,
                         "group_importance_norm": group_imp_norm,
                         "function_importance_norm": function_imp_norm,
                         "importance_signed_difference_function_minus_group": imp_signed_diff,
                         "importance_absolute_difference": imp_abs_diff,
-                        "source_group_shap": str(Path(group_path).relative_to(PROJECT_ROOT)),
-                        "source_function_shap": str(Path(individual_path).relative_to(PROJECT_ROOT)),
+                        "source_group_shap": display_path(group_path),
+                        "source_function_shap": display_path(individual_path),
+                        "source_group_raw_long": display_path(group_records_path) if group_records_path else "",
+                        "source_function_raw_long": display_path(individual_records_path) if individual_records_path else "",
                         "group_distribution_mode": group_mode,
                         "function_distribution_mode": individual_mode,
+                        "group_record_mode": group_records_mode,
+                        "function_record_mode": individual_records_mode,
                         "group_importance_column": group_imp_col,
                         "function_importance_column": ind_imp_col,
                         "status": "ok",
                         "note": (
-                            "Mean SHAP columns use raw distributions when available. "
-                            "Importance columns use normalized summary SHAP importance."
+                            "matched_feature_value_mean_abs_distance averages |function SHAP - nearest group SHAP| "
+                            "after matching by the same or nearest feature_value. Wasserstein is retained "
+                            "as an unpaired SHAP-distribution distance."
                         ),
                     }
                 )
@@ -1266,14 +1596,22 @@ def build_table4_generated_value_distance(hof):
                     "function_mean_abs_shap": np.nan,
                     "signed_difference_abs_shap_function_minus_group": np.nan,
                     "absolute_difference_mean_abs_shap": np.nan,
+                    "wasserstein_distance": np.nan,
+                    "matched_feature_value_mean_abs_distance": np.nan,
+                    "matched_n_pairs": np.nan,
+                    "matched_mean_feature_value_gap": np.nan,
                     "group_importance_norm": np.nan,
                     "function_importance_norm": np.nan,
                     "importance_signed_difference_function_minus_group": np.nan,
                     "importance_absolute_difference": np.nan,
                     "source_group_shap": "",
                     "source_function_shap": "",
+                    "source_group_raw_long": "",
+                    "source_function_raw_long": "",
                     "group_distribution_mode": "",
                     "function_distribution_mode": "",
+                    "group_record_mode": "",
+                    "function_record_mode": "",
                     "group_importance_column": "",
                     "function_importance_column": "",
                     "status": "error",
@@ -1369,15 +1707,22 @@ def build_table5_generated_summary(hof, table3, table4):
         ].copy()
 
         if not t4.empty:
-            item["mean_value_distance"] = float(t4["importance_absolute_difference"].mean())
-            item["max_value_distance"] = float(t4["importance_absolute_difference"].max())
+            if "matched_feature_value_mean_abs_distance" in t4.columns:
+                value_distance_col = "matched_feature_value_mean_abs_distance"
+            else:
+                value_distance_col = "importance_absolute_difference"
 
-            idx = t4["importance_absolute_difference"].idxmax()
+            item["mean_value_distance"] = float(t4[value_distance_col].mean())
+            item["max_value_distance"] = float(t4[value_distance_col].max())
+
+            idx = t4[value_distance_col].idxmax()
             item["most_different_hyperparameter_value"] = t4.loc[idx, "hyperparameter"]
+            item["value_distance_metric"] = value_distance_col
         else:
             item["mean_value_distance"] = np.nan
             item["max_value_distance"] = np.nan
             item["most_different_hyperparameter_value"] = ""
+            item["value_distance_metric"] = ""
 
         # Table 3 shape distance summary.
         t3 = table3[
@@ -1422,7 +1767,882 @@ def build_table5_generated_summary(hof, table3, table4):
     return table5
 
 
+
 # =========================
+# Additional Table 1 wide-format helpers
+# =========================
+def format_group_function_delta(row):
+    """
+    Format one cell as:
+    group importance / individual function importance (group - function)
+    """
+    g = row["group_importance_norm"]
+    f = row["function_importance_norm"]
+
+    if "signed_difference_group_minus_function" in row.index:
+        d = row["signed_difference_group_minus_function"]
+    elif "signed_difference" in row.index:
+        d = row["signed_difference"]
+    else:
+        d = g - f
+
+    if pd.isna(g) or pd.isna(f) or pd.isna(d):
+        return ""
+
+    return f"{g:.3f}/{f:.3f} ({d:+.3f})"
+
+
+def natural_function_sort_key(x):
+    s = str(x)
+
+    if s.startswith("f"):
+        s2 = s[1:]
+        if s2.isdigit():
+            return int(s2)
+
+    if s.isdigit():
+        return int(s)
+
+    return 10**9
+
+
+def build_table1_bbob_function_wide(table1_detail: pd.DataFrame) -> pd.DataFrame:
+    """Build wide per-BBOB-function Table 1.
+
+    Each hyperparameter cell is:
+        group importance / function importance (group - function)
+
+    This version is intentionally tolerant to column-name differences between
+    earlier Step10D drafts.
+    """
+    import re
+
+    detail = table1_detail.copy()
+    if detail.empty:
+        return pd.DataFrame()
+
+    def pick_column(candidates, label, required=True):
+        for col in candidates:
+            if col in detail.columns:
+                return col
+        if required:
+            raise KeyError(
+                f"Could not find {label} column. "
+                f"Tried {candidates}. Available columns: {list(detail.columns)}"
+            )
+        return None
+
+    function_col = pick_column(
+        [
+            "function_id",
+            "bbob_function_id",
+            "fid",
+            "function",
+            "bbob_function",
+            "function_name",
+        ],
+        "BBOB function id",
+    )
+
+    group_col = pick_column(
+        [
+            "assigned_group_0307",
+            "bbob_group",
+            "group",
+            "group_id",
+            "assigned_group",
+            "group_label",
+        ],
+        "assigned group",
+    )
+
+    hyperparameter_col = pick_column(
+        [
+            "hyperparameter",
+            "parameter",
+            "feature",
+            "feature_name",
+            "hp",
+        ],
+        "hyperparameter",
+    )
+
+    group_value_col = pick_column(
+        [
+            "group_importance_norm",
+            "group_shap_importance_norm",
+            "group_importance",
+            "group_imp",
+            "group_importance_mean",
+            "group_mean_importance",
+            "group_mean_abs_shap_norm",
+            "group_mean_abs_shap",
+            "group_value",
+            "Group imp.",
+            "Group imp",
+        ],
+        "group SHAP importance",
+    )
+
+    function_value_col = pick_column(
+        [
+            "function_importance_norm",
+            "function_shap_importance_norm",
+            "function_importance",
+            "bbob_importance_norm",
+            "bbob_importance",
+            "function_imp",
+            "bbob_imp",
+            "function_mean_abs_shap_norm",
+            "function_mean_abs_shap",
+            "individual_importance_norm",
+            "individual_importance",
+            "BBOB imp.",
+            "BBOB imp",
+        ],
+        "individual BBOB SHAP importance",
+    )
+
+    def function_sort_value(value):
+        text = str(value)
+        nums = re.findall(r"\d+", text)
+        if nums:
+            return int(nums[-1])
+        return 10**9
+
+    def function_label(value):
+        n = function_sort_value(value)
+        if n != 10**9:
+            return f"function{n}"
+        return str(value)
+
+    def group_label(value):
+        text = str(value)
+        if text.startswith("G"):
+            return text
+        nums = re.findall(r"\d+", text)
+        if nums:
+            return f"G{int(nums[-1])}"
+        return text
+
+    def fmt_cell(row):
+        g = row["_group_value"]
+        f = row["_function_value"]
+        if pd.isna(g) or pd.isna(f):
+            return "--"
+        d = g - f
+        return f"{g:.3f}/{f:.3f} ({d:+.3f})"
+
+    detail["_function_sort"] = detail[function_col].map(function_sort_value)
+    detail["function"] = detail[function_col].map(function_label)
+    detail["group"] = detail[group_col].map(group_label)
+    detail["hyperparameter"] = detail[hyperparameter_col].astype(str)
+
+    detail["_group_value"] = pd.to_numeric(detail[group_value_col], errors="coerce")
+    detail["_function_value"] = pd.to_numeric(detail[function_value_col], errors="coerce")
+
+    compact = (
+        detail.groupby(
+            ["_function_sort", "function", "group", "hyperparameter"],
+            as_index=False,
+            dropna=False,
+        )
+        .agg(
+            _group_value=("_group_value", "mean"),
+            _function_value=("_function_value", "mean"),
+        )
+    )
+    compact["_cell"] = compact.apply(fmt_cell, axis=1)
+
+    preferred_hyperparameters = [
+        hp for hp in globals().get("HYPERPARAMETERS", [])
+        if hp in set(compact["hyperparameter"])
+    ]
+    remaining_hyperparameters = sorted(
+        hp for hp in compact["hyperparameter"].unique()
+        if hp not in preferred_hyperparameters
+    )
+    hyperparameter_order = preferred_hyperparameters + remaining_hyperparameters
+
+    wide = (
+        compact.pivot_table(
+            index=["_function_sort", "function", "group"],
+            columns="hyperparameter",
+            values="_cell",
+            aggfunc="first",
+        )
+        .reset_index()
+        .sort_values("_function_sort")
+    )
+
+    for hp in hyperparameter_order:
+        if hp not in wide.columns:
+            wide[hp] = "--"
+
+    wide = wide[["function", "group"] + hyperparameter_order]
+    wide = wide.fillna("--")
+
+    return wide
+
+def latex_escape_text(x):
+    s = str(x)
+
+    replacements = {
+        "\\": r"\textbackslash{}",
+        "_": r"\_",
+        "%": r"\%",
+        "&": r"\&",
+        "#": r"\#",
+        "$": r"\$",
+        "{": r"\{",
+        "}": r"\}",
+    }
+
+    return "".join(replacements.get(ch, ch) for ch in s)
+
+
+def df_to_latex_table1_wide(df):
+    cols = list(df.columns)
+
+    lines = []
+    lines.append(r"\begin{table}[htbp]")
+    lines.append(r"\centering")
+    lines.append(
+        r"\caption{Per-function BBOB SHAP-importance comparison against the assigned 0307 group reference. "
+        r"Each hyperparameter cell reports group importance/function importance (group minus function).}"
+    )
+    lines.append(r"\label{tab:bbob_function_group_shap_comparison}")
+    lines.append(r"\begin{adjustbox}{max width=\textwidth}")
+    lines.append(r"\begin{tabular}{ll" + "c" * (len(cols) - 2) + "}")
+    lines.append(r"\toprule")
+    lines.append(" & ".join(latex_escape_text(c) for c in cols) + r" \\")
+    lines.append(r"\midrule")
+
+    for _, row in df.iterrows():
+        vals = []
+        for c in cols:
+            v = row[c]
+            vals.append("" if pd.isna(v) else latex_escape_text(v))
+        lines.append(" & ".join(vals) + r" \\")
+
+    lines.append(r"\bottomrule")
+    lines.append(r"\end{tabular}")
+    lines.append(r"\end{adjustbox}")
+    lines.append(r"\end{table}")
+
+    return "\n".join(lines)
+
+# =========================
+
+def normalize_hof_value(value):
+    if pd.isna(value):
+        return ""
+    text = str(value).strip()
+    if text.endswith(".0"):
+        text = text[:-2]
+    return text
+
+
+def format_predicted_actual_delta(predicted, actual):
+    pred = normalize_hof_value(predicted)
+    act = normalize_hof_value(actual)
+
+    if pred == "" and act == "":
+        return "--"
+
+    pred_num = pd.to_numeric(pred, errors="coerce")
+    act_num = pd.to_numeric(act, errors="coerce")
+
+    if pd.notna(pred_num) and pd.notna(act_num):
+        delta = float(pred_num) - float(act_num)
+        return f"{pred}/{act} ({delta:+.3f})"
+
+    if pred == act:
+        return f"{pred}/{act} (match)"
+
+    return f"{pred}/{act} (diff)"
+
+
+def latex_escape_cell(value):
+    text = str(value)
+    replacements = {
+        "\\": r"\textbackslash{}",
+        "&": r"\&",
+        "%": r"\%",
+        "$": r"\$",
+        "#": r"\#",
+        "_": r"\_",
+        "{": r"\{",
+        "}": r"\}",
+        "~": r"\textasciitilde{}",
+        "^": r"\textasciicircum{}",
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    return text
+
+
+def get_first_existing_column(df, candidates, required=True):
+    for col in candidates:
+        if col in df.columns:
+            return col
+    if required:
+        raise KeyError(
+            f"Could not find any of {candidates}. Available columns: {list(df.columns)}"
+        )
+    return None
+
+
+def find_hof_value_column(df, hp, side):
+    """Find predicted/actual HoF value column for one hyperparameter.
+
+    side must be "predicted" or "actual".
+    This is tolerant to several Step10D / hall_of_fame naming styles.
+    """
+    hp_candidates = [hp, hp.replace("lambda_", "lambda"), hp.replace("_", "")]
+    if side == "predicted":
+        templates = [
+            "predicted_{hp}",
+            "predicted_hof_{hp}",
+            "predicted_group_{hp}",
+            "group_hof_{hp}",
+            "reference_{hp}",
+            "pred_{hp}",
+        ]
+    else:
+        templates = [
+            "actual_{hp}",
+            "actual_hof_{hp}",
+            "best_{hp}",
+            "function_hof_{hp}",
+            "generated_hof_{hp}",
+            "act_{hp}",
+        ]
+
+    for h in hp_candidates:
+        for template in templates:
+            col = template.format(hp=h)
+            if col in df.columns:
+                return col
+
+    # Case-insensitive fallback.
+    lowered = {c.lower(): c for c in df.columns}
+    for h in hp_candidates:
+        h_low = h.lower()
+        for template in templates:
+            col_low = template.format(hp=h_low).lower()
+            if col_low in lowered:
+                return lowered[col_low]
+
+    return None
+
+
+def build_table2_generated_predicted_actual_wide(table2: pd.DataFrame) -> pd.DataFrame:
+    """Build wide generated-function HoF table from the original Table 2 output.
+
+    Original Table 2 stores each generated function as two rows:
+        - function HoF actual
+        - group HoF predicted
+
+    The wide table keeps:
+        Type, Function, Group
+
+    Then each hyperparameter cell reports:
+        predicted / actual (predicted - actual)
+
+    For non-numeric hyperparameters, the parenthesized value is match/diff.
+    """
+    df = table2.copy()
+    if df.empty:
+        return pd.DataFrame()
+
+    required = [
+        "function_type",
+        "function_id",
+        "function_label",
+        "assigned_group_0307",
+        "config_source",
+    ]
+    missing = [c for c in required if c not in df.columns]
+    if missing:
+        raise KeyError(
+            f"Table 2 wide conversion is missing required columns {missing}. "
+            f"Available columns: {list(df.columns)}"
+        )
+
+    hyperparameters = [
+        hp for hp in globals().get("HYPERPARAMETERS", [])
+        if hp in df.columns
+    ]
+    if not hyperparameters:
+        hyperparameters = [
+            c for c in df.columns
+            if c not in {
+                "function_type",
+                "function_id",
+                "function_label",
+                "assigned_group_0307",
+                "predicted_source_bbob_function",
+                "group_n_bbob_functions",
+                "group_bbob_functions",
+                "prediction_reference_method",
+                "delta_auc_actual_minus_predicted",
+                "config_match_count",
+                "config_available_count",
+                "config_match_ratio",
+                "mismatch_config_fields",
+                "status",
+                "config_source",
+                "auc_mean",
+                "config_signature",
+                "note",
+            }
+        ]
+
+    numeric_delta_hps = {"CR", "F", "lambda_", "mutation_n_comps"}
+
+    def normalize_value(value):
+        if pd.isna(value):
+            return "NA"
+        if isinstance(value, bool):
+            return str(value)
+        text = str(value).strip()
+        if text.endswith(".0"):
+            text = text[:-2]
+        if text.lower() == "nan":
+            return "NA"
+        return text
+
+    def format_cell(predicted, actual, hp):
+        pred = normalize_value(predicted)
+        act = normalize_value(actual)
+
+        if hp in numeric_delta_hps:
+            pred_num = pd.to_numeric(pred, errors="coerce")
+            act_num = pd.to_numeric(act, errors="coerce")
+            if pd.notna(pred_num) and pd.notna(act_num):
+                delta = float(pred_num) - float(act_num)
+                return f"{pred}/{act} ({delta:+.3f})"
+
+        if pred == act:
+            return f"{pred}/{act} (match)"
+        return f"{pred}/{act} (diff)"
+
+    key_cols = [
+        "function_type",
+        "function_id",
+        "function_label",
+        "assigned_group_0307",
+    ]
+
+    rows = []
+    grouped = df.groupby(key_cols, dropna=False, sort=False)
+    for key, group_df in grouped:
+        actual_rows = group_df[
+            group_df["config_source"].astype(str).str.contains("actual", case=False, na=False)
+        ]
+        predicted_rows = group_df[
+            group_df["config_source"].astype(str).str.contains("predicted", case=False, na=False)
+        ]
+
+        if actual_rows.empty or predicted_rows.empty:
+            continue
+
+        actual = actual_rows.iloc[0]
+        predicted = predicted_rows.iloc[0]
+
+        row = {
+            "Type": actual["function_type"],
+            "Function": actual["function_label"],
+            "Group": actual["assigned_group_0307"],
+        }
+
+        for hp in hyperparameters:
+            row[hp] = format_cell(predicted[hp], actual[hp], hp)
+
+        rows.append(row)
+
+    out = pd.DataFrame(rows)
+    if out.empty:
+        raise ValueError(
+            "Could not build wide Table 2 because no actual/predicted row pairs were found. "
+            f"config_source values: {sorted(df['config_source'].astype(str).unique())}"
+        )
+
+    out = out.sort_values(["Type", "Function", "Group"]).reset_index(drop=True)
+    return out
+
+def df_to_latex_table2_wide(df: pd.DataFrame) -> str:
+    column_spec = "lll" + ("l" * max(0, len(df.columns) - 3))
+    lines = []
+    lines.append(r"\begin{table*}[htbp]")
+    lines.append(r"\centering")
+    lines.append(r"\small")
+    lines.append(r"\setlength{\tabcolsep}{3pt}")
+    lines.append(r"\caption{Generated functions: predicted BBOB group-mean reference compared with actual function-level Hall-of-Fame configuration under the 0307 grouping. Each hyperparameter cell reports predicted/actual (predicted-actual).}")
+    lines.append(r"\label{tab:generated-predicted-actual-hof-wide-0307}")
+    lines.append(r"\begin{tabular}{" + column_spec + r"}")
+    lines.append(r"\toprule")
+    lines.append(" & ".join(latex_escape_cell(c) for c in df.columns) + r" \\")
+    lines.append(r"\midrule")
+    for _, row in df.iterrows():
+        lines.append(" & ".join(latex_escape_cell(row[c]) for c in df.columns) + r" \\")
+    lines.append(r"\bottomrule")
+    lines.append(r"\end{tabular}")
+    lines.append(r"\end{table*}")
+    return "\n".join(lines)
+
+
+
+def _pick_col_from_df(df: pd.DataFrame, candidates, label, required=True):
+    for c in candidates:
+        if c in df.columns:
+            return c
+    if required:
+        raise KeyError(
+            f"Could not find {label}. Tried {candidates}. "
+            f"Available columns: {list(df.columns)}"
+        )
+    return None
+
+
+def _format_short_type(value):
+    text = str(value)
+    low = text.lower()
+    if "llamea" in low:
+        return "LLaMEA"
+    if "affine" in low:
+        return "affine"
+    return text
+
+
+def _format_numeric_cell(group_value, function_value):
+    g = pd.to_numeric(group_value, errors="coerce")
+    f = pd.to_numeric(function_value, errors="coerce")
+
+    if pd.isna(g) or pd.isna(f):
+        return "--"
+
+    d = float(g) - float(f)
+    return f"{float(g):.3f}/{float(f):.3f} ({d:+.3f})"
+
+
+def _latex_escape_table_value(value):
+    text = str(value)
+    replacements = {
+        "\\": r"\textbackslash{}",
+        "&": r"\&",
+        "%": r"\%",
+        "$": r"\$",
+        "#": r"\#",
+        "_": r"\_",
+        "{": r"\{",
+        "}": r"\}",
+        "~": r"\textasciitilde{}",
+        "^": r"\textasciicircum{}",
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    return text
+
+
+def build_generated_group_function_metric_wide(
+    detail: pd.DataFrame,
+    group_metric_candidates,
+    function_metric_candidates,
+    metric_label: str,
+) -> pd.DataFrame:
+    """Build Type/Function/Group wide table for generated-function SHAP metrics.
+
+    Each hyperparameter cell is:
+        group metric / function metric (group - function)
+    """
+    df = detail.copy()
+    if df.empty:
+        return pd.DataFrame()
+
+    type_col = _pick_col_from_df(
+        df,
+        ["function_type", "type", "Type", "source_type", "generated_type"],
+        "function type",
+    )
+    function_col = _pick_col_from_df(
+        df,
+        ["function_label", "function_name", "function_id", "function", "Function", "generated_function"],
+        "function label",
+    )
+    group_col = _pick_col_from_df(
+        df,
+        ["assigned_group_0307", "group_label_0307", "group", "Group", "predicted_group"],
+        "assigned group",
+    )
+    hp_col = _pick_col_from_df(
+        df,
+        ["hyperparameter", "parameter", "feature", "feature_name", "hp"],
+        "hyperparameter",
+    )
+
+    group_metric_col = _pick_col_from_df(
+        df,
+        group_metric_candidates,
+        f"group {metric_label} metric",
+    )
+    function_metric_col = _pick_col_from_df(
+        df,
+        function_metric_candidates,
+        f"function {metric_label} metric",
+    )
+
+    preferred_hps = [
+        hp for hp in globals().get("HYPERPARAMETERS", [])
+        if hp in set(df[hp_col].astype(str))
+    ]
+    remaining_hps = sorted(
+        hp for hp in df[hp_col].astype(str).unique()
+        if hp not in preferred_hps
+    )
+    hp_order = preferred_hps + remaining_hps
+
+    rows = []
+    for _, r in df.iterrows():
+        rows.append({
+            "Type": _format_short_type(r[type_col]),
+            "Function": str(r[function_col]),
+            "Group": str(r[group_col]),
+            "hyperparameter": str(r[hp_col]),
+            "_cell": _format_numeric_cell(r[group_metric_col], r[function_metric_col]),
+        })
+
+    compact = pd.DataFrame(rows)
+
+    wide = (
+        compact.pivot_table(
+            index=["Type", "Function", "Group"],
+            columns="hyperparameter",
+            values="_cell",
+            aggfunc="first",
+        )
+        .reset_index()
+    )
+
+    for hp in hp_order:
+        if hp not in wide.columns:
+            wide[hp] = "--"
+
+    wide = wide[["Type", "Function", "Group"] + hp_order]
+    wide = wide.fillna("--")
+
+    type_order = {"affine": 0, "LLaMEA": 1}
+    wide["_type_order"] = wide["Type"].map(type_order).fillna(9)
+    wide = wide.sort_values(["_type_order", "Function", "Group"]).drop(columns=["_type_order"])
+    wide = wide.reset_index(drop=True)
+
+    return wide
+
+
+def build_generated_distance_metric_wide(
+    detail: pd.DataFrame,
+    distance_col: str,
+    decimals: int = 3,
+) -> pd.DataFrame:
+    """Build Type/Function/Group wide table where each cell is one distance.
+
+    Smaller values indicate more similar group and function distributions.
+    """
+    df = detail.copy()
+    if df.empty:
+        return pd.DataFrame()
+
+    type_col = _pick_col_from_df(
+        df,
+        ["function_type", "type", "Type", "source_type", "generated_type"],
+        "function type",
+    )
+    function_col = _pick_col_from_df(
+        df,
+        ["function_label", "function_name", "function_id", "function", "Function", "generated_function"],
+        "function label",
+    )
+    group_col = _pick_col_from_df(
+        df,
+        ["assigned_group_0307", "group_label_0307", "group", "Group", "predicted_group"],
+        "assigned group",
+    )
+    hp_col = _pick_col_from_df(
+        df,
+        ["hyperparameter", "parameter", "feature", "feature_name", "hp"],
+        "hyperparameter",
+    )
+
+    if distance_col not in df.columns:
+        raise KeyError(f"Missing distance column {distance_col}. Available columns: {list(df.columns)}")
+
+    preferred_hps = [
+        hp for hp in globals().get("HYPERPARAMETERS", [])
+        if hp in set(df[hp_col].astype(str))
+    ]
+    remaining_hps = sorted(
+        hp for hp in df[hp_col].astype(str).unique()
+        if hp not in preferred_hps
+    )
+    hp_order = preferred_hps + remaining_hps
+
+    def fmt_distance(x):
+        x = safe_float(x)
+        if not np.isfinite(x):
+            return "--"
+        return f"{x:.{decimals}f}"
+
+    rows = []
+    for _, r in df.iterrows():
+        rows.append({
+            "Type": _format_short_type(r[type_col]),
+            "Function": str(r[function_col]),
+            "Group": str(r[group_col]),
+            "hyperparameter": str(r[hp_col]),
+            "_cell": fmt_distance(r[distance_col]),
+        })
+
+    compact = pd.DataFrame(rows)
+    wide = (
+        compact.pivot_table(
+            index=["Type", "Function", "Group"],
+            columns="hyperparameter",
+            values="_cell",
+            aggfunc="first",
+        )
+        .reset_index()
+    )
+
+    for hp in hp_order:
+        if hp not in wide.columns:
+            wide[hp] = "--"
+
+    wide = wide[["Type", "Function", "Group"] + hp_order]
+    wide = wide.fillna("--")
+
+    type_order = {"affine": 0, "LLaMEA": 1}
+    wide["_type_order"] = wide["Type"].map(type_order).fillna(9)
+    wide = wide.sort_values(["_type_order", "Function", "Group"]).drop(columns=["_type_order"])
+    wide = wide.reset_index(drop=True)
+
+    return wide
+
+
+def build_table3_generated_shap_shape_wide(table3: pd.DataFrame) -> pd.DataFrame:
+    """Wide Table 3: group vs generated-function raw SHAP distribution shape.
+
+    Default shape descriptor: skewness.
+    If skewness columns are unavailable, this falls back to other shape-like columns.
+    """
+    return build_generated_group_function_metric_wide(
+        table3,
+        group_metric_candidates=[
+            "group_skewness",
+            "group_shap_skewness",
+            "group_raw_skewness",
+            "group_distribution_skewness",
+            "group_shape_skewness",
+            "group_shape_value",
+        ],
+        function_metric_candidates=[
+            "function_skewness",
+            "function_shap_skewness",
+            "function_raw_skewness",
+            "function_distribution_skewness",
+            "function_shape_skewness",
+            "function_shape_value",
+        ],
+        metric_label="shape",
+    )
+
+
+def build_table3_wasserstein_wide(table3: pd.DataFrame) -> pd.DataFrame:
+    return build_generated_distance_metric_wide(
+        table3,
+        distance_col="wasserstein_distance",
+        decimals=3,
+    )
+
+
+def build_table3_kl_wide(table3: pd.DataFrame) -> pd.DataFrame:
+    return build_generated_distance_metric_wide(
+        table3,
+        distance_col="kl_divergence",
+        decimals=3,
+    )
+
+
+def build_table4_generated_shap_value_wide(table4: pd.DataFrame) -> pd.DataFrame:
+    """Wide Table 4: matched feature-value SHAP distance.
+
+    Each cell averages |function SHAP - nearest group SHAP| after matching
+    each generated-function point to a group point with the same or nearest
+    feature value. Smaller means more similar local SHAP behavior.
+    """
+    if "matched_feature_value_mean_abs_distance" in table4.columns:
+        return build_generated_distance_metric_wide(
+            table4,
+            distance_col="matched_feature_value_mean_abs_distance",
+            decimals=3,
+        )
+
+    if "wasserstein_distance" in table4.columns:
+        return build_generated_distance_metric_wide(
+            table4,
+            distance_col="wasserstein_distance",
+            decimals=3,
+        )
+
+    return build_generated_group_function_metric_wide(
+        table4,
+        group_metric_candidates=[
+            "group_mean_abs_shap",
+            "group_importance_norm",
+            "group_shap_importance_norm",
+        ],
+        function_metric_candidates=[
+            "function_mean_abs_shap",
+            "function_importance_norm",
+            "function_shap_importance_norm",
+        ],
+        metric_label="mean absolute SHAP value",
+    )
+
+def df_to_compact_wide_latex(
+    df: pd.DataFrame,
+    caption: str,
+    label: str,
+) -> str:
+    """Compact Overleaf table for wide SHAP comparison tables.
+
+    Requires:
+        \\usepackage{booktabs}
+        \\usepackage{adjustbox}
+    """
+    column_spec = "lll" + ("l" * max(0, len(df.columns) - 3))
+    lines = []
+    lines.append(r"\begin{table*}[htbp]")
+    lines.append(r"\centering")
+    lines.append(r"\scriptsize")
+    lines.append(r"\setlength{\tabcolsep}{1.5pt}")
+    lines.append(r"\renewcommand{\arraystretch}{0.88}")
+    lines.append(r"\caption{" + caption + r"}")
+    lines.append(r"\label{" + label + r"}")
+    lines.append(r"\begin{adjustbox}{width=\textwidth,center}")
+    lines.append(r"\begin{tabular}{" + column_spec + r"}")
+    lines.append(r"\toprule")
+    lines.append(" & ".join(_latex_escape_table_value(c) for c in df.columns) + r" \\")
+    lines.append(r"\midrule")
+    for _, row in df.iterrows():
+        lines.append(" & ".join(_latex_escape_table_value(row[c]) for c in df.columns) + r" \\")
+    lines.append(r"\bottomrule")
+    lines.append(r"\end{tabular}")
+    lines.append(r"\end{adjustbox}")
+    lines.append(r"\end{table*}")
+    return "\n".join(lines)
+
+
 # Main
 # =========================
 def main():
@@ -1464,6 +2684,25 @@ def main():
 
     table1.to_csv(OUT_TABLE1_CSV, index=False)
 
+    # Additional requested Table 1 detail and wide-format outputs.
+    table1_detail.to_csv(OUT_TABLE1_DETAIL_CSV, index=False)
+
+    table1_wide = build_table1_bbob_function_wide(table1_detail)
+    table1_wide.to_csv(OUT_TABLE1_WIDE_CSV, index=False)
+
+    with open(OUT_TABLE1_WIDE_MD, "w", encoding="utf-8") as f:
+        f.write("# Table 1 wide. BBOB per-function SHAP comparison against assigned group\n\n")
+        f.write(
+            "Each hyperparameter cell reports `group importance/function importance "
+            "(group minus function)`.\n\n"
+        )
+        f.write(df_to_markdown_no_tabulate(table1_wide))
+        f.write("\n")
+
+    with open(OUT_TABLE1_WIDE_TEX, "w", encoding="utf-8") as f:
+        f.write(df_to_latex_table1_wide(table1_wide))
+        f.write("\n")
+
     with open(OUT_TABLE1_MD, "w", encoding="utf-8") as f:
         f.write("# Table 1. BBOB group-level SHAP distance by hyperparameter\n\n")
         f.write(
@@ -1482,6 +2721,11 @@ def main():
     table2 = build_table2_generated_predicted_vs_actual_hof(hof)
 
     table2.to_csv(OUT_TABLE2_CSV, index=False)
+
+    table2_wide = build_table2_generated_predicted_actual_wide(table2)
+    table2_wide.to_csv(OUT_TABLE2_WIDE_CSV, index=False)
+    OUT_TABLE2_WIDE_MD.write_text(table2_wide.to_markdown(index=False), encoding="utf-8")
+    OUT_TABLE2_WIDE_TEX.write_text(df_to_latex_table2_wide(table2_wide), encoding="utf-8")
 
     table2_display_cols = [
         "function_type",
@@ -1502,15 +2746,17 @@ def main():
         "config_match_ratio",
         "mismatch_config_fields",
         "predicted_source_bbob_function",
+        "prediction_reference_method",
         "status",
     ]
 
     with open(OUT_TABLE2_MD, "w", encoding="utf-8") as f:
-        f.write("# Table 2. Generated functions: predicted group Hall-of-Fame vs actual function Hall-of-Fame\n\n")
+        f.write("# Table 2. Generated functions: predicted BBOB group mean vs actual function Hall-of-Fame\n\n")
         f.write(
             "Each generated function is shown with two rows: the predicted configuration from "
-            "the assigned group's BBOB Hall-of-Fame winner, and the actual function-level "
-            "Hall-of-Fame winner.\n\n"
+            "the assigned group's BBOB Hall-of-Fame mean reference, and the actual "
+            "function-level Hall-of-Fame winner. Numeric hyperparameters in the predicted "
+            "row are group means; categorical hyperparameters are group modes.\n\n"
         )
         f.write(df_to_markdown_no_tabulate(table2[[c for c in table2_display_cols if c in table2.columns]]))
         f.write("\n")
@@ -1524,6 +2770,48 @@ def main():
 
     table3.to_csv(OUT_TABLE3_CSV, index=False)
 
+    table3_wide = build_table3_generated_shap_shape_wide(table3)
+    table3_wide.to_csv(OUT_TABLE3_WIDE_CSV, index=False)
+    OUT_TABLE3_WIDE_MD.write_text(table3_wide.to_markdown(index=False), encoding="utf-8")
+    OUT_TABLE3_WIDE_TEX.write_text(
+        df_to_compact_wide_latex(
+            table3_wide,
+            caption="Generated functions: per-function and per-hyperparameter comparison of raw SHAP distribution shape between the assigned BBOB group and the generated function. Each cell reports group/function (group-function), using skewness as the distribution-shape descriptor.",
+            label="tab:generated-shap-shape-wide-0307",
+        ),
+        encoding="utf-8",
+    )
+
+    table3_wasserstein_wide = build_table3_wasserstein_wide(table3)
+    table3_wasserstein_wide.to_csv(OUT_TABLE3_WASSERSTEIN_WIDE_CSV, index=False)
+    OUT_TABLE3_WASSERSTEIN_WIDE_MD.write_text(
+        table3_wasserstein_wide.to_markdown(index=False),
+        encoding="utf-8",
+    )
+    OUT_TABLE3_WASSERSTEIN_WIDE_TEX.write_text(
+        df_to_compact_wide_latex(
+            table3_wasserstein_wide,
+            caption="Generated functions: Wasserstein distance between the assigned BBOB group SHAP distribution and the generated-function SHAP distribution. Each cell reports one distance value; smaller values indicate more similar distribution shape.",
+            label="tab:generated-shap-shape-wasserstein-0307",
+        ),
+        encoding="utf-8",
+    )
+
+    table3_kl_wide = build_table3_kl_wide(table3)
+    table3_kl_wide.to_csv(OUT_TABLE3_KL_WIDE_CSV, index=False)
+    OUT_TABLE3_KL_WIDE_MD.write_text(
+        table3_kl_wide.to_markdown(index=False),
+        encoding="utf-8",
+    )
+    OUT_TABLE3_KL_WIDE_TEX.write_text(
+        df_to_compact_wide_latex(
+            table3_kl_wide,
+            caption="Generated functions: Kullback-Leibler divergence between the assigned BBOB group SHAP distribution and the generated-function SHAP distribution. Each cell reports one divergence value; smaller values indicate more similar distribution shape.",
+            label="tab:generated-shap-shape-kl-0307",
+        ),
+        encoding="utf-8",
+    )
+
     table3_display_cols = [
         "function_type",
         "function_id",
@@ -1531,6 +2819,7 @@ def main():
         "hyperparameter",
         "shape_distance_metric",
         "wasserstein_distance",
+        "kl_divergence",
         "ks_statistic",
         "group_n_values",
         "function_n_values",
@@ -1561,6 +2850,18 @@ def main():
 
     table4.to_csv(OUT_TABLE4_CSV, index=False)
 
+    table4_wide = build_table4_generated_shap_value_wide(table4)
+    table4_wide.to_csv(OUT_TABLE4_WIDE_CSV, index=False)
+    OUT_TABLE4_WIDE_MD.write_text(table4_wide.to_markdown(index=False), encoding="utf-8")
+    OUT_TABLE4_WIDE_TEX.write_text(
+        df_to_compact_wide_latex(
+            table4_wide,
+            caption="Generated functions: matched SHAP-value distance between the assigned BBOB group and the generated function. Each generated-function point is paired with the same or nearest group feature value; each cell reports the mean absolute SHAP-value distance, where smaller values indicate more similar local SHAP behavior.",
+            label="tab:generated-shap-value-wide-0307",
+        ),
+        encoding="utf-8",
+    )
+
     table4_display_cols = [
         "function_type",
         "function_id",
@@ -1572,10 +2873,16 @@ def main():
         "absolute_difference",
         "group_mean_abs_shap",
         "function_mean_abs_shap",
+        "wasserstein_distance",
+        "matched_feature_value_mean_abs_distance",
+        "matched_n_pairs",
+        "matched_mean_feature_value_gap",
         "group_importance_norm",
         "function_importance_norm",
         "importance_signed_difference_function_minus_group",
         "importance_absolute_difference",
+        "group_record_mode",
+        "function_record_mode",
         "group_distribution_mode",
         "function_distribution_mode",
         "status",
@@ -1584,8 +2891,12 @@ def main():
     with open(OUT_TABLE4_MD, "w", encoding="utf-8") as f:
         f.write("# Table 4. Generated functions: SHAP value distance\n\n")
         f.write(
-            "For each generated function and hyperparameter, this table compares the value "
-            "and magnitude of SHAP contributions between the assigned group and the individual function.\n\n"
+            "For each generated function and hyperparameter, this table compares the assigned "
+            "group SHAP values with the individual function SHAP values. The wide table reports "
+            "`matched_feature_value_mean_abs_distance`: for each generated-function point, the script "
+            "finds the same or nearest group feature value and averages the absolute SHAP-value "
+            "difference. Wasserstein distance is retained in the detailed CSV as an unpaired "
+            "distribution-distance reference.\n\n"
         )
         f.write(df_to_markdown_no_tabulate(table4[[c for c in table4_display_cols if c in table4.columns]]))
         f.write("\n")
@@ -1633,42 +2944,41 @@ def main():
         f.write("Step 10D final supervisor-requested tables under 0307 main tiebreak scheme\n")
         f.write("\n")
         f.write("Generated files:\n")
-        f.write(f"- Table 1 CSV: {OUT_TABLE1_CSV.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- Table 1 MD:  {OUT_TABLE1_MD.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- Table 2 CSV: {OUT_TABLE2_CSV.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- Table 2 MD:  {OUT_TABLE2_MD.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- Table 3 CSV: {OUT_TABLE3_CSV.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- Table 3 MD:  {OUT_TABLE3_MD.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- Table 4 CSV: {OUT_TABLE4_CSV.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- Table 4 MD:  {OUT_TABLE4_MD.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- Table 5 CSV: {OUT_TABLE5_CSV.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- Table 5 MD:  {OUT_TABLE5_MD.relative_to(PROJECT_ROOT)}\n")
+        f.write(f"- Table 1 CSV: {display_path(OUT_TABLE1_CSV)}\n")
+        f.write(f"- Table 1 MD:  {display_path(OUT_TABLE1_MD)}\n")
+        f.write(f"- Table 1 detail CSV: {display_path(OUT_TABLE1_DETAIL_CSV)}\n")
+        f.write(f"- Table 1 wide CSV:   {display_path(OUT_TABLE1_WIDE_CSV)}\n")
+        f.write(f"- Table 1 wide MD:    {display_path(OUT_TABLE1_WIDE_MD)}\n")
+        f.write(f"- Table 1 wide TeX:   {display_path(OUT_TABLE1_WIDE_TEX)}\n")
+        f.write(f"- Table 2 CSV: {display_path(OUT_TABLE2_CSV)}\n")
+        f.write(f"- Table 2 MD:  {display_path(OUT_TABLE2_MD)}\n")
+        f.write(f"- Table 3 CSV: {display_path(OUT_TABLE3_CSV)}\n")
+        f.write(f"- Table 3 MD:  {display_path(OUT_TABLE3_MD)}\n")
+        f.write(f"- Table 3 Wasserstein wide CSV: {display_path(OUT_TABLE3_WASSERSTEIN_WIDE_CSV)}\n")
+        f.write(f"- Table 3 Wasserstein wide TeX: {display_path(OUT_TABLE3_WASSERSTEIN_WIDE_TEX)}\n")
+        f.write(f"- Table 3 KL wide CSV: {display_path(OUT_TABLE3_KL_WIDE_CSV)}\n")
+        f.write(f"- Table 3 KL wide TeX: {display_path(OUT_TABLE3_KL_WIDE_TEX)}\n")
+        f.write(f"- Table 4 CSV: {display_path(OUT_TABLE4_CSV)}\n")
+        f.write(f"- Table 4 MD:  {display_path(OUT_TABLE4_MD)}\n")
+        f.write(f"- Table 5 CSV: {display_path(OUT_TABLE5_CSV)}\n")
+        f.write(f"- Table 5 MD:  {display_path(OUT_TABLE5_MD)}\n")
         f.write("\n")
         f.write("Inputs:\n")
-        f.write(f"- Hall of Fame: {HALL_OF_FAME_CSV.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- SHAP similarity: {SHAP_SIMILARITY_CSV.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- Group SHAP dir: {GROUP_SHAP_DIR.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- BBOB individual SHAP dir: {BBOB_INDIVIDUAL_SHAP_DIR.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- Affine SHAP dir: {AFFINE_SHAP_DIR.relative_to(PROJECT_ROOT)}\n")
-        f.write(f"- LLaMEA SHAP dir: {LLAMEA_SHAP_DIR.relative_to(PROJECT_ROOT)}\n")
-        f.write("\n")
-        f.write("Definitions:\n")
-        f.write("- Table 1 distance = abs(group normalized SHAP importance - BBOB function normalized SHAP importance).\n")
-        f.write("- Table 2 predicted configuration = the BBOB Hall-of-Fame winner inside the assigned group.\n")
-        f.write("- Table 2 actual configuration = the generated function's own Hall-of-Fame winner.\n")
-        f.write("- Table 3 shape distance = Wasserstein distance and KS statistic between group and function SHAP distributions.\n")
-        f.write("- Table 4 value distance = differences in mean SHAP, mean absolute SHAP, and normalized SHAP importance.\n")
-        f.write("- Table 5 summary combines cosine, Spearman, top-3 overlap, mean value distance, and mean shape distance.\n")
-        f.write("\n")
-        f.write("Important limitation:\n")
-        f.write("- If raw SHAP-value files are unavailable, Tables 3 and 4 fall back to summary-level SHAP importance values.\n")
-        f.write("- In fallback mode, shape-distance results should be interpreted as summary-level approximations, not full raw SHAP distribution comparisons.\n")
-
+        f.write(f"- Hall of Fame: {display_path(HALL_OF_FAME_CSV)}\n")
+        f.write(f"- SHAP similarity: {display_path(SHAP_SIMILARITY_CSV)}\n")
+        f.write(f"- Group SHAP dir: {display_path(GROUP_SHAP_DIR)}\n")
+        f.write(f"- BBOB individual SHAP dir: {display_path(BBOB_INDIVIDUAL_SHAP_DIR)}\n")
+        f.write(f"- Affine SHAP dir: {display_path(AFFINE_SHAP_DIR)}\n")
+        f.write(f"- LLaMEA SHAP dir: {display_path(LLAMEA_SHAP_DIR)}\n")
     # --------------------------------------------------------
     # Console summary
     # --------------------------------------------------------
     print("\nDone.")
     print(f"Saved Table 1 CSV: {OUT_TABLE1_CSV}")
+    print(f"Saved Table 1 detail CSV: {OUT_TABLE1_DETAIL_CSV}")
+    print(f"Saved Table 1 wide CSV:   {OUT_TABLE1_WIDE_CSV}")
+    print(f"Saved Table 1 wide MD:    {OUT_TABLE1_WIDE_MD}")
+    print(f"Saved Table 1 wide TeX:   {OUT_TABLE1_WIDE_TEX}")
     print(f"Saved Table 2 CSV: {OUT_TABLE2_CSV}")
     print(f"Saved Table 3 CSV: {OUT_TABLE3_CSV}")
     print(f"Saved Table 4 CSV: {OUT_TABLE4_CSV}")
