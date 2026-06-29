@@ -131,11 +131,18 @@ Detailed local setup notes are available in:
 README_LOCAL_ENV_SETUP.md
 ```
 
-## Data Notes
+## Data Bundle
 
-Large raw and processed experiment files are intentionally ignored by Git where appropriate, especially pickle and CSV files generated during repeated experiments.
+Large raw and processed experiment files are intentionally not committed to Git, especially `.pkl` and `.csv` files generated during repeated experiments. These files are provided separately as a GitHub Release asset:
 
-The repository keeps selected scripts, figures, and final table outputs needed to inspect and reproduce the thesis analysis. Some large data files may need to be regenerated or restored from the experiment environment before rerunning the full pipeline.
+- Release page: [Thesis data bundle](https://github.com/ttzzyy123/landscape-de-analysis/releases/tag/data-v1.0)
+- Main data archive: [csv_pkl_data_bundle_20260629.zip](https://github.com/ttzzyy123/landscape-de-analysis/releases/download/data-v1.0/csv_pkl_data_bundle_20260629.zip)
+- Archive manifest: [csv_pkl_data_bundle_20260629_manifest.csv](https://github.com/ttzzyy123/landscape-de-analysis/releases/download/data-v1.0/csv_pkl_data_bundle_20260629_manifest.csv)
+- Skipped-file log: [csv_pkl_data_bundle_20260629_skipped.csv](https://github.com/ttzzyy123/landscape-de-analysis/releases/download/data-v1.0/csv_pkl_data_bundle_20260629_skipped.csv)
+
+The archive contains the local `.csv` and `.pkl` files used for the thesis experiments, including processed BBOB/modDE data, generated-function aligned `10000 x 3` results, SHAP intermediate outputs, and final CSV/PKL experiment outputs. The manifest lists the relative paths and file sizes of the archived files.
+
+To restore the data locally, download and extract the archive into the project parent or the same directory structure used during the experiments. The relative paths inside the archive preserve the original experiment-folder layout.
 
 ## Thesis Context
 
