@@ -75,6 +75,23 @@ INSTANCE_IMPORTANCE_OUT.mkdir(parents=True, exist_ok=True)
 # New function task dirs
 REAL_MODDE_DIR = PROJECT_ROOT / "intermediate" / "new_function_task" / "modde_real_function_results"
 AFFINE_MODDE_DIR = PROJECT_ROOT / "intermediate" / "new_function_task" / "modde_affine_function_results"
+ALIGNED_GENERATED_MODDE_DIR = Path(
+    os.getenv(
+        "STEP8B_ALIGNED_GENERATED_MODDE_DIR",
+        str(
+            PROJECT_ROOT
+            / "intermediate"
+            / "new_function_task"
+            / "modde_table7_aligned_10000x3_results"
+        ),
+    )
+)
+USE_ALIGNED_GENERATED_MODDE = os.getenv("STEP8B_USE_ALIGNED_GENERATED_MODDE", "0").lower() in {
+    "1",
+    "true",
+    "yes",
+    "y",
+}
 
 REAL_SHAP_OUT = PROJECT_ROOT / "output" / "new_function_task" / "task_H_individual_shap_real_generated_function"
 AFFINE_SHAP_OUT = PROJECT_ROOT / "output" / "new_function_task" / "task_H_individual_shap_affine_functions"
@@ -195,10 +212,19 @@ def extract_fid(text):
 
 def clean_function_name_from_path(path: Path):
     stem = path.stem
+    stem = re.sub(r"^table7_aligned_", "", stem)
     stem = re.sub(r"_modde_results_processed$", "", stem)
     stem = re.sub(r"_modde_results$", "", stem)
     stem = re.sub(r"_processed$", "", stem)
+    stem = re.sub(r"_10000x3$", "", stem)
     stem = re.sub(r"_individual_shap_importance$", "", stem)
+
+    if path.name.startswith("table7_aligned_"):
+        affine_ids = {"f10_f6", "f15_f8", "f1_f23", "f3_f6", "f9_f12"}
+        if stem in affine_ids:
+            return f"affine_function_{stem}_alpha_0p9"
+        return f"real_generated_function_{stem}"
+
     return stem
 
 
@@ -664,6 +690,14 @@ def run_46_partial_function_exports():
 # ============================================================
 def collect_modde_pkls():
     files = []
+
+    if USE_ALIGNED_GENERATED_MODDE:
+        if ALIGNED_GENERATED_MODDE_DIR.exists():
+            for p in ALIGNED_GENERATED_MODDE_DIR.rglob("table7_aligned_*_10000x3_processed.pkl"):
+                name = clean_function_name_from_path(p)
+                kind = "affine" if name.startswith("affine_function_") else "real"
+                files.append((kind, p))
+        return sorted(files, key=lambda x: str(x[1]))
 
     if REAL_MODDE_DIR.exists():
         for p in REAL_MODDE_DIR.rglob("*.pkl"):

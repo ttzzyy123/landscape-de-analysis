@@ -4,6 +4,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from scipy.stats import kendalltau
 
 # ============================================================
 # Step 10D: Generate final supervisor-requested tables
@@ -117,6 +118,18 @@ LLAMEA_SHAP_DIR = PROJECT_NEW_FUNCTION_SHAP_BASE / "task_H_individual_shap_real_
 AFFINE_SHAP_FALLBACK_DIR = LOCAL_RAW_BASE / "task_H_individual_shap_affine_functions"
 LLAMEA_SHAP_FALLBACK_DIR = LOCAL_RAW_BASE / "task_H_individual_shap_real_generated_function"
 
+ALIGNED_GENERATED_MODDE_DIR = Path(
+    os.getenv(
+        "STEP10D_ALIGNED_GENERATED_MODDE_DIR",
+        str(
+            PROJECT_ROOT
+            / "intermediate"
+            / "new_function_task"
+            / "modde_table7_aligned_10000x3_results"
+        ),
+    )
+)
+
 HYPERPARAMETERS = [
     "CR",
     "F",
@@ -148,6 +161,15 @@ OUT_TABLE2_WIDE_CSV = COMPARISON_DIR / "table02_generated_predicted_vs_actual_ho
 OUT_TABLE2_WIDE_MD = COMPARISON_DIR / "table02_generated_predicted_vs_actual_hof_wide_0307.md"
 OUT_TABLE2_WIDE_TEX = COMPARISON_DIR / "table02_generated_predicted_vs_actual_hof_wide_0307.tex"
 OUT_TABLE2_MD = COMPARISON_DIR / "table02_generated_predicted_vs_actual_hof_0307.md"
+
+OUT_TABLE6_BBOB_HOF_CSV = COMPARISON_DIR / "table06_bbob_predicted_vs_actual_hof_0307.csv"
+OUT_TABLE6_BBOB_HOF_WIDE_CSV = COMPARISON_DIR / "table06_bbob_predicted_vs_actual_hof_wide_0307.csv"
+OUT_TABLE6_BBOB_HOF_WIDE_MD = COMPARISON_DIR / "table06_bbob_predicted_vs_actual_hof_wide_0307.md"
+OUT_TABLE6_BBOB_HOF_WIDE_TEX = COMPARISON_DIR / "table06_bbob_predicted_vs_actual_hof_wide_0307.tex"
+OUT_TABLE6_BBOB_HOF_MD = COMPARISON_DIR / "table06_bbob_predicted_vs_actual_hof_0307.md"
+OUT_TABLE6_BBOB_RANKING_SUMMARY_CSV = COMPARISON_DIR / "table06_bbob_predicted_vs_actual_hof_ranking_summary_0307.csv"
+OUT_TABLE6_BBOB_RANKING_SUMMARY_MD = COMPARISON_DIR / "table06_bbob_predicted_vs_actual_hof_ranking_summary_0307.md"
+OUT_TABLE6_BBOB_RANKING_SUMMARY_TEX = COMPARISON_DIR / "table06_bbob_predicted_vs_actual_hof_ranking_summary_0307.tex"
 
 OUT_TABLE3_CSV = COMPARISON_DIR / "table03_generated_shap_shape_distance_0307.csv"
 OUT_TABLE3_WIDE_CSV = COMPARISON_DIR / "table03_generated_shap_shape_distance_wide_0307.csv"
@@ -217,6 +239,149 @@ def safe_float(x):
         return float(x)
     except Exception:
         return np.nan
+
+
+def aligned_processed_file_for_generated_function(function_type, function_id):
+    """Return the aligned 10000x3 modDE result file for a generated function."""
+    function_id = str(function_id)
+
+    if function_type == "affine":
+        filename = f"table7_aligned_{function_id}_10000x3_processed.pkl"
+    elif function_type == "llamea_generated":
+        filename = f"table7_aligned_{function_id}_10000x3_processed.pkl"
+    else:
+        return None
+
+    path = ALIGNED_GENERATED_MODDE_DIR / filename
+    return path if path.exists() else None
+
+
+def best_hof_row_from_aligned_modde(df):
+    """Select the best configuration by mean AUC over the three stochastic seeds."""
+    df = df.copy()
+    df["auc"] = pd.to_numeric(df["auc"], errors="coerce")
+    if "aucLarge" in df.columns:
+        df["aucLarge"] = pd.to_numeric(df["aucLarge"], errors="coerce")
+
+    grouped = (
+        df.groupby("config_index", dropna=False)
+        .agg(
+            actual_auc_mean=("auc", "mean"),
+            actual_auc_std=("auc", "std"),
+            actual_auc_median=("auc", "median"),
+            actual_auc_min=("auc", "min"),
+            actual_auc_max=("auc", "max"),
+            actual_aucLarge_mean=("aucLarge", "mean") if "aucLarge" in df.columns else ("auc", "mean"),
+            n_rows=("auc", "size"),
+            n_seeds=("seed", "nunique"),
+        )
+        .reset_index()
+        .sort_values(["actual_auc_mean", "config_index"], ascending=[False, True])
+    )
+
+    if grouped.empty:
+        return None
+
+    best = grouped.iloc[0]
+    best_config_index = best["config_index"]
+    best_rows = df[df["config_index"].eq(best_config_index)].copy()
+    config_source = best_rows.iloc[0]
+
+    out = {
+        "actual_auc_mean": best["actual_auc_mean"],
+        "actual_auc_std": best["actual_auc_std"],
+        "actual_auc_median": best["actual_auc_median"],
+        "actual_auc_min": best["actual_auc_min"],
+        "actual_auc_max": best["actual_auc_max"],
+        "actual_aucLarge_mean": best["actual_aucLarge_mean"],
+        "n_rows": best["n_rows"],
+        "n_seeds": best["n_seeds"],
+        "ranking_metric": "mean_auc_desc_aligned_10000x3",
+    }
+
+    for col in CONFIG_COLS:
+        if col in config_source.index:
+            out[col] = config_source[col]
+
+    return out
+
+
+def apply_aligned_generated_hof_override(hof):
+    """
+    Replace generated-function Hall-of-Fame rows with results from the aligned
+    10000-configuration x 3-seed modDE runs, when those files are available.
+    """
+    if not ALIGNED_GENERATED_MODDE_DIR.exists():
+        print(f"[WARN] Aligned generated modDE directory not found: {ALIGNED_GENERATED_MODDE_DIR}")
+        return hof
+
+    hof = hof.copy()
+    updated = []
+
+    generated_mask = (
+        hof["function_type"].isin(GENERATED_TYPES)
+        & (~hof["function_id"].astype(str).eq("All"))
+    )
+
+    for idx, row in hof[generated_mask].iterrows():
+        function_type = str(row["function_type"])
+        function_id = str(row["function_id"])
+        path = aligned_processed_file_for_generated_function(function_type, function_id)
+
+        if path is None:
+            continue
+
+        df = pd.read_pickle(path)
+        best = best_hof_row_from_aligned_modde(df)
+        if best is None:
+            continue
+
+        for key, value in best.items():
+            if key in hof.columns:
+                hof.at[idx, key] = value
+
+        if "source_file" in hof.columns:
+            try:
+                hof.at[idx, "source_file"] = str(path.relative_to(PROJECT_ROOT))
+            except ValueError:
+                hof.at[idx, "source_file"] = str(path)
+
+        updated.append(function_id)
+
+    for function_type, aggregate_label in [
+        ("affine", "All affine functions"),
+        ("llamea_generated", "All LLaMEA generated functions"),
+    ]:
+        rows = hof[
+            hof["function_type"].eq(function_type)
+            & (~hof["function_id"].astype(str).eq("All"))
+        ].copy()
+        if rows.empty:
+            continue
+
+        rows["actual_auc_mean"] = pd.to_numeric(rows["actual_auc_mean"], errors="coerce")
+        best_idx = rows["actual_auc_mean"].idxmax()
+        all_mask = hof["function_type"].eq(function_type) & hof["function_id"].astype(str).eq("All")
+
+        if not all_mask.any():
+            continue
+
+        all_idx = hof[all_mask].index[0]
+        replacement = hof.loc[best_idx].copy()
+        replacement["function_id"] = "All"
+        replacement["function_name"] = aggregate_label
+        replacement["source_file"] = f"aggregate_of_{function_type}_aligned_10000x3_hall_of_fame_rows"
+        hof.loc[all_idx, replacement.index] = replacement
+
+    if updated:
+        print(
+            "[INFO] Updated generated-function Hall-of-Fame rows from aligned 10000x3 data: "
+            + ", ".join(updated)
+        )
+    else:
+        print("[WARN] No generated-function Hall-of-Fame rows were updated from aligned 10000x3 data.")
+
+    return hof
 
 
 def clean_bool_like(x):
@@ -1075,6 +1240,90 @@ def build_group_hof_winner_table(hof):
       - If older Hall-of-Fame files do not contain group-mean rows, compute
         the same reference directly from BBOB original HoF rows.
     """
+    bbob = hof[
+        (hof["function_type"].eq("bbob_original"))
+        & (~hof["function_id"].astype(str).eq("All"))
+    ].copy()
+
+    if not bbob.empty:
+        bbob["actual_auc_mean"] = pd.to_numeric(bbob["actual_auc_mean"], errors="coerce")
+
+    def mode_value(series):
+        vals = series.dropna()
+        if vals.empty:
+            return np.nan
+
+        cleaned = []
+        for value in vals:
+            value = clean_bool_like(value)
+            if isinstance(value, (bool, np.bool_)):
+                cleaned.append(bool(value))
+                continue
+
+            text = str(value).strip()
+            if text == "" or text.lower() in ["nan", "none"]:
+                continue
+            cleaned.append(text)
+
+        if not cleaned:
+            return np.nan
+
+        counts = pd.Series(cleaned).value_counts(sort=True)
+        return counts.index[0]
+
+    def bool_majority(series):
+        vals = series.dropna()
+        if vals.empty:
+            return np.nan
+
+        bools = []
+        for value in vals:
+            value = clean_bool_like(value)
+            if isinstance(value, (bool, np.bool_)):
+                bools.append(bool(value))
+                continue
+
+            num = safe_float(value)
+            if np.isfinite(num):
+                bools.append(bool(num >= 0.5))
+
+        if not bools:
+            return mode_value(series)
+
+        return bool(float(np.mean(bools)) >= 0.5)
+
+    def rounded_mean_int(series):
+        vals = pd.to_numeric(series, errors="coerce").dropna()
+        if vals.empty:
+            return np.nan
+        return int(round(float(vals.mean())))
+
+    def aggregate_reference_config(sub):
+        item = {}
+
+        for c in ["CR", "F"]:
+            if c in sub.columns:
+                vals = pd.to_numeric(sub[c], errors="coerce").dropna()
+                item[c] = float(vals.mean()) if not vals.empty else np.nan
+
+        if "lambda_" in sub.columns:
+            item["lambda_"] = rounded_mean_int(sub["lambda_"])
+
+        if "mutation_n_comps" in sub.columns:
+            value = mode_value(sub["mutation_n_comps"])
+            num = safe_float(value)
+            item["mutation_n_comps"] = int(round(num)) if np.isfinite(num) else value
+
+        for c in ["lpsr", "use_archive"]:
+            if c in sub.columns:
+                item[c] = bool_majority(sub[c])
+
+        for c in ["crossover", "mutation_base", "mutation_reference"]:
+            if c in sub.columns:
+                item[c] = mode_value(sub[c])
+
+        return item
+
     group_mean = hof[
         (hof["function_type"].eq("bbob_group_mean"))
         & (~hof["function_id"].astype(str).eq("All"))
@@ -1089,30 +1338,32 @@ def build_group_hof_winner_table(hof):
 
         for _, r in group_mean.iterrows():
             group_id = r["assigned_group_0307"]
+            sub = bbob[bbob["assigned_group_0307"].astype(str).eq(str(group_id))].copy()
+            config_values = aggregate_reference_config(sub) if not sub.empty else {}
             item = {
                 "assigned_group_0307": group_id,
                 "predicted_source_function_type": r["function_type"],
                 "predicted_source_function_id": r.get("function_id", group_id),
                 "predicted_source_auc_mean": safe_float(r["actual_auc_mean"]),
-                "group_n_bbob_functions": r.get("group_n_bbob_functions", np.nan),
-                "group_bbob_functions": r.get("group_bbob_functions", ""),
-                "predicted_config_signature": config_signature(r),
-                "prediction_reference_method": "bbob_group_mean_row",
+                "group_n_bbob_functions": (
+                    len(sub) if not sub.empty else r.get("group_n_bbob_functions", np.nan)
+                ),
+                "group_bbob_functions": (
+                    ",".join(sub["function_id"].astype(str).tolist())
+                    if not sub.empty
+                    else r.get("group_bbob_functions", "")
+                ),
+                "prediction_reference_method": "bbob_group_mean_auc_with_executable_group_reference",
             }
 
             for c in CONFIG_COLS:
-                item[c] = r.get(c, np.nan)
+                item[c] = config_values.get(c, r.get(c, np.nan))
+
+            item["predicted_config_signature"] = config_signature(pd.Series(item))
 
             rows.append(item)
 
         return pd.DataFrame(rows)
-
-    bbob = hof[
-        (hof["function_type"].eq("bbob_original"))
-        & (~hof["function_id"].astype(str).eq("All"))
-    ].copy()
-
-    bbob["actual_auc_mean"] = pd.to_numeric(bbob["actual_auc_mean"], errors="coerce")
 
     rows = []
 
@@ -1136,16 +1387,7 @@ def build_group_hof_winner_table(hof):
             "prediction_reference_method": "computed_from_bbob_hof_rows",
         }
 
-        for c in ["CR", "F", "lambda_", "mutation_n_comps", "lpsr", "use_archive"]:
-            if c in sub.columns:
-                vals = pd.to_numeric(sub[c], errors="coerce").dropna()
-                item[c] = float(vals.mean()) if not vals.empty else np.nan
-
-        for c in ["crossover", "mutation_base", "mutation_reference"]:
-            if c in sub.columns:
-                vals = sub[c].dropna().astype(str)
-                vals = vals[~vals.str.lower().isin(["", "nan", "none"])]
-                item[c] = vals.mode().iloc[0] if not vals.empty else np.nan
+        item.update(aggregate_reference_config(sub))
 
         item["predicted_config_signature"] = config_signature(pd.Series(item))
 
@@ -1363,6 +1605,138 @@ def build_table2_generated_predicted_vs_actual_hof(hof):
     table2 = table2.sort_values(sort_cols)
 
     return table2
+
+
+def build_table6_bbob_predicted_vs_actual_hof(hof):
+    """Compare each BBOB function HoF winner with its assigned group reference."""
+    group_winners = build_group_hof_winner_table(hof)
+
+    bbob = hof[
+        hof["function_type"].eq("bbob_original")
+        & (~hof["function_id"].astype(str).eq("All"))
+    ].copy()
+
+    bbob["actual_auc_mean"] = pd.to_numeric(
+        bbob["actual_auc_mean"],
+        errors="coerce",
+    )
+
+    rows = []
+
+    for _, r in bbob.iterrows():
+        function_type = str(r["function_type"])
+        function_id = str(r["function_id"])
+        group_id = r["assigned_group_0307"]
+
+        pred_match = group_winners[
+            group_winners["assigned_group_0307"].astype(str).eq(str(group_id))
+        ]
+
+        if pred_match.empty:
+            rows.append(
+                {
+                    "function_type": function_type,
+                    "function_id": function_id,
+                    "function_label": short_function_label(r),
+                    "assigned_group_0307": canonical_group_label(group_id),
+                    "config_source": "group mean predicted",
+                    "auc_mean": np.nan,
+                    "delta_auc_actual_minus_predicted": np.nan,
+                    "config_match_count": np.nan,
+                    "config_available_count": np.nan,
+                    "config_match_ratio": np.nan,
+                    "mismatch_config_fields": "",
+                    "status": "error",
+                    "note": f"No group Hall-of-Fame winner found for {group_id}",
+                }
+            )
+            continue
+
+        pred = pred_match.iloc[0]
+
+        match_count = 0
+        available_count = 0
+        mismatch_cols = []
+
+        for c in CONFIG_COLS:
+            if c in r.index:
+                available_count += 1
+                if compare_config_values(pred.get(c, np.nan), r.get(c, np.nan)):
+                    match_count += 1
+                else:
+                    mismatch_cols.append(c)
+
+        match_ratio = match_count / available_count if available_count > 0 else np.nan
+        actual_auc = safe_float(r.get("actual_auc_mean", np.nan))
+        predicted_auc = safe_float(pred.get("predicted_source_auc_mean", np.nan))
+        delta_auc = actual_auc - predicted_auc
+
+        common = {
+            "function_type": function_type,
+            "function_id": function_id,
+            "function_label": short_function_label(r),
+            "assigned_group_0307": canonical_group_label(group_id),
+            "predicted_source_bbob_function": pred.get("predicted_source_function_id", ""),
+            "group_n_bbob_functions": pred.get("group_n_bbob_functions", np.nan),
+            "group_bbob_functions": pred.get("group_bbob_functions", ""),
+            "prediction_reference_method": pred.get("prediction_reference_method", ""),
+            "delta_auc_actual_minus_predicted": delta_auc,
+            "config_match_count": match_count,
+            "config_available_count": available_count,
+            "config_match_ratio": match_ratio,
+            "mismatch_config_fields": ",".join(mismatch_cols),
+            "status": "ok",
+        }
+
+        actual_row = {
+            **common,
+            "config_source": "function HoF actual",
+            "auc_mean": actual_auc,
+            "config_signature": config_signature(r),
+            "note": "Actual configuration is the BBOB function-level Hall-of-Fame winner.",
+        }
+
+        pred_row = {
+            **common,
+            "config_source": "group mean predicted",
+            "auc_mean": predicted_auc,
+            "config_signature": pred.get("predicted_config_signature", ""),
+            "note": (
+                "Predicted reference is the assigned group's mean BBOB "
+                "Hall-of-Fame behavior; numeric hyperparameters are means "
+                "and categorical hyperparameters are modes."
+            ),
+        }
+
+        for c in CONFIG_COLS:
+            actual_row[c] = r.get(c, np.nan)
+            pred_row[c] = pred.get(c, np.nan)
+
+        rows.append(actual_row)
+        rows.append(pred_row)
+
+    table6 = pd.DataFrame(rows)
+
+    if not table6.empty:
+        table6["_function_order"] = (
+            table6["function_id"]
+            .astype(str)
+            .str.replace("f", "", regex=False)
+            .astype(int)
+        )
+        table6["_source_order"] = (
+            table6["config_source"]
+            .astype(str)
+            .str.contains("predicted", case=False, na=False)
+            .astype(int)
+        )
+        table6 = (
+            table6.sort_values(["_function_order", "_source_order"])
+            .drop(columns=["_function_order", "_source_order"])
+            .reset_index(drop=True)
+        )
+
+    return table6
 
 
 # =========================
@@ -2138,19 +2512,11 @@ def find_hof_value_column(df, hp, side):
 
 
 def build_table2_generated_predicted_actual_wide(table2: pd.DataFrame) -> pd.DataFrame:
-    """Build wide generated-function HoF table from the original Table 2 output.
+    """Build the compact two-row Table 2 used in the thesis.
 
-    Original Table 2 stores each generated function as two rows:
-        - function HoF actual
-        - group HoF predicted
-
-    The wide table keeps:
-        Type, Function, Group
-
-    Then each hyperparameter cell reports:
-        predicted / actual (predicted - actual)
-
-    For non-numeric hyperparameters, the parenthesized value is match/diff.
+    Each generated function is shown with one Actual row and one Predicted row.
+    The Actual row is the function-level Hall-of-Fame configuration, while the
+    Predicted row is the assigned BBOB group-mean reference.
     """
     df = table2.copy()
     if df.empty:
@@ -2170,42 +2536,19 @@ def build_table2_generated_predicted_actual_wide(table2: pd.DataFrame) -> pd.Dat
             f"Available columns: {list(df.columns)}"
         )
 
-    hyperparameters = [
-        hp for hp in globals().get("HYPERPARAMETERS", [])
-        if hp in df.columns
-    ]
-    if not hyperparameters:
-        hyperparameters = [
-            c for c in df.columns
-            if c not in {
-                "function_type",
-                "function_id",
-                "function_label",
-                "assigned_group_0307",
-                "predicted_source_bbob_function",
-                "group_n_bbob_functions",
-                "group_bbob_functions",
-                "prediction_reference_method",
-                "delta_auc_actual_minus_predicted",
-                "config_match_count",
-                "config_available_count",
-                "config_match_ratio",
-                "mismatch_config_fields",
-                "status",
-                "config_source",
-                "auc_mean",
-                "config_signature",
-                "note",
-            }
-        ]
-
-    numeric_delta_hps = {"CR", "F", "lambda_", "mutation_n_comps"}
-
-    def normalize_value(value):
+    def normalize_value(value, numeric=False):
         if pd.isna(value):
             return "NA"
         if isinstance(value, bool):
             return str(value)
+        if isinstance(value, (np.bool_,)):
+            return str(bool(value))
+        if numeric:
+            num = pd.to_numeric(value, errors="coerce")
+            if pd.notna(num):
+                if float(num).is_integer():
+                    return str(int(num))
+                return f"{float(num):.3f}"
         text = str(value).strip()
         if text.endswith(".0"):
             text = text[:-2]
@@ -2213,20 +2556,42 @@ def build_table2_generated_predicted_actual_wide(table2: pd.DataFrame) -> pd.Dat
             return "NA"
         return text
 
-    def format_cell(predicted, actual, hp):
-        pred = normalize_value(predicted)
-        act = normalize_value(actual)
+    def fmt_aocc(value):
+        num = pd.to_numeric(value, errors="coerce")
+        return "NA" if pd.isna(num) else f"{float(num):.3f}"
 
-        if hp in numeric_delta_hps:
-            pred_num = pd.to_numeric(pred, errors="coerce")
-            act_num = pd.to_numeric(act, errors="coerce")
-            if pd.notna(pred_num) and pd.notna(act_num):
-                delta = float(pred_num) - float(act_num)
-                return f"{pred}/{act} ({delta:+.3f})"
+    def display_type(value):
+        text = str(value)
+        return "LLaMEA" if "llamea" in text.lower() else text
 
-        if pred == act:
-            return f"{pred}/{act} (match)"
-        return f"{pred}/{act} (diff)"
+    def display_source(value):
+        text = str(value)
+        if "actual" in text.lower():
+            return "Actual"
+        if "predicted" in text.lower():
+            return "Predicted"
+        return text
+
+    def row_from_source(source_row, actual_auc, predicted_auc):
+        source = display_source(source_row["config_source"])
+        delta = actual_auc - predicted_auc
+        return {
+            "Type": display_type(source_row["function_type"]),
+            "Function": source_row["function_label"],
+            "Group": source_row["assigned_group_0307"],
+            "Source": source,
+            "AOCC": fmt_aocc(source_row["auc_mean"]),
+            "Delta_AOCC": f"{delta:.3f}" if source == "Actual" else "",
+            "CR": normalize_value(source_row.get("CR"), numeric=True),
+            "F": normalize_value(source_row.get("F"), numeric=True),
+            "crossover": normalize_value(source_row.get("crossover")),
+            "lambda": normalize_value(source_row.get("lambda_"), numeric=True),
+            "lpsr": normalize_value(source_row.get("lpsr"), numeric=True),
+            "base": normalize_value(source_row.get("mutation_base")),
+            "n_comps": normalize_value(source_row.get("mutation_n_comps"), numeric=True),
+            "ref": normalize_value(source_row.get("mutation_reference")),
+            "archive": normalize_value(source_row.get("use_archive"), numeric=True),
+        }
 
     key_cols = [
         "function_type",
@@ -2250,17 +2615,11 @@ def build_table2_generated_predicted_actual_wide(table2: pd.DataFrame) -> pd.Dat
 
         actual = actual_rows.iloc[0]
         predicted = predicted_rows.iloc[0]
+        actual_auc = safe_float(actual.get("auc_mean", np.nan))
+        predicted_auc = safe_float(predicted.get("auc_mean", np.nan))
 
-        row = {
-            "Type": actual["function_type"],
-            "Function": actual["function_label"],
-            "Group": actual["assigned_group_0307"],
-        }
-
-        for hp in hyperparameters:
-            row[hp] = format_cell(predicted[hp], actual[hp], hp)
-
-        rows.append(row)
+        rows.append(row_from_source(actual, actual_auc, predicted_auc))
+        rows.append(row_from_source(predicted, actual_auc, predicted_auc))
 
     out = pd.DataFrame(rows)
     if out.empty:
@@ -2269,27 +2628,323 @@ def build_table2_generated_predicted_actual_wide(table2: pd.DataFrame) -> pd.Dat
             f"config_source values: {sorted(df['config_source'].astype(str).unique())}"
         )
 
-    out = out.sort_values(["Type", "Function", "Group"]).reset_index(drop=True)
+    type_order = {"affine": 0, "LLaMEA": 1}
+    out["_type_order"] = out["Type"].map(type_order).fillna(99)
+    out["_source_order"] = out["Source"].map({"Actual": 0, "Predicted": 1}).fillna(99)
+    out = (
+        out.sort_values(["_type_order", "Function", "Group", "_source_order"])
+        .drop(columns=["_type_order", "_source_order"])
+        .reset_index(drop=True)
+    )
     return out
 
+
+def build_bbob_predicted_actual_hof_wide(table6: pd.DataFrame) -> pd.DataFrame:
+    """Build compact Actual/Predicted HoF table for the 24 BBOB functions."""
+    df = table6.copy()
+    if df.empty:
+        return pd.DataFrame()
+
+    def normalize_value(value, numeric=False):
+        if pd.isna(value):
+            return "NA"
+        if isinstance(value, bool):
+            return str(value)
+        if isinstance(value, (np.bool_,)):
+            return str(bool(value))
+        if numeric:
+            num = pd.to_numeric(value, errors="coerce")
+            if pd.notna(num):
+                if float(num).is_integer():
+                    return str(int(num))
+                return f"{float(num):.3f}"
+        text = str(value).strip()
+        if text.endswith(".0"):
+            text = text[:-2]
+        if text.lower() == "nan":
+            return "NA"
+        return text
+
+    def fmt_aocc(value):
+        num = pd.to_numeric(value, errors="coerce")
+        return "NA" if pd.isna(num) else f"{float(num):.3f}"
+
+    def display_source(value):
+        text = str(value)
+        if "actual" in text.lower():
+            return "Actual"
+        if "predicted" in text.lower():
+            return "Predicted"
+        return text
+
+    def function_sort_key(label):
+        try:
+            return int(str(label).replace("f", ""))
+        except Exception:
+            return 999
+
+    def row_from_source(source_row, actual_auc, predicted_auc):
+        source = display_source(source_row["config_source"])
+        delta = actual_auc - predicted_auc
+        return {
+            "Type": "BBOB",
+            "Function": source_row["function_label"],
+            "Group": source_row["assigned_group_0307"],
+            "Source": source,
+            "AOCC": fmt_aocc(source_row["auc_mean"]),
+            "Delta_AOCC": f"{delta:.3f}" if source == "Actual" else "",
+            "CR": normalize_value(source_row.get("CR"), numeric=True),
+            "F": normalize_value(source_row.get("F"), numeric=True),
+            "crossover": normalize_value(source_row.get("crossover")),
+            "lambda": normalize_value(source_row.get("lambda_"), numeric=True),
+            "lpsr": normalize_value(source_row.get("lpsr"), numeric=True),
+            "base": normalize_value(source_row.get("mutation_base")),
+            "n_comps": normalize_value(source_row.get("mutation_n_comps"), numeric=True),
+            "ref": normalize_value(source_row.get("mutation_reference")),
+            "archive": normalize_value(source_row.get("use_archive"), numeric=True),
+        }
+
+    rows = []
+    key_cols = ["function_id", "function_label", "assigned_group_0307"]
+    for _, group_df in df.groupby(key_cols, dropna=False, sort=False):
+        actual_rows = group_df[
+            group_df["config_source"].astype(str).str.contains("actual", case=False, na=False)
+        ]
+        predicted_rows = group_df[
+            group_df["config_source"].astype(str).str.contains("predicted", case=False, na=False)
+        ]
+
+        if actual_rows.empty or predicted_rows.empty:
+            continue
+
+        actual = actual_rows.iloc[0]
+        predicted = predicted_rows.iloc[0]
+        actual_auc = safe_float(actual.get("auc_mean", np.nan))
+        predicted_auc = safe_float(predicted.get("auc_mean", np.nan))
+
+        rows.append(row_from_source(actual, actual_auc, predicted_auc))
+        rows.append(row_from_source(predicted, actual_auc, predicted_auc))
+
+    out = pd.DataFrame(rows)
+    if out.empty:
+        raise ValueError("Could not build BBOB predicted/actual HoF wide table.")
+
+    out["_function_order"] = out["Function"].map(function_sort_key)
+    out["_source_order"] = out["Source"].map({"Actual": 0, "Predicted": 1}).fillna(99)
+    out = (
+        out.sort_values(["_function_order", "_source_order"])
+        .drop(columns=["_function_order", "_source_order"])
+        .reset_index(drop=True)
+    )
+    return out
+
+
 def df_to_latex_table2_wide(df: pd.DataFrame) -> str:
-    column_spec = "lll" + ("l" * max(0, len(df.columns) - 3))
+    column_spec = "llllrrrrlrrlrlr"
+    display_columns = [
+        "Type",
+        "Function",
+        "Group",
+        "Source",
+        "AOCC",
+        r"$\Delta$AOCC",
+        "CR",
+        "F",
+        "crossover",
+        r"$\lambda$",
+        "lpsr",
+        "base",
+        "n_comps",
+        "ref",
+        "archive",
+    ]
+
     lines = []
     lines.append(r"\begin{table*}[htbp]")
     lines.append(r"\centering")
     lines.append(r"\small")
-    lines.append(r"\setlength{\tabcolsep}{3pt}")
-    lines.append(r"\caption{Generated functions: predicted BBOB group-mean reference compared with actual function-level Hall-of-Fame configuration under the 0307 grouping. Each hyperparameter cell reports predicted/actual (predicted-actual).}")
+    lines.append(r"\setlength{\tabcolsep}{2.5pt}")
+    lines.append(r"\caption{Generated functions: comparison between the predicted BBOB group reference and the actual function-level Hall-of-Fame configuration under the main six-group landscape grouping scheme. The $\Delta$AOCC value is reported only on the Actual row and is computed as actual AOCC minus predicted group-reference AOCC. Predicted rows use the mean AOCC of the assigned BBOB group; continuous hyper-parameters use group means, integer hyper-parameters are rounded to integer values, and binary or categorical hyper-parameters use majority vote or group mode.}")
     lines.append(r"\label{tab:generated-predicted-actual-hof-wide-0307}")
     lines.append(r"\begin{tabular}{" + column_spec + r"}")
     lines.append(r"\toprule")
-    lines.append(" & ".join(latex_escape_cell(c) for c in df.columns) + r" \\")
+    lines.append(" & ".join(display_columns) + r" \\")
     lines.append(r"\midrule")
+
+    ordered_cols = [
+        "Type",
+        "Function",
+        "Group",
+        "Source",
+        "AOCC",
+        "Delta_AOCC",
+        "CR",
+        "F",
+        "crossover",
+        "lambda",
+        "lpsr",
+        "base",
+        "n_comps",
+        "ref",
+        "archive",
+    ]
+
+    previous_function = None
     for _, row in df.iterrows():
-        lines.append(" & ".join(latex_escape_cell(row[c]) for c in df.columns) + r" \\")
+        current_function = (row["Type"], row["Function"])
+        if previous_function is not None and current_function != previous_function:
+            lines.append(r"\midrule")
+        lines.append(" & ".join(latex_escape_cell(row[c]) for c in ordered_cols) + r" \\")
+        previous_function = current_function
+
     lines.append(r"\bottomrule")
     lines.append(r"\end{tabular}")
     lines.append(r"\end{table*}")
+    return "\n".join(lines)
+
+
+def df_to_latex_bbob_hof_wide(df: pd.DataFrame) -> str:
+    column_spec = "llllrrrrlrrlrlr"
+    display_columns = [
+        "Type",
+        "Function",
+        "Group",
+        "Source",
+        "AOCC",
+        r"$\Delta$AOCC",
+        "CR",
+        "F",
+        "crossover",
+        r"$\lambda$",
+        "lpsr",
+        "base",
+        "n_comps",
+        "ref",
+        "archive",
+    ]
+
+    ordered_cols = [
+        "Type",
+        "Function",
+        "Group",
+        "Source",
+        "AOCC",
+        "Delta_AOCC",
+        "CR",
+        "F",
+        "crossover",
+        "lambda",
+        "lpsr",
+        "base",
+        "n_comps",
+        "ref",
+        "archive",
+    ]
+
+    lines = []
+    lines.append(r"\begin{table*}[htbp]")
+    lines.append(r"\centering")
+    lines.append(r"\scriptsize")
+    lines.append(r"\setlength{\tabcolsep}{2.5pt}")
+    lines.append(
+        r"\caption{BBOB functions: comparison between each function-level Hall-of-Fame configuration and the predicted reference configuration of its assigned BBOB landscape group under the main six-group grouping scheme. The $\Delta$AOCC value is reported only on the Actual row and is computed as actual AOCC minus predicted group-reference AOCC. Predicted rows use the mean AOCC of the assigned BBOB group; continuous hyper-parameters use group means, integer hyper-parameters are rounded to integer values, and binary or categorical hyper-parameters use majority vote or group mode.}"
+    )
+    lines.append(r"\label{tab:bbob-predicted-actual-hof-wide-0307}")
+    lines.append(r"\resizebox{\textwidth}{!}{%")
+    lines.append(r"\begin{tabular}{" + column_spec + r"}")
+    lines.append(r"\toprule")
+    lines.append(" & ".join(display_columns) + r" \\")
+    lines.append(r"\midrule")
+
+    previous_function = None
+    for _, row in df.iterrows():
+        current_function = row["Function"]
+        if previous_function is not None and current_function != previous_function:
+            lines.append(r"\midrule")
+        lines.append(" & ".join(latex_escape_cell(row[c]) for c in ordered_cols) + r" \\")
+        previous_function = current_function
+
+    lines.append(r"\bottomrule")
+    lines.append(r"\end{tabular}%")
+    lines.append(r"}")
+    lines.append(r"\end{table*}")
+    return "\n".join(lines)
+
+
+def build_table6_bbob_ranking_summary(table6: pd.DataFrame) -> pd.DataFrame:
+    """Kendall tau agreement between actual and predicted AOCC rankings."""
+    df = table6.copy()
+
+    actual = df[
+        df["config_source"].astype(str).str.contains("actual", case=False, na=False)
+    ][["function_id", "auc_mean"]].rename(columns={"auc_mean": "actual_aocc"})
+
+    predicted = df[
+        df["config_source"].astype(str).str.contains("predicted", case=False, na=False)
+    ][["function_id", "auc_mean"]].rename(columns={"auc_mean": "predicted_group_reference_aocc"})
+
+    merged = actual.merge(predicted, on="function_id", how="inner")
+    merged["actual_aocc"] = pd.to_numeric(merged["actual_aocc"], errors="coerce")
+    merged["predicted_group_reference_aocc"] = pd.to_numeric(
+        merged["predicted_group_reference_aocc"],
+        errors="coerce",
+    )
+    merged = merged.dropna(subset=["actual_aocc", "predicted_group_reference_aocc"])
+
+    if len(merged) >= 2:
+        tau, p_value = kendalltau(
+            merged["actual_aocc"],
+            merged["predicted_group_reference_aocc"],
+        )
+    else:
+        tau, p_value = np.nan, np.nan
+
+    return pd.DataFrame(
+        [
+            {
+                "Comparison": "BBOB actual AOCC vs assigned-group predicted AOCC",
+                "Kendall_tau": tau,
+                "p_value": p_value,
+                "n_functions": int(len(merged)),
+                "ranking_unit": "BBOB function",
+                "actual_score": "function-level Hall-of-Fame AOCC",
+                "predicted_score": "assigned BBOB group-reference AOCC",
+                "interpretation": (
+                    "Pairwise agreement between the actual function-level AOCC ranking "
+                    "and the ranking induced by assigned group-reference AOCC values."
+                ),
+            }
+        ]
+    )
+
+
+def df_to_latex_table6_ranking_summary(df: pd.DataFrame) -> str:
+    display = df.copy()
+    for col in ["Kendall_tau", "p_value"]:
+        display[col] = pd.to_numeric(display[col], errors="coerce").map(
+            lambda x: "NA" if pd.isna(x) else f"{x:.3f}"
+        )
+
+    cols = ["Comparison", "Kendall_tau", "p_value", "n_functions"]
+
+    lines = []
+    lines.append(r"\begin{table}[htbp]")
+    lines.append(r"\centering")
+    lines.append(r"\small")
+    lines.append(r"\caption{Kendall's tau rank correlation between BBOB function-level actual AOCC values and the assigned group-reference AOCC values. The ranking unit is one BBOB function; higher Kendall's tau indicates stronger agreement in the relative ordering of functions.}")
+    lines.append(r"\label{tab:bbob-hof-ranking-summary-0307}")
+    lines.append(r"\begin{tabular}{lrrr}")
+    lines.append(r"\toprule")
+    lines.append(r"Comparison & Kendall's $\tau$ & $p$-value & $n$ \\")
+    lines.append(r"\midrule")
+    for _, row in display.iterrows():
+        lines.append(
+            " & ".join(latex_escape_cell(row[c]) for c in cols)
+            + r" \\"
+        )
+    lines.append(r"\bottomrule")
+    lines.append(r"\end{tabular}")
+    lines.append(r"\end{table}")
     return "\n".join(lines)
 
 
@@ -2663,6 +3318,7 @@ def main():
         raise FileNotFoundError(f"Missing Hall-of-Fame CSV: {HALL_OF_FAME_CSV}")
 
     hof = pd.read_csv(HALL_OF_FAME_CSV)
+    hof = apply_aligned_generated_hof_override(hof)
 
     required_cols = [
         "function_type",
@@ -2759,6 +3415,72 @@ def main():
             "row are group means; categorical hyperparameters are group modes.\n\n"
         )
         f.write(df_to_markdown_no_tabulate(table2[[c for c in table2_display_cols if c in table2.columns]]))
+        f.write("\n")
+
+    # --------------------------------------------------------
+    # Table 6
+    # --------------------------------------------------------
+    print("Building Table 6: BBOB predicted vs actual Hall-of-Fame table...")
+
+    table6 = build_table6_bbob_predicted_vs_actual_hof(hof)
+
+    table6.to_csv(OUT_TABLE6_BBOB_HOF_CSV, index=False)
+
+    table6_wide = build_bbob_predicted_actual_hof_wide(table6)
+    table6_wide.to_csv(OUT_TABLE6_BBOB_HOF_WIDE_CSV, index=False)
+    OUT_TABLE6_BBOB_HOF_WIDE_MD.write_text(
+        table6_wide.to_markdown(index=False),
+        encoding="utf-8",
+    )
+    OUT_TABLE6_BBOB_HOF_WIDE_TEX.write_text(
+        df_to_latex_bbob_hof_wide(table6_wide),
+        encoding="utf-8",
+    )
+
+    table6_ranking_summary = build_table6_bbob_ranking_summary(table6)
+    table6_ranking_summary.to_csv(OUT_TABLE6_BBOB_RANKING_SUMMARY_CSV, index=False)
+    OUT_TABLE6_BBOB_RANKING_SUMMARY_MD.write_text(
+        table6_ranking_summary.to_markdown(index=False),
+        encoding="utf-8",
+    )
+    OUT_TABLE6_BBOB_RANKING_SUMMARY_TEX.write_text(
+        df_to_latex_table6_ranking_summary(table6_ranking_summary),
+        encoding="utf-8",
+    )
+
+    table6_display_cols = [
+        "function_type",
+        "function_id",
+        "assigned_group_0307",
+        "config_source",
+        "auc_mean",
+        "delta_auc_actual_minus_predicted",
+        "CR",
+        "F",
+        "crossover",
+        "lambda_",
+        "lpsr",
+        "mutation_base",
+        "mutation_n_comps",
+        "mutation_reference",
+        "use_archive",
+        "config_match_ratio",
+        "mismatch_config_fields",
+        "predicted_source_bbob_function",
+        "prediction_reference_method",
+        "status",
+    ]
+
+    with open(OUT_TABLE6_BBOB_HOF_MD, "w", encoding="utf-8") as f:
+        f.write("# Table 6. BBOB functions: predicted group reference vs actual function Hall-of-Fame\n\n")
+        f.write(
+            "Each BBOB function is shown with two rows: the actual function-level "
+            "Hall-of-Fame winner and the predicted reference configuration from the "
+            "assigned BBOB landscape group. Numeric hyperparameters in the predicted "
+            "row are group means; categorical hyperparameters are group modes. "
+            "The wide table reports Delta_AOCC only on the Actual row.\n\n"
+        )
+        f.write(df_to_markdown_no_tabulate(table6[[c for c in table6_display_cols if c in table6.columns]]))
         f.write("\n")
 
     # --------------------------------------------------------
@@ -2952,6 +3674,14 @@ def main():
         f.write(f"- Table 1 wide TeX:   {display_path(OUT_TABLE1_WIDE_TEX)}\n")
         f.write(f"- Table 2 CSV: {display_path(OUT_TABLE2_CSV)}\n")
         f.write(f"- Table 2 MD:  {display_path(OUT_TABLE2_MD)}\n")
+        f.write(f"- Table 6 BBOB HoF CSV:      {display_path(OUT_TABLE6_BBOB_HOF_CSV)}\n")
+        f.write(f"- Table 6 BBOB HoF MD:       {display_path(OUT_TABLE6_BBOB_HOF_MD)}\n")
+        f.write(f"- Table 6 BBOB HoF wide CSV: {display_path(OUT_TABLE6_BBOB_HOF_WIDE_CSV)}\n")
+        f.write(f"- Table 6 BBOB HoF wide MD:  {display_path(OUT_TABLE6_BBOB_HOF_WIDE_MD)}\n")
+        f.write(f"- Table 6 BBOB HoF wide TeX: {display_path(OUT_TABLE6_BBOB_HOF_WIDE_TEX)}\n")
+        f.write(f"- Table 6 BBOB ranking summary CSV: {display_path(OUT_TABLE6_BBOB_RANKING_SUMMARY_CSV)}\n")
+        f.write(f"- Table 6 BBOB ranking summary MD:  {display_path(OUT_TABLE6_BBOB_RANKING_SUMMARY_MD)}\n")
+        f.write(f"- Table 6 BBOB ranking summary TeX: {display_path(OUT_TABLE6_BBOB_RANKING_SUMMARY_TEX)}\n")
         f.write(f"- Table 3 CSV: {display_path(OUT_TABLE3_CSV)}\n")
         f.write(f"- Table 3 MD:  {display_path(OUT_TABLE3_MD)}\n")
         f.write(f"- Table 3 Wasserstein wide CSV: {display_path(OUT_TABLE3_WASSERSTEIN_WIDE_CSV)}\n")
@@ -2980,6 +3710,9 @@ def main():
     print(f"Saved Table 1 wide MD:    {OUT_TABLE1_WIDE_MD}")
     print(f"Saved Table 1 wide TeX:   {OUT_TABLE1_WIDE_TEX}")
     print(f"Saved Table 2 CSV: {OUT_TABLE2_CSV}")
+    print(f"Saved Table 6 BBOB HoF CSV:      {OUT_TABLE6_BBOB_HOF_CSV}")
+    print(f"Saved Table 6 BBOB HoF wide TeX: {OUT_TABLE6_BBOB_HOF_WIDE_TEX}")
+    print(f"Saved Table 6 BBOB ranking summary TeX: {OUT_TABLE6_BBOB_RANKING_SUMMARY_TEX}")
     print(f"Saved Table 3 CSV: {OUT_TABLE3_CSV}")
     print(f"Saved Table 4 CSV: {OUT_TABLE4_CSV}")
     print(f"Saved Table 5 CSV: {OUT_TABLE5_CSV}")

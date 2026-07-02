@@ -9,6 +9,11 @@ Generated files:
 - Table 1 wide TeX:   output\0307_main_comparison\table01_bbob_function_hyperparameter_shap_distance_wide_0307.tex
 - Table 2 CSV: output\0307_main_comparison\table02_generated_predicted_vs_actual_hof_0307.csv
 - Table 2 MD:  output\0307_main_comparison\table02_generated_predicted_vs_actual_hof_0307.md
+- Table 6 BBOB HoF CSV:      output\0307_main_comparison\table06_bbob_predicted_vs_actual_hof_0307.csv
+- Table 6 BBOB HoF MD:       output\0307_main_comparison\table06_bbob_predicted_vs_actual_hof_0307.md
+- Table 6 BBOB HoF wide CSV: output\0307_main_comparison\table06_bbob_predicted_vs_actual_hof_wide_0307.csv
+- Table 6 BBOB HoF wide MD:  output\0307_main_comparison\table06_bbob_predicted_vs_actual_hof_wide_0307.md
+- Table 6 BBOB HoF wide TeX: output\0307_main_comparison\table06_bbob_predicted_vs_actual_hof_wide_0307.tex
 - Table 3 CSV: output\0307_main_comparison\table03_generated_shap_shape_distance_0307.csv
 - Table 3 MD:  output\0307_main_comparison\table03_generated_shap_shape_distance_0307.md
 - Table 3 Wasserstein wide CSV: output\0307_main_comparison\table03_generated_shap_shape_wasserstein_wide_0307.csv
